@@ -1,0 +1,21 @@
+---
+sourceKey: team-course-short-key
+title: 课程资料标题
+author: 团队或教师姓名
+publisher: 华五项目组
+license: USER-AUTHORIZED
+version: 1.0.0
+subject: 数据结构
+chapter: 章节名称
+language: zh-CN
+sourceType: team_authored
+documentKey: team-course-short-key-chapter-key
+---
+
+# 章节标题
+
+在这里粘贴团队有权使用的教材、讲义或内部资料正文。
+
+## 知识点标题
+
+写清定义、适用条件、推导过程、示例和常见错误。导入程序会按标题和段落切分，并把正文关联到知识图谱。

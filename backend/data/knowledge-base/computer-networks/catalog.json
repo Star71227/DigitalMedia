@@ -1,0 +1,17 @@
+{
+  "points": [
+    ["network-arch","网络体系结构","分层模型、协议栈与各层功能的划分。","体系结构","foundation",["OSI","七层模型","TCP/IP","分层","协议栈","五层","封装","解封装"]],
+    ["data-link","数据链路层","帧的封装、差错检测与介质访问控制。","数据链路层","intermediate",["数据链路","帧","差错检测","CRC","以太网","MAC地址","CSMA/CD"]],
+    ["arp","地址解析协议","把 IP 地址解析为下一跳的 MAC 地址。","网络层","intermediate",["ARP","地址解析","MAC","IP地址","RARP","ARP缓存"]],
+    ["ip","网际协议与子网","IP 地址、子网掩码、子网划分与数据报转发。","网络层","intermediate",["IP地址","子网掩码","子网划分","CIDR","IPv4","数据报","TTL"]],
+    ["routing","路由选择","路由器按路由协议与路由表转发分组。","网络层","intermediate",["路由","RIP","OSPF","BGP","路由表","距离向量","链路状态"]],
+    ["tcp","TCP可靠传输","TCP 的可靠传输机制：序号、确认、重传与滑动窗口。","传输层","intermediate",["TCP","可靠传输","序号","确认","重传","滑动窗口","流量控制","校验和"]],
+    ["tcp-conn","TCP连接管理","三次握手建立连接与四次挥手释放连接。","传输层","intermediate",["三次握手","四次挥手","连接建立","连接释放","SYN","ACK","FIN"]],
+    ["udp","用户数据报协议","无连接、尽力而为的传输协议。","传输层","intermediate",["UDP","无连接","数据报","校验和","端口"]],
+    ["congestion","拥塞控制","TCP 通过慢开始、拥塞避免、快重传与快恢复调节发送速率。","传输层","intermediate",["拥塞控制","慢开始","拥塞避免","快重传","快恢复","拥塞窗口","ssthresh"]],
+    ["app-layer","应用层协议","DNS、HTTP、HTTPS 等应用层协议。","应用层","intermediate",["DNS","HTTP","HTTPS","域名","应用层","端口号"]]
+  ],
+  "relations": [
+    ["arp","ip"],["routing","ip"],["tcp-conn","tcp"],["congestion","tcp"],["data-link","network-arch"],["app-layer","network-arch"]
+  ,["ip","network-arch"],["tcp","network-arch"],["udp","network-arch"],["arp","data-link"],["app-layer","tcp"],["app-layer","udp"],["tcp","ip"],["udp","ip"]]
+}

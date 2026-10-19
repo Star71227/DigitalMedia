@@ -1,0 +1,456 @@
+/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* ===========================================================================
+   全局外观层：语言 / 外观 / 字号大小 / 字体
+   ---------------------------------------------------------------------------
+   1) 外观：Blueprint 整套 CSS 用的是字面色值（没有一套深色变量），逐个改写成
+      深色不现实，所以「深色」用整页反相 + 色相回正（invert + hue-rotate 180°），
+      配色关系整体保留、蓝色仍是蓝色；图片 / iframe / 画布再反相回来。
+      标记写在 <html data-appearance="dark">，由 appSettings.tsx 维护，
+      data-theme 固定为 light，避免与旧版深色变量叠加成反相两次。
+   2) 字号大小：--lm-chat-font-size 只作用于会话正文。
+   3) 字体：--lm-font 覆盖全站文字（代码块除外）。
+   =========================================================================== */
+
+/* ---------------------------------------------------------------- 深色 ---- */
+html[data-appearance="dark"] {
+  background: #101216;
+  filter: invert(1) hue-rotate(180deg);
+}
+/* 图片 / 内嵌页面 / 画布反相回来，保持原本的颜色 */
+html[data-appearance="dark"] img,
+html[data-appearance="dark"] picture,
+html[data-appearance="dark"] video,
+html[data-appearance="dark"] iframe,
+html[data-appearance="dark"] canvas,
+html[data-appearance="dark"] embed,
+html[data-appearance="dark"] object,
+html[data-appearance="dark"] [data-keep-colors] {
+  filter: invert(1) hue-rotate(180deg);
+}
+/* 滚动条跟着深色走 */
+html[data-appearance="dark"] {
+  scrollbar-color: #4a463e transparent;
+  color-scheme: dark;
+}
+
+/* ---------------------------------------------------------------- 字体 ---- */
+html {
+  --lm-font: system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", "PingFang SC", sans-serif;
+  --lm-chat-font-size: 15px;
+}
+html body,
+html body button,
+html body input,
+html body select,
+html body textarea,
+html .bp-app-shell,
+html .lm-app {
+  font-family: var(--lm-font);
+}
+/* 代码、公式、等宽场景不受正文字体影响 */
+html body code,
+html body pre,
+html body kbd,
+html body samp,
+html body .lm-code,
+html body .lm-codelab-editor,
+html body .bp-code-assessment textarea {
+  font-family: "JetBrains Mono", "Cascadia Mono", Consolas, "Sarasa Mono SC", ui-monospace, monospace;
+}
+
+/* ------------------------------------------------------- 会话内容字号 ---- */
+/* 「会话」= AI 学习助手里的对话正文；只改正文，不动整页排版。
+   组员把助手页重写成 MentorWorkspace（.mw-* 类），这里两套类名都覆盖。 */
+.bp-chat-message > div,
+.bp-chat-message > div p,
+.bp-chat-message > div li,
+.bp-chat-message > div td,
+.bp-chat-message > div th,
+.bp-chat-message > div blockquote,
+.lm-chat-message__body,
+.lm-chat-message__body p,
+.lm-chat-message__body li,
+.mw-message-body,
+.mw-message-body p,
+.mw-message-body li,
+.mw-message-body td,
+.mw-message-body th,
+.mw-message-body blockquote,
+.mw-thread-intro,
+.mw-thread-intro p {
+  font-size: var(--lm-chat-font-size);
+  line-height: 1.75;
+}
+.bp-chat-message > div h1,
+.lm-chat-message__body h1,
+.mw-message-body h1 {
+  font-size: calc(var(--lm-chat-font-size) * 1.5);
+}
+.bp-chat-message > div h2,
+.lm-chat-message__body h2,
+.mw-message-body h2 {
+  font-size: calc(var(--lm-chat-font-size) * 1.3);
+}
+.bp-chat-message > div h3,
+.lm-chat-message__body h3,
+.mw-message-body h3 {
+  font-size: calc(var(--lm-chat-font-size) * 1.15);
+}
+.bp-chat-composer textarea,
+.bp-chat-composer input,
+.lm-chat-composer textarea,
+/* 组员的 .mw-composer 里用 font: 14px/1.6 写了简写，且它的样式表是随组件懒加载、
+   加载顺序在本文件之后；这里用 body 前缀把优先级抬高一级，避免被它覆盖掉。 */
+body .mw-composer textarea,
+body .mw-composer input {
+  font-size: var(--lm-chat-font-size);
+}
+
+/* ---------------------------------------------------------------- 动效 ---- */
+html[data-motion="reduce"] *,
+html[data-motion="reduce"] *::before,
+html[data-motion="reduce"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* ------------------------------------------------- 设置页新控件样式 ---- */
+.bp-select {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  /* 固定宽度：换字体后选项文字长短不同，控件本身也不会跟着变宽变窄 */
+  width: 192px;
+  height: 40px;
+  padding: 0 34px 0 14px;
+  border: 1px solid var(--bp-line, #e3ded4);
+  border-radius: 10px;
+  background: rgb(255 255 255 / 0.72);
+  color: #16232f;
+  font-size: 13.5px;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%237d7266' stroke-width='2.2'%3E%3Cpath d='M3 4.5 6 8l3-3.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 13px center;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+.bp-select:hover {
+  border-color: #086fe7;
+}
+.bp-select:focus-visible {
+  outline: none;
+  border-color: #086fe7;
+  box-shadow: 0 0 0 3px rgb(8 111 231 / 0.16);
+}
+
+.bp-number {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.bp-number input {
+  width: 84px;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--bp-line, #e3ded4);
+  border-radius: 10px;
+  background: rgb(255 255 255 / 0.72);
+  color: #16232f;
+  font-size: 14px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.bp-number input:focus-visible {
+  outline: none;
+  border-color: #086fe7;
+  box-shadow: 0 0 0 3px rgb(8 111 231 / 0.16);
+}
+.bp-number small {
+  color: #8b8073;
+  font-size: 12px;
+}
+
+/* 外观三选一：浅色 / 深色 / 跟随系统 */
+.bp-appearance {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  width: min(100%, 460px);
+}
+.bp-appearance button {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 14px 8px 12px;
+  border: 1px solid var(--bp-line, #e3ded4);
+  border-radius: 12px;
+  background: rgb(255 255 255 / 0.6);
+  color: #526d84;
+  font-size: 12.5px;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease,
+    color 160ms ease;
+}
+.bp-appearance button svg {
+  width: 18px;
+  height: 18px;
+}
+.bp-appearance button:hover {
+  border-color: #086fe7;
+  color: #086fe7;
+}
+.bp-appearance button.is-active {
+  border-color: #086fe7;
+  background: rgb(8 111 231 / 0.1);
+  color: #086fe7;
+  font-weight: 700;
+}
+@media (max-width: 720px) {
+  .bp-appearance {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* 语言下拉：与截图一致的胶囊样式 */
+/* 语言下拉：文字居中、右侧小箭头，整体做成小一号的胶囊（和截图一致）。
+   注意：整块胶囊都必须是 select 的可点区域——padding 放在 select 上而不是外层 span 上，
+   否则左右两侧的留白（尤其箭头那一段）会变成点不动的死区。 */
+.bp-lang-select {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid var(--bp-line, #e3ded4);
+  border-radius: 999px;
+  background: rgb(249 247 241 / 0.9);
+  color: #16232f;
+  cursor: pointer;
+}
+.bp-lang-select select {
+  width: 100%;
+  height: 100%;
+  padding: 0 22px;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  font-size: 13.5px;
+  text-align: center;
+  text-align-last: center;
+  cursor: pointer;
+  appearance: none;
+}
+.bp-lang-select::after {
+  content: "";
+  position: absolute;
+  right: 11px;
+  top: 50%;
+  width: 9px;
+  height: 6px;
+  margin-top: -3px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='6' fill='none' stroke='%237d7266' stroke-width='1.6'%3E%3Cpath d='M1 1.5 4.5 5 8 1.5'/%3E%3C/svg%3E")
+    no-repeat center / contain;
+  pointer-events: none;
+}
+
+/* 已即时生效的小提示 */
+.bp-instant-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 10px;
+  color: #0f8a63;
+  font-size: 11.5px;
+}
+.bp-instant-hint i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* ---------------------------------------------------- 账户与隐私 / 数据管理 ---- */
+.bp-account-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 7px 14px;
+  border: 1px solid var(--bp-line, #e3ded4);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.6);
+}
+.bp-account-chip b {
+  color: #16232f;
+  font-size: 13.5px;
+}
+.bp-account-chip em {
+  color: #8b8073;
+  font-size: 12px;
+  font-style: normal;
+}
+
+.bp-row-actions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+.bp-line-button svg {
+  width: 15px;
+  height: 15px;
+}
+.bp-line-button--danger {
+  border-color: #e0b4ad;
+  color: #b8402a;
+}
+.bp-line-button--danger:hover {
+  border-color: #b8402a;
+  background: rgb(184 64 42 / 0.08);
+  color: #b8402a;
+}
+
+.bp-inline-form,
+.bp-danger {
+  margin-top: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--bp-line, #e3ded4);
+  border-radius: 12px;
+  background: rgb(255 255 255 / 0.45);
+}
+.bp-danger {
+  border-color: #e6c3bc;
+  background: rgb(184 64 42 / 0.05);
+}
+.bp-inline-form__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.bp-inline-form__head svg {
+  width: 17px;
+  height: 17px;
+  color: #086fe7;
+}
+.bp-danger .bp-inline-form__head svg {
+  color: #b8402a;
+}
+.bp-inline-form__head strong {
+  display: block;
+  color: #16232f;
+  font-size: 13.5px;
+}
+.bp-inline-form__head small {
+  color: #8b8073;
+  font-size: 11.5px;
+}
+.bp-inline-form__fields {
+  display: grid;
+  margin-top: 12px;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+.bp-inline-form__fields label {
+  display: grid;
+  gap: 5px;
+  color: #8b8073;
+  font-size: 11.5px;
+}
+.bp-inline-form__fields input {
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--bp-line, #e3ded4);
+  border-radius: 10px;
+  background: rgb(255 255 255 / 0.8);
+  color: #16232f;
+  font: inherit;
+  font-size: 13.5px;
+}
+.bp-inline-form__fields input:focus-visible {
+  outline: none;
+  border-color: #086fe7;
+  box-shadow: 0 0 0 3px rgb(8 111 231 / 0.16);
+}
+.bp-inline-form__foot {
+  display: flex;
+  margin-top: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.bp-danger-action {
+  height: 38px;
+  padding: 0 16px;
+  border: 1px solid #b8402a;
+  border-radius: 8px;
+  background: #b8402a;
+  color: #fff;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.16s ease;
+}
+.bp-danger-action:hover:not(:disabled) {
+  background: #9d3521;
+}
+.bp-danger-action:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.bp-form-note {
+  color: #8b8073;
+  font-size: 12px;
+}
+.bp-form-note.is-ok {
+  color: #0f8a63;
+}
+.bp-form-note.is-error {
+  color: #b8402a;
+}
+.bp-form-note.is-busy {
+  color: #086fe7;
+}
+
+/* 会话预览卡：直接看到字号 / 字体的效果。
+   固定高度 + 最多两行：换字体或改字号时这张卡自己不动，下面的「保存 / 恢复默认」也不会跟着跳。
+   高度按最大 24px 字号仍能完整显示两行来定（28 内边距 + 16 标签 + 8 间距 + 2×42 行高 ≈ 148）。 */
+.bp-font-preview {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 8px;
+  align-content: start;
+  height: 148px;
+  margin-top: 6px;
+  padding: 14px 16px;
+  overflow: hidden;
+  border: 1px dashed var(--bp-line, #e3ded4);
+  border-radius: 12px;
+  background: rgb(255 255 255 / 0.5);
+  color: #47607a;
+}
+.bp-font-preview span {
+  color: #8b8073;
+  font-size: 11px;
+  line-height: 16px;
+  letter-spacing: 0.08em;
+}
+.bp-font-preview__text {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  font-size: var(--lm-chat-font-size);
+  line-height: 1.75;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}

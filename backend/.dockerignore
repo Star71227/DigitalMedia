@@ -1,0 +1,16 @@
+.env
+.env.*
+!.env.example
+.npm-cache
+.npmrc
+node_modules
+coverage
+test
+docs
+storage
+*.log
+**/*.pdf
+**/*.pptx
+npm-debug.log*
+.git
+.gitignore

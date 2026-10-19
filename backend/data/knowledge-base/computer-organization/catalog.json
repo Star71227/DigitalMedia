@@ -1,0 +1,17 @@
+{
+  "points": [
+    ["number-representation","数据的表示","定点数、浮点数、原反补移码与字符编码的表示方法。","数据的表示与运算","foundation",["原码","反码","补码","移码","浮点数","定点数","IEEE754","字符编码"]],
+    ["alu","运算方法与运算器","补码加减、溢出判断与算术逻辑单元的构成。","数据的表示与运算","intermediate",["ALU","加法器","溢出","算术逻辑单元","补码加减","串行进位","并行进位"]],
+    ["instruction","指令系统","指令格式、寻址方式与 CISC/RISC 的区别。","指令系统","intermediate",["指令格式","寻址方式","操作码","地址码","CISC","RISC","立即寻址","间接寻址"]],
+    ["cpu-datapath","CPU数据通路","控制器、数据通路、指令周期与微操作序列。","中央处理器","intermediate",["数据通路","控制器","指令周期","微操作","时序","取指","执行"]],
+    ["pipeline","指令流水线","流水线的划分、加速比与三类冒险。","中央处理器","intermediate",["流水线","指令流水","数据冒险","控制冒险","结构冒险","加速比","流水线周期"]],
+    ["memory-hierarchy","存储层次","存储系统的层次结构与局部性原理。","存储器","intermediate",["存储层次","局部性","主存","辅存","层次结构","Cache-主存"]],
+    ["cache","高速缓冲存储器","Cache 的映射方式、替换与写策略、命中率。","存储器","intermediate",["Cache","缓存","命中率","直接映射","组相联","全相联","写回","写直达"]],
+    ["main-memory","主存储器","主存的组成、字扩展、位扩展与地址译码。","存储器","intermediate",["主存","RAM","ROM","存储芯片","字扩展","位扩展","地址译码"]],
+    ["bus","系统总线","总线的分类、性能指标与仲裁方式。","总线与I/O","intermediate",["总线","数据总线","地址总线","控制总线","总线仲裁","带宽"]],
+    ["io-interrupt","I/O与中断","程序查询、中断、DMA 与通道等 I/O 方式。","总线与I/O","intermediate",["中断","I/O","程序查询","中断方式","DMA","通道","中断向量"]]
+  ],
+  "relations": [
+    ["alu","number-representation"],["cpu-datapath","instruction"],["pipeline","cpu-datapath"],["cache","memory-hierarchy"],["main-memory","memory-hierarchy"],["io-interrupt","bus"]
+  ,["instruction","number-representation"],["cpu-datapath","alu"],["memory-hierarchy","cpu-datapath"],["bus","memory-hierarchy"],["io-interrupt","cpu-datapath"]]
+}

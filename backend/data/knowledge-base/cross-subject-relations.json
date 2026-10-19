@@ -1,0 +1,462 @@
+{
+  "version": 1,
+  "description": "跨课程知识点关系。组员的 catalog.json 中 relations 的 id 按 subject 解析，只能表达课程内关系；跨课程关系单独放在本文件，由 knowledgeBootstrapService 在导入时一并写入 knowledge_point_prerequisites（relation_type = cross_subject）。from 依赖 requires。",
+  "relations": [
+    {
+      "from": {
+        "subject": "数据结构",
+        "key": "linked-list"
+      },
+      "requires": {
+        "subject": "C语言",
+        "key": "c-pointers"
+      },
+      "type": "cross_subject",
+      "note": "链表的结点与指针操作直接依赖 C 的指针语义"
+    },
+    {
+      "from": {
+        "subject": "数据结构",
+        "key": "linked-list"
+      },
+      "requires": {
+        "subject": "C语言",
+        "key": "c-memory"
+      },
+      "type": "cross_subject",
+      "note": "链表的动态结点创建与释放依赖动态内存管理"
+    },
+    {
+      "from": {
+        "subject": "数据结构",
+        "key": "doubly-linked-list"
+      },
+      "requires": {
+        "subject": "C语言",
+        "key": "c-structs"
+      },
+      "type": "cross_subject",
+      "note": "双向链表结点用结构体定义前驱/后继指针"
+    },
+    {
+      "from": {
+        "subject": "数据结构",
+        "key": "array"
+      },
+      "requires": {
+        "subject": "C语言",
+        "key": "c-arrays"
+      },
+      "type": "cross_subject",
+      "note": "顺序表的底层就是一维数组"
+    },
+    {
+      "from": {
+        "subject": "数据结构",
+        "key": "string"
+      },
+      "requires": {
+        "subject": "C语言",
+        "key": "c-strings"
+      },
+      "type": "cross_subject",
+      "note": "串的实现依赖字符数组与结束符约定"
+    },
+    {
+      "from": {
+        "subject": "数据结构",
+        "key": "graph"
+      },
+      "requires": {
+        "subject": "C语言",
+        "key": "c-structs"
+      },
+      "type": "cross_subject",
+      "note": "邻接表的边结点用结构体组织"
+    },
+    {
+      "from": {
+        "subject": "数据结构",
+        "key": "hash-table"
+      },
+      "requires": {
+        "subject": "C语言",
+        "key": "c-arrays"
+      },
+      "type": "cross_subject",
+      "note": "哈希表的桶数组依赖数组与下标取模"
+    },
+    {
+      "from": {
+        "subject": "操作系统",
+        "key": "file-system"
+      },
+      "requires": {
+        "subject": "C语言",
+        "key": "c-files"
+      },
+      "type": "cross_subject",
+      "note": "C 标准库文件操作是理解文件系统接口的入口"
+    },
+    {
+      "from": {
+        "subject": "操作系统",
+        "key": "memory-management"
+      },
+      "requires": {
+        "subject": "C语言",
+        "key": "c-memory"
+      },
+      "type": "cross_subject",
+      "note": "malloc/free 之下就是操作系统的堆管理"
+    },
+    {
+      "from": {
+        "subject": "操作系统",
+        "key": "process-thread"
+      },
+      "requires": {
+        "subject": "C语言",
+        "key": "c-functions"
+      },
+      "type": "cross_subject",
+      "note": "函数调用与栈帧是理解进程上下文的基础"
+    },
+    {
+      "from": {
+        "subject": "操作系统",
+        "key": "cpu-scheduling"
+      },
+      "requires": {
+        "subject": "数据结构",
+        "key": "queue"
+      },
+      "type": "cross_subject",
+      "note": "就绪队列/阻塞队列是调度算法的数据结构基础"
+    },
+    {
+      "from": {
+        "subject": "操作系统",
+        "key": "cpu-scheduling"
+      },
+      "requires": {
+        "subject": "数据结构",
+        "key": "priority-queue"
+      },
+      "type": "cross_subject",
+      "note": "优先级调度用优先队列选取下一个进程"
+    },
+    {
+      "from": {
+        "subject": "操作系统",
+        "key": "file-system"
+      },
+      "requires": {
+        "subject": "数据结构",
+        "key": "tree"
+      },
+      "type": "cross_subject",
+      "note": "目录结构本质是一棵树"
+    },
+    {
+      "from": {
+        "subject": "操作系统",
+        "key": "file-system"
+      },
+      "requires": {
+        "subject": "数据结构",
+        "key": "linked-list"
+      },
+      "type": "cross_subject",
+      "note": "文件分配表与空闲块链用链表组织"
+    },
+    {
+      "from": {
+        "subject": "操作系统",
+        "key": "memory-management"
+      },
+      "requires": {
+        "subject": "数据结构",
+        "key": "linked-list"
+      },
+      "type": "cross_subject",
+      "note": "动态分区分配的空闲分区链是链表应用"
+    },
+    {
+      "from": {
+        "subject": "操作系统",
+        "key": "virtual-memory"
+      },
+      "requires": {
+        "subject": "数据结构",
+        "key": "queue"
+      },
+      "type": "cross_subject",
+      "note": "FIFO/LRU 页面置换需要维护页框队列"
+    },
+    {
+      "from": {
+        "subject": "操作系统",
+        "key": "virtual-memory"
+      },
+      "requires": {
+        "subject": "数据结构",
+        "key": "hash-table"
+      },
+      "type": "cross_subject",
+      "note": "页表常用哈希结构加速地址变换"
+    },
+    {
+      "from": {
+        "subject": "操作系统",
+        "key": "disk-io"
+      },
+      "requires": {
+        "subject": "数据结构",
+        "key": "queue"
+      },
+      "type": "cross_subject",
+      "note": "磁盘请求队列的调度依赖队列结构"
+    },
+    {
+      "from": {
+        "subject": "操作系统",
+        "key": "semaphore"
+      },
+      "requires": {
+        "subject": "数据结构",
+        "key": "queue"
+      },
+      "type": "cross_subject",
+      "note": "信号量的等待队列本质是队列"
+    },
+    {
+      "from": {
+        "subject": "操作系统",
+        "key": "process-thread"
+      },
+      "requires": {
+        "subject": "数据结构",
+        "key": "stack"
+      },
+      "type": "cross_subject",
+      "note": "函数调用栈是进程运行时的核心结构"
+    },
+    {
+      "from": {
+        "subject": "操作系统",
+        "key": "deadlock"
+      },
+      "requires": {
+        "subject": "数据结构",
+        "key": "graph"
+      },
+      "type": "cross_subject",
+      "note": "资源分配图用图论方法检测环路"
+    },
+    {
+      "from": {
+        "subject": "计算机网络",
+        "key": "routing"
+      },
+      "requires": {
+        "subject": "数据结构",
+        "key": "dijkstra"
+      },
+      "type": "cross_subject",
+      "note": "链路状态路由用 Dijkstra 计算最短路径"
+    },
+    {
+      "from": {
+        "subject": "计算机网络",
+        "key": "routing"
+      },
+      "requires": {
+        "subject": "数据结构",
+        "key": "graph"
+      },
+      "type": "cross_subject",
+      "note": "网络拓扑本身就是一张带权图"
+    },
+    {
+      "from": {
+        "subject": "计算机网络",
+        "key": "congestion"
+      },
+      "requires": {
+        "subject": "数据结构",
+        "key": "queue"
+      },
+      "type": "cross_subject",
+      "note": "拥塞控制依赖发送/接收缓冲队列"
+    },
+    {
+      "from": {
+        "subject": "计算机网络",
+        "key": "tcp"
+      },
+      "requires": {
+        "subject": "数据结构",
+        "key": "queue"
+      },
+      "type": "cross_subject",
+      "note": "滑动窗口本质是发送与接收队列"
+    },
+    {
+      "from": {
+        "subject": "操作系统",
+        "key": "memory-management"
+      },
+      "requires": {
+        "subject": "计算机组成原理",
+        "key": "main-memory"
+      },
+      "type": "cross_subject",
+      "note": "内存管理直接管理主存的分配与地址变换"
+    },
+    {
+      "from": {
+        "subject": "操作系统",
+        "key": "virtual-memory"
+      },
+      "requires": {
+        "subject": "计算机组成原理",
+        "key": "memory-hierarchy"
+      },
+      "type": "cross_subject",
+      "note": "虚拟内存建立在存储层次结构之上"
+    },
+    {
+      "from": {
+        "subject": "操作系统",
+        "key": "virtual-memory"
+      },
+      "requires": {
+        "subject": "计算机组成原理",
+        "key": "cache"
+      },
+      "type": "cross_subject",
+      "note": "页框与 Cache 行都是局部性原理的体现"
+    },
+    {
+      "from": {
+        "subject": "操作系统",
+        "key": "cpu-scheduling"
+      },
+      "requires": {
+        "subject": "计算机组成原理",
+        "key": "cpu-datapath"
+      },
+      "type": "cross_subject",
+      "note": "调度的对象就是 CPU 数据通路的执行权"
+    },
+    {
+      "from": {
+        "subject": "操作系统",
+        "key": "process-state"
+      },
+      "requires": {
+        "subject": "计算机组成原理",
+        "key": "io-interrupt"
+      },
+      "type": "cross_subject",
+      "note": "阻塞/唤醒由 I/O 中断驱动"
+    },
+    {
+      "from": {
+        "subject": "操作系统",
+        "key": "disk-io"
+      },
+      "requires": {
+        "subject": "计算机组成原理",
+        "key": "io-interrupt"
+      },
+      "type": "cross_subject",
+      "note": "I/O 控制方式的核心是中断与 DMA"
+    },
+    {
+      "from": {
+        "subject": "操作系统",
+        "key": "disk-io"
+      },
+      "requires": {
+        "subject": "计算机组成原理",
+        "key": "bus"
+      },
+      "type": "cross_subject",
+      "note": "设备与主机通过系统总线交换数据"
+    },
+    {
+      "from": {
+        "subject": "操作系统",
+        "key": "process-thread"
+      },
+      "requires": {
+        "subject": "计算机组成原理",
+        "key": "instruction"
+      },
+      "type": "cross_subject",
+      "note": "进程的执行就是指令序列的执行"
+    },
+    {
+      "from": {
+        "subject": "计算机网络",
+        "key": "data-link"
+      },
+      "requires": {
+        "subject": "计算机组成原理",
+        "key": "number-representation"
+      },
+      "type": "cross_subject",
+      "note": "CRC 与校验码是数据表示与编码方法的直接应用"
+    },
+    {
+      "from": {
+        "subject": "计算机网络",
+        "key": "ip"
+      },
+      "requires": {
+        "subject": "计算机组成原理",
+        "key": "alu"
+      },
+      "type": "cross_subject",
+      "note": "首部校验和用反码求和，是运算器的典型应用"
+    },
+    {
+      "from": {
+        "subject": "计算机组成原理",
+        "key": "number-representation"
+      },
+      "requires": {
+        "subject": "C语言",
+        "key": "c-basics"
+      },
+      "type": "cross_subject",
+      "note": "C 的基本类型位宽是理解机器数表示的前提"
+    },
+    {
+      "from": {
+        "subject": "计算机组成原理",
+        "key": "alu"
+      },
+      "requires": {
+        "subject": "C语言",
+        "key": "c-operators"
+      },
+      "type": "cross_subject",
+      "note": "C 的算术与位运算直接对应运算器功能"
+    },
+    {
+      "from": {
+        "subject": "计算机网络",
+        "key": "network-arch"
+      },
+      "requires": {
+        "subject": "操作系统",
+        "key": "process-thread"
+      },
+      "type": "cross_subject",
+      "note": "协议栈的分层实现依托进程与线程"
+    }
+  ]
+}

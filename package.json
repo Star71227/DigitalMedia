@@ -1,0 +1,11 @@
+{
+  "name": "learnmate-project",
+  "private": true,
+  "scripts": {
+    "install:clients": "npm --prefix frontend-new ci && npm --prefix frontend-teacher ci",
+    "typecheck": "npm --prefix frontend-new run lint && npm --prefix frontend-teacher run lint",
+    "build": "npm --prefix frontend-new run build && npm --prefix frontend-teacher run build",
+    "test": "npm --prefix frontend-new test",
+    "format": "npm --prefix frontend-new exec -- prettier --write \"src/**/*.{ts,tsx}\" \"../frontend-teacher/src/**/*.{ts,tsx}\""
+  }
+}

@@ -1,0 +1,87 @@
+@baseUrl = http://localhost:5800
+@token = 请先调用登录接口并把返回的token粘贴到这里
+
+### 后端健康检查
+GET {{baseUrl}}/api/health
+
+### 学生登录（密码请使用根目录 .env 中的 DEMO_PASSWORD）
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "identifier": "zhangsan",
+  "password": "请在本机填写"
+}
+
+### 大模型学习闭环状态
+GET {{baseUrl}}/api/ai-learning/status
+Authorization: Bearer {{token}}
+
+### 学习闭环数据概览
+GET {{baseUrl}}/api/ai-learning/overview
+Authorization: Bearer {{token}}
+
+### 上传学生个人资料
+POST {{baseUrl}}/api/personal-knowledge/documents
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "数据结构第四章讲义",
+  "fileName": "chapter-4.md",
+  "mimeType": "text/markdown",
+  "subject": "数据结构",
+  "contentText": "# 红黑树\n\n在这里粘贴学生有权使用的资料正文。"
+}
+
+### 查看知识图谱与资源框架
+GET {{baseUrl}}/api/knowledge/graph?subject=数据结构
+Authorization: Bearer {{token}}
+
+### 在助手中分析文字错题
+POST {{baseUrl}}/api/chat
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "message": "请识别并分析这道错题",
+  "wrongQuestion": {
+    "subject": "数据结构",
+    "questionText": "红黑树左旋后中序遍历次序是否改变？",
+    "studentAnswer": "会改变",
+    "correctAnswer": "不会改变"
+  }
+}
+
+### 生成融合路径、错题、对话、私有资料和联网题源的个性化测验
+POST {{baseUrl}}/api/quiz/personalized/generate
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "subject": "数据结构",
+  "knowledgePoint": "红黑树",
+  "questionCount": 8,
+  "difficulty": "提高"
+}
+
+### 查看到期滚动复习任务
+GET {{baseUrl}}/api/review/queue
+Authorization: Bearer {{token}}
+
+### 提交复习效果（quality 为 0 到 5）
+POST {{baseUrl}}/api/review/queue/1/result
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "quality": 4
+}
+
+### 学习路径使用所有闭环数据重新生成
+POST {{baseUrl}}/api/path/generate
+Authorization: Bearer {{token}}
+
+### 清晰的资源分类与接口衔接
+GET {{baseUrl}}/api/resources/catalog
+Authorization: Bearer {{token}}

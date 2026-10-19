@@ -1,0 +1,2799 @@
+<!-- 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 -->
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>知识点详情 · 计算机专业课知识图谱</title>
+    <style>
+      /* =====================================================================
+     独立详情页（由图谱页跳转而来）
+     知识点模式：① 标题 ② 知识概述与定义 ③ 核心考点 ④ 前置依赖 ⑤ 简单例题与解析
+     课程模式（点击课程/章节节点）：课程概述 + 章节考查要点 + 跨课程关联 + 综合例题
+     URL：?node=<名称>&key=<key>  或  ?subject=<课程>&chapter=<章节>
+     ===================================================================== */
+      /* 黑夜星空主题：与知识图谱页保持一套配色（深夜底 + 星点 + 半透明深色卡片） */
+      :root {
+        --ink: #e8f0fb;
+        --text: #b9c8da;
+        --muted: #8497ae;
+        --line: rgb(255 255 255 / 0.12);
+        --bg: #0a1120;
+        --soft: rgb(255 255 255 / 0.05);
+        --glass: rgb(9 15 27 / 0.82);
+        --blue: #5b9bff;
+        --blue-soft: rgb(91 155 255 / 0.16);
+        --amber: #ffc247;
+        --amber-soft: rgb(255 194 71 / 0.13);
+        --red: #ff8f80;
+        --green: #3fd0a8;
+        --radius: 14px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: radial-gradient(120% 90% at 50% -10%, #16233d 0%, #0b1425 40%, #05090f 100%) #05090f fixed;
+        color: var(--ink);
+        font:
+          14.5px/1.75 "Microsoft YaHei",
+          "PingFang SC",
+          system-ui,
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      /* 星空：一层重复的小星点（每块 340×260 里十几颗位置不规则的点），滚动时固定不动 */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background-repeat: repeat;
+        background-size: 340px 260px;
+        background-image:
+          radial-gradient(1.7px 1.7px at 24px 38px, rgb(255 255 255 / 0.85), transparent 62%),
+          radial-gradient(1.2px 1.2px at 128px 96px, rgb(214 230 255 / 0.7), transparent 62%),
+          radial-gradient(1px 1px at 212px 26px, rgb(214 230 255 / 0.55), transparent 62%),
+          radial-gradient(1.5px 1.5px at 296px 148px, rgb(255 255 255 / 0.75), transparent 62%),
+          radial-gradient(1px 1px at 62px 196px, rgb(214 230 255 / 0.5), transparent 62%),
+          radial-gradient(1.3px 1.3px at 168px 232px, rgb(255 255 255 / 0.65), transparent 62%),
+          radial-gradient(1px 1px at 268px 208px, rgb(214 230 255 / 0.45), transparent 62%),
+          radial-gradient(1.9px 1.9px at 316px 66px, rgb(236 244 255 / 0.8), transparent 62%),
+          radial-gradient(1px 1px at 96px 148px, rgb(214 230 255 / 0.45), transparent 62%),
+          radial-gradient(1.2px 1.2px at 244px 104px, rgb(255 255 255 / 0.6), transparent 62%),
+          radial-gradient(1px 1px at 40px 108px, rgb(214 230 255 / 0.4), transparent 62%),
+          radial-gradient(1.4px 1.4px at 196px 178px, rgb(255 255 255 / 0.55), transparent 62%);
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      /* ---------------- 顶栏 ---------------- */
+      .bar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: flex;
+        padding: 12px 28px;
+        align-items: center;
+        gap: 14px;
+        border-bottom: 1px solid var(--line);
+        background: var(--glass);
+        backdrop-filter: blur(10px);
+      }
+      .back {
+        display: inline-flex;
+        height: 36px;
+        padding: 0 16px;
+        align-items: center;
+        gap: 7px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgb(255 255 255 / 0.06);
+        color: var(--text);
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.16s ease;
+      }
+      .back:hover {
+        border-color: var(--blue);
+        color: var(--blue);
+        background: var(--blue-soft);
+      }
+      .bar__crumb {
+        color: var(--muted);
+        font-size: 12.5px;
+      }
+      .bar__crumb b {
+        color: var(--text);
+        font-weight: 600;
+      }
+      .bar__spacer {
+        margin-left: auto;
+      }
+      .bar__stat {
+        color: var(--muted);
+        font-size: 12px;
+        letter-spacing: 0.04em;
+      }
+
+      /* ---------------- 主体 ---------------- */
+      .wrap {
+        position: relative;
+        z-index: 1;
+        max-width: 1180px;
+        padding: 28px 28px 72px;
+        margin: 0 auto;
+      }
+
+      /* ① 标题 */
+      .hero {
+        position: relative;
+        padding: 30px 34px 26px;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        background: rgb(255 255 255 / 0.045);
+        box-shadow: 0 14px 34px rgb(0 0 0 / 0.38);
+      }
+      .hero::after {
+        content: "";
+        position: absolute;
+        top: -70px;
+        right: -50px;
+        width: 280px;
+        height: 280px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgb(91 155 255 / 0.18), transparent 68%);
+      }
+      .hero__subject {
+        display: inline-flex;
+        padding: 4px 12px;
+        align-items: center;
+        gap: 7px;
+        border-radius: 999px;
+        background: var(--blue-soft);
+        color: var(--blue);
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .hero__subject i {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: currentColor;
+      }
+      .hero h1 {
+        margin: 14px 0 10px;
+        font-size: clamp(1.8rem, 3vw, 2.4rem);
+        line-height: 1.25;
+        letter-spacing: 0.01em;
+      }
+      .hero__desc {
+        max-width: 74ch;
+        margin: 0;
+        color: var(--text);
+        font-size: 15px;
+      }
+      .hero__meta {
+        display: flex;
+        margin-top: 20px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .chip {
+        display: inline-flex;
+        padding: 6px 13px;
+        align-items: center;
+        gap: 7px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--soft);
+        color: var(--text);
+        font-size: 12.5px;
+      }
+      .chip b {
+        color: var(--ink);
+        font-weight: 600;
+      }
+      .chip.diff-foundation {
+        border-color: rgb(63 208 168 / 0.45);
+        background: rgb(63 208 168 / 0.12);
+        color: #5fe0b8;
+      }
+      .chip.diff-advanced {
+        border-color: rgb(255 194 71 / 0.45);
+        background: var(--amber-soft);
+        color: #ffc247;
+      }
+      .chip.diff-challenge {
+        border-color: rgb(255 143 128 / 0.45);
+        background: rgb(255 143 128 / 0.12);
+        color: var(--red);
+      }
+
+      .grid {
+        display: grid;
+        margin-top: 20px;
+        gap: 18px;
+        grid-template-columns: minmax(0, 1.62fr) minmax(0, 1fr);
+        align-items: start;
+      }
+      @media (max-width: 1000px) {
+        .grid {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+      .col {
+        display: grid;
+        gap: 18px;
+      }
+
+      .card {
+        padding: 22px 26px 24px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: rgb(255 255 255 / 0.045);
+        box-shadow: 0 10px 26px rgb(0 0 0 / 0.3);
+      }
+      .card__head {
+        display: flex;
+        margin-bottom: 14px;
+        align-items: center;
+        gap: 11px;
+      }
+      .card__no {
+        display: grid;
+        width: 26px;
+        height: 26px;
+        flex: 0 0 auto;
+        place-items: center;
+        border-radius: 8px;
+        background: var(--blue-soft);
+        color: var(--blue);
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .card__head h2 {
+        margin: 0;
+        font-size: 16px;
+        letter-spacing: 0.01em;
+      }
+      .card__head em {
+        margin-left: auto;
+        color: var(--muted);
+        font-size: 11.5px;
+        font-style: normal;
+      }
+
+      .card p {
+        margin: 0 0 12px;
+        color: var(--text);
+      }
+      .card p:last-child {
+        margin-bottom: 0;
+      }
+      .card strong {
+        color: var(--ink);
+      }
+      .def {
+        padding: 14px 16px;
+        border: 1px solid rgb(91 155 255 / 0.3);
+        border-radius: 10px;
+        background: linear-gradient(180deg, rgb(91 155 255 / 0.14), rgb(255 255 255 / 0.02));
+        color: #cfe0f8;
+      }
+      ol.points,
+      ul.points {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+        counter-reset: pt;
+      }
+      ol.points > li {
+        position: relative;
+        padding: 9px 0 9px 34px;
+        border-bottom: 1px dashed var(--line);
+        color: var(--text);
+      }
+      ol.points > li:last-child {
+        border-bottom: 0;
+        padding-bottom: 0;
+      }
+      ol.points > li::before {
+        counter-increment: pt;
+        content: counter(pt);
+        position: absolute;
+        top: 11px;
+        left: 0;
+        display: grid;
+        width: 21px;
+        height: 21px;
+        place-items: center;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--soft);
+        color: var(--blue);
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      /* ④ 前置依赖（可点击 → 对应知识点详情页） */
+      .rel {
+        display: grid;
+        gap: 9px;
+      }
+      .rel__group + .rel__group {
+        margin-top: 4px;
+      }
+      .rel__label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--muted);
+        font-size: 11.5px;
+        letter-spacing: 0.06em;
+      }
+      .rel__label span {
+        flex: 1 1 auto;
+        height: 1px;
+        background: var(--line);
+      }
+      .rel__list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .rel__item {
+        display: inline-flex;
+        padding: 7px 13px;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        background: rgb(255 255 255 / 0.05);
+        color: var(--text);
+        font-size: 13px;
+        transition: all 0.16s ease;
+      }
+      .rel__item:hover {
+        border-color: var(--blue);
+        background: var(--blue-soft);
+        color: var(--blue);
+        transform: translateY(-1px);
+      }
+      .rel__item--cross {
+        border-style: dashed;
+        border-color: rgb(91 155 255 / 0.45);
+      }
+      .rel__item em {
+        color: var(--muted);
+        font-size: 11px;
+        font-style: normal;
+      }
+      .rel__item.is-target {
+        border-color: var(--green);
+        background: rgb(63 208 168 / 0.12);
+        color: #5fe0b8;
+      }
+      .empty {
+        padding: 12px 14px;
+        border: 1px dashed var(--line);
+        border-radius: 10px;
+        background: var(--soft);
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      /* 章节卡片（课程模式） */
+      .chapter {
+        padding: 16px 18px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--soft);
+      }
+      .chapter + .chapter {
+        margin-top: 12px;
+      }
+      .chapter.is-focus {
+        border-color: var(--blue);
+        background: rgb(91 155 255 / 0.13);
+        box-shadow: 0 0 0 3px rgb(91 155 255 / 0.18);
+      }
+      .chapter__head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .chapter__head b {
+        font-size: 14.5px;
+      }
+      .chapter__head em {
+        margin-left: auto;
+        color: var(--muted);
+        font-size: 11.5px;
+        font-style: normal;
+      }
+      .chapter__key {
+        margin: 8px 0 12px !important;
+        color: var(--text) !important;
+        font-size: 13.5px;
+      }
+
+      /* ⑤ 例题 */
+      .quiz__q {
+        padding: 16px 18px;
+        border: 1px solid rgb(184 122 12 / 0.34);
+        border-radius: 10px;
+        background: var(--amber-soft);
+        color: #f0d79a;
+      }
+      .quiz__q b {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--amber);
+        font-size: 12px;
+        letter-spacing: 0.12em;
+      }
+      .quiz__step {
+        display: grid;
+        margin-top: 14px;
+        gap: 10px;
+      }
+      .quiz__step > div {
+        display: grid;
+        padding: 12px 14px;
+        gap: 8px;
+        grid-template-columns: 62px minmax(0, 1fr);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--soft);
+      }
+      .quiz__step span {
+        color: var(--blue);
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .quiz__step p {
+        margin: 0;
+        color: var(--text);
+      }
+      .quiz__ans {
+        margin-top: 14px;
+        padding: 13px 16px;
+        border: 1px solid rgb(63 208 168 / 0.4);
+        border-radius: 10px;
+        background: rgb(63 208 168 / 0.12);
+        color: #7fe8c4;
+      }
+      .quiz__ans b {
+        color: #a8f2da;
+      }
+
+      /* 侧栏 */
+      .side__list {
+        display: grid;
+        gap: 6px;
+        max-height: 340px;
+        overflow: auto;
+        padding-right: 4px;
+      }
+      .side__list a {
+        display: flex;
+        padding: 7px 10px;
+        align-items: center;
+        gap: 8px;
+        border-radius: 8px;
+        color: var(--text);
+        font-size: 13px;
+      }
+      .side__list a:hover {
+        background: var(--blue-soft);
+        color: var(--blue);
+      }
+      .side__list a.is-current {
+        background: var(--blue);
+        color: #fff;
+        font-weight: 600;
+      }
+      .side__list a em {
+        margin-left: auto;
+        color: var(--muted);
+        font-size: 11px;
+        font-style: normal;
+      }
+      .side__list a.is-current em {
+        color: rgb(255 255 255 / 0.8);
+      }
+      .pathbar {
+        display: flex;
+        margin-top: 18px;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        color: var(--muted);
+        font-size: 11.5px;
+      }
+      .pathbar i {
+        color: #5d708a;
+        font-style: normal;
+      }
+      /* 同名知识点提示：图谱中「数组」同时存在于 C语言 与 数据结构 */
+      .twin {
+        margin-top: 16px;
+        padding: 10px 14px;
+        border: 1px dashed rgb(255 194 71 / 0.45);
+        border-radius: 10px;
+        background: var(--amber-soft);
+        color: #e8c07a;
+        font-size: 12.5px;
+      }
+      .twin a {
+        color: var(--blue);
+        text-decoration: underline;
+      }
+
+      .notfound {
+        padding: 60px 0;
+        text-align: center;
+      }
+      .notfound h1 {
+        margin: 0 0 10px;
+        font-size: 1.6rem;
+      }
+      .notfound p {
+        margin: 0 0 22px;
+        color: var(--text);
+      }
+
+      @media print {
+        .bar {
+          position: static;
+        }
+        .back {
+          display: none;
+        }
+        .card {
+          break-inside: avoid;
+        }
+      }
+      /* =====================================================================
+   讲义纸面主题（覆盖上面的星空深色变量，不改任何 DOM 结构）
+   取值与应用里的学习讲义保持一致：
+     --lm-canvas #F7F6F3 / --bp-ink #061325 / 正文 #455F77 / 眉标 #688CA7
+     卡片 1px rgb(91 136 168 / .24) + 18px 3px 圆角 + 0 12px 28px rgb(8 57 98 / .055)
+     编号 #0B7FC1 用 Georgia，标题用宋体，正文用无衬线
+   ===================================================================== */
+      :root {
+        --ink: #14202e;
+        --text: #455f77;
+        --muted: #688ca7;
+        --line: rgb(91 136 168 / 0.26);
+        --bg: #f7f6f3;
+        --soft: rgb(255 255 255 / 0.78);
+        --glass: rgb(255 255 255 / 0.92);
+        --blue: #0b7fc1;
+        --blue-soft: rgb(11 127 193 / 0.1);
+        --amber: #a8700c;
+        --amber-soft: rgb(217 154 24 / 0.12);
+        --red: #b04a60;
+        --green: #0f9d76;
+        --radius: 12px;
+        --paper-serif: "Songti SC", "STSong", "SimSun", "Noto Serif CJK SC", serif;
+        --paper-sans: Inter, "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+        --paper-num: Georgia, "Times New Roman", serif;
+        --paper-shadow: 0 12px 28px rgb(8 57 98 / 0.055);
+        --paper-card: rgb(255 255 255 / 0.82);
+      }
+
+      /* 纸面底色：去掉夜空渐变与星点，换成讲义那种米白纸 */
+      body {
+        background: linear-gradient(180deg, #fbfaf7 0%, #f4f2ed 42%, #efece6 100%) #f4f2ed fixed;
+        color: var(--ink);
+        font: 14.5px/1.8 var(--paper-sans);
+      }
+      body::before {
+        display: none !important;
+      }
+
+      /* 顶栏：白纸悬浮条 */
+      .bar {
+        background: var(--glass);
+        border-bottom: 1px solid var(--line);
+        box-shadow: 0 1px 0 rgb(91 136 168 / 0.12);
+      }
+      .back {
+        background: #fff;
+        color: var(--text);
+        border-color: var(--line);
+      }
+      .back:hover {
+        border-color: var(--blue);
+        color: var(--blue);
+        background: var(--blue-soft);
+      }
+      .bar__crumb {
+        color: var(--muted);
+      }
+      .bar__crumb b {
+        color: var(--ink);
+      }
+      .bar__stat {
+        color: var(--muted);
+        font-family: var(--paper-num);
+        letter-spacing: 0.06em;
+      }
+
+      /* 标题统一宋体、正文统一无衬线、数字统一 Georgia —— 与讲义排版一致 */
+      h1,
+      h2,
+      h3,
+      h4,
+      .hero__title,
+      .card__head b,
+      .chapter__head b,
+      .side__title {
+        font-family: var(--paper-serif);
+        color: var(--ink);
+        letter-spacing: 0.01em;
+      }
+      .hero__desc,
+      .card p,
+      .chapter__key,
+      .quiz__step p,
+      .notfound p {
+        color: var(--text);
+      }
+      .card__head em,
+      .chapter__head em,
+      .rel__label,
+      .side__list a em {
+        color: var(--muted);
+        font-family: var(--paper-num);
+        font-style: normal;
+      }
+
+      /* 卡片：讲义式的浅描边 + 不对称圆角 + 极淡投影 */
+      .card,
+      .chapter,
+      .side,
+      .hero,
+      .quiz,
+      .notfound {
+        background: var(--paper-card);
+        border: 1px solid var(--line);
+        border-radius: 18px 3px 18px 3px;
+        box-shadow: var(--paper-shadow);
+      }
+      .card__head,
+      .chapter__head {
+        border-bottom: 1px solid var(--line);
+      }
+
+      /* 编号 / 数字徽标：讲义里的蓝色 Georgia 数字 */
+      .hero__index,
+      .card__index,
+      .chapter__index,
+      .quiz__index,
+      .side__index,
+      .bar__stat b {
+        color: var(--blue);
+        font-family: var(--paper-num);
+      }
+
+      /* 小胶囊标签（重点 / 章节 / 前置依赖 / 跨课程等） */
+      .rel__item,
+      .empty,
+      .chip,
+      .tag,
+      .pill,
+      .badge {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: var(--text);
+      }
+      .rel__item {
+        padding: 5px 12px;
+      }
+      .rel__item:hover,
+      .side__list a:hover {
+        border-color: var(--blue);
+        color: var(--blue);
+        background: var(--blue-soft);
+      }
+      .side__list a {
+        color: var(--text);
+      }
+      .pathbar {
+        color: var(--muted);
+      }
+
+      /* 强调色：沿用讲义的蓝(考点)/琥珀(易错)/红(风险)/绿(掌握) */
+      mark,
+      .is-key,
+      .is-important {
+        background: var(--amber-soft);
+        color: var(--amber);
+      }
+      .is-warn,
+      .is-danger {
+        color: var(--red);
+      }
+      .is-ok {
+        color: var(--green);
+      }
+
+      /* 表格 / 代码块也换成纸面观感 */
+      table {
+        border-color: var(--line);
+      }
+      th {
+        background: #fff;
+        color: var(--ink);
+        font-family: var(--paper-serif);
+      }
+      td {
+        color: var(--text);
+      }
+      code,
+      pre {
+        background: #fff;
+        border: 1px solid var(--line);
+        color: #1f3a52;
+        border-radius: 10px;
+      }
+
+      /* 滚动条：浅色细条 */
+      * {
+        scrollbar-color: rgb(91 136 168 / 0.35) transparent;
+        scrollbar-width: thin;
+      }
+
+      /* ---------------------------------------------------------------------
+   「题目 / 解析要点」两块原来在深色主题下用的是亮色字（#ffc247 压琥珀底、
+   #7fe8c4 压薄荷底），换成纸面底色后几乎同色、看不清。这里把文字压深、
+   底色调浅，做成讲义里那种"浅底深字"的高对比配色：
+     题目：底 #fff8e8 / 字 #6b4708（约 8:1）
+     解析：底 #eefaf5 / 字 #0b5f47（约 9:1）
+   --------------------------------------------------------------------- */
+      .quiz__q {
+        background: linear-gradient(180deg, #fff8e8, #fdf4e0);
+        border: 1px solid rgb(184 122 12 / 0.32);
+        color: #6b4708;
+      }
+      .quiz__q b {
+        color: #9c6605;
+        font-weight: 700;
+      }
+      .quiz__ans {
+        background: linear-gradient(180deg, #eefaf5, #e3f6ee);
+        border: 1px solid rgb(15 138 99 / 0.32);
+        color: #0b5f47;
+      }
+      .quiz__ans b {
+        color: #0a6f52;
+      }
+      .twin {
+        background: #fff8e8;
+        border-color: rgb(184 122 12 / 0.38);
+        color: #6b4708;
+      }
+      .chip.diff-advanced {
+        border-color: rgb(184 122 12 / 0.45);
+        background: rgb(217 154 24 / 0.16);
+        color: #8a5a00;
+      }
+      .chip.diff-basic {
+        border-color: rgb(15 138 99 / 0.4);
+        background: rgb(15 138 99 / 0.1);
+        color: #0a6f52;
+      }
+      .quiz__step span {
+        color: var(--blue);
+      }
+    </style>
+  </head>
+  <body>
+    <header class="bar">
+      <a class="back" id="btnBack" href="knowledge-graph.html">← 返回图谱首页</a>
+      <div class="bar__crumb" id="crumb">知识点详情</div>
+      <div class="bar__spacer"></div>
+      <div class="bar__stat" id="stat"></div>
+    </header>
+
+    <div class="wrap" id="root">
+      <div class="notfound"><p>正在载入…</p></div>
+    </div>
+
+    <script>
+      window.KG_DATA = {
+        "nodes": [
+          {
+            "id": 98,
+            "key": "c-functions",
+            "label": "函数",
+            "subject": "C语言",
+            "chapter": "函数",
+            "difficulty": "foundation",
+            "description": "函数定义、声明、调用、参数传递与递归。",
+            "resourceCount": 192,
+          },
+          {
+            "id": 95,
+            "key": "c-basics",
+            "label": "数据类型与变量",
+            "subject": "C语言",
+            "chapter": "基础语法",
+            "difficulty": "foundation",
+            "description": "C 语言的基本数据类型、变量、常量与存储。",
+            "resourceCount": 368,
+          },
+          {
+            "id": 96,
+            "key": "c-operators",
+            "label": "运算符与表达式",
+            "subject": "C语言",
+            "chapter": "基础语法",
+            "difficulty": "foundation",
+            "description": "算术、关系、逻辑、赋值、自增自减等运算符及优先级。",
+            "resourceCount": 79,
+          },
+          {
+            "id": 104,
+            "key": "c-memory",
+            "label": "动态内存管理",
+            "subject": "C语言",
+            "chapter": "指针",
+            "difficulty": "intermediate",
+            "description": "malloc、free、calloc、realloc 与内存泄漏。",
+            "resourceCount": 53,
+          },
+          {
+            "id": 100,
+            "key": "c-pointers",
+            "label": "指针",
+            "subject": "C语言",
+            "chapter": "指针",
+            "difficulty": "intermediate",
+            "description": "指针变量、取地址、解引用、指针运算与指针数组。",
+            "resourceCount": 140,
+          },
+          {
+            "id": 97,
+            "key": "c-control",
+            "label": "流程控制",
+            "subject": "C语言",
+            "chapter": "控制结构",
+            "difficulty": "foundation",
+            "description": "if、switch、for、while、do-while 等控制结构。",
+            "resourceCount": 220,
+          },
+          {
+            "id": 101,
+            "key": "c-strings",
+            "label": "字符串与字符数组",
+            "subject": "C语言",
+            "chapter": "数组与字符串",
+            "difficulty": "intermediate",
+            "description": "字符数组、字符串处理函数与输入输出。",
+            "resourceCount": 88,
+          },
+          {
+            "id": 99,
+            "key": "c-arrays",
+            "label": "数组",
+            "subject": "C语言",
+            "chapter": "数组与字符串",
+            "difficulty": "foundation",
+            "description": "一维与二维数组的定义、初始化与访问。",
+            "resourceCount": 156,
+          },
+          {
+            "id": 105,
+            "key": "c-files",
+            "label": "文件操作",
+            "subject": "C语言",
+            "chapter": "文件",
+            "difficulty": "intermediate",
+            "description": "文件指针、打开、读写与关闭。",
+            "resourceCount": 167,
+          },
+          {
+            "id": 102,
+            "key": "c-structs",
+            "label": "结构体与共用体",
+            "subject": "C语言",
+            "chapter": "结构体",
+            "difficulty": "intermediate",
+            "description": "结构体、共用体、typedef 与成员访问。",
+            "resourceCount": 32,
+          },
+          {
+            "id": 103,
+            "key": "c-preprocessor",
+            "label": "预处理与头文件",
+            "subject": "C语言",
+            "chapter": "预处理",
+            "difficulty": "intermediate",
+            "description": "宏定义、文件包含与条件编译。",
+            "resourceCount": 199,
+          },
+          {
+            "id": 71,
+            "key": "memory-management",
+            "label": "内存管理",
+            "subject": "操作系统",
+            "chapter": "内存管理",
+            "difficulty": "intermediate",
+            "description": "对主存进行分配、回收、地址变换与保护。",
+            "resourceCount": 38,
+          },
+          {
+            "id": 72,
+            "key": "virtual-memory",
+            "label": "虚拟内存与页面置换",
+            "subject": "操作系统",
+            "chapter": "内存管理",
+            "difficulty": "intermediate",
+            "description": "用外存扩展逻辑地址空间并按需调入页面。",
+            "resourceCount": 36,
+          },
+          {
+            "id": 67,
+            "key": "cpu-scheduling",
+            "label": "处理机调度",
+            "subject": "操作系统",
+            "chapter": "处理机调度",
+            "difficulty": "intermediate",
+            "description": "按一定算法从就绪队列中选择进程占用 CPU。",
+            "resourceCount": 30,
+          },
+          {
+            "id": 73,
+            "key": "file-system",
+            "label": "文件系统",
+            "subject": "操作系统",
+            "chapter": "文件管理",
+            "difficulty": "intermediate",
+            "description": "文件的逻辑结构、物理组织、目录与空间管理。",
+            "resourceCount": 39,
+          },
+          {
+            "id": 70,
+            "key": "deadlock",
+            "label": "死锁",
+            "subject": "操作系统",
+            "chapter": "死锁",
+            "difficulty": "intermediate",
+            "description": "多个进程因循环等待对方资源而永久阻塞。",
+            "resourceCount": 34,
+          },
+          {
+            "id": 74,
+            "key": "disk-io",
+            "label": "磁盘与I/O管理",
+            "subject": "操作系统",
+            "chapter": "设备管理",
+            "difficulty": "intermediate",
+            "description": "磁盘调度、设备管理与输入输出控制方式。",
+            "resourceCount": 79,
+          },
+          {
+            "id": 69,
+            "key": "semaphore",
+            "label": "信号量与PV操作",
+            "subject": "操作系统",
+            "chapter": "进程同步",
+            "difficulty": "intermediate",
+            "description": "用信号量原语实现互斥、同步与资源计数。",
+            "resourceCount": 41,
+          },
+          {
+            "id": 68,
+            "key": "process-sync",
+            "label": "进程同步与互斥",
+            "subject": "操作系统",
+            "chapter": "进程同步",
+            "difficulty": "intermediate",
+            "description": "协调并发进程对共享资源的访问，避免竞争与不一致。",
+            "resourceCount": 64,
+          },
+          {
+            "id": 65,
+            "key": "process-thread",
+            "label": "进程与线程",
+            "subject": "操作系统",
+            "chapter": "进程管理",
+            "difficulty": "foundation",
+            "description":
+              "进程是程序的一次执行实例，拥有独立地址空间；线程是进程内的调度单元，共享进程资源。",
+            "resourceCount": 149,
+          },
+          {
+            "id": 66,
+            "key": "process-state",
+            "label": "进程状态与转换",
+            "subject": "操作系统",
+            "chapter": "进程管理",
+            "difficulty": "foundation",
+            "description": "进程在就绪、运行、阻塞等状态间因调度和事件而转换。",
+            "resourceCount": 93,
+          },
+          {
+            "id": 19,
+            "key": "bst",
+            "label": "二叉搜索树",
+            "subject": "数据结构",
+            "chapter": "二叉搜索树",
+            "difficulty": "intermediate",
+            "description": "左子树键较小、右子树键较大的有序二叉树。",
+            "resourceCount": 24,
+          },
+          {
+            "id": 21,
+            "key": "bst-delete",
+            "label": "二叉搜索树删除",
+            "subject": "数据结构",
+            "chapter": "二叉搜索树",
+            "difficulty": "advanced",
+            "description": "按叶子、单子树和双子树情况维护搜索树次序。",
+            "resourceCount": 18,
+          },
+          {
+            "id": 20,
+            "key": "bst-search",
+            "label": "二叉搜索树查找",
+            "subject": "数据结构",
+            "chapter": "二叉搜索树",
+            "difficulty": "intermediate",
+            "description": "依据键的大小关系沿单一路径查找。",
+            "resourceCount": 18,
+          },
+          {
+            "id": 51,
+            "key": "hash-collision",
+            "label": "哈希冲突",
+            "subject": "数据结构",
+            "chapter": "哈希表",
+            "difficulty": "intermediate",
+            "description": "不同键映射到同一散列地址的现象。",
+            "resourceCount": 6,
+          },
+          {
+            "id": 49,
+            "key": "hash-table",
+            "label": "哈希表",
+            "subject": "数据结构",
+            "chapter": "哈希表",
+            "difficulty": "intermediate",
+            "description": "通过散列函数把键映射到存储位置的结构。",
+            "resourceCount": 22,
+          },
+          {
+            "id": 53,
+            "key": "open-addressing",
+            "label": "开放定址法",
+            "subject": "数据结构",
+            "chapter": "哈希表",
+            "difficulty": "advanced",
+            "description": "冲突后按探测序列寻找表内空槽。",
+            "resourceCount": 0,
+          },
+          {
+            "id": 50,
+            "key": "hash-function",
+            "label": "散列函数",
+            "subject": "数据结构",
+            "chapter": "哈希表",
+            "difficulty": "intermediate",
+            "description": "把键确定性映射为有限桶下标的函数。",
+            "resourceCount": 5,
+          },
+          {
+            "id": 52,
+            "key": "separate-chaining",
+            "label": "链地址法",
+            "subject": "数据结构",
+            "chapter": "哈希表",
+            "difficulty": "intermediate",
+            "description": "每个散列桶用链式容器保存冲突元素。",
+            "resourceCount": 10,
+          },
+          {
+            "id": 33,
+            "key": "graph",
+            "label": "图",
+            "subject": "数据结构",
+            "chapter": "图",
+            "difficulty": "foundation",
+            "description": "由顶点集合和顶点间边集合构成的非线性结构。",
+            "resourceCount": 28,
+          },
+          {
+            "id": 34,
+            "key": "adjacency-matrix",
+            "label": "邻接矩阵",
+            "subject": "数据结构",
+            "chapter": "图",
+            "difficulty": "foundation",
+            "description": "用二维矩阵记录顶点对之间边关系的图表示。",
+            "resourceCount": 20,
+          },
+          {
+            "id": 35,
+            "key": "adjacency-list",
+            "label": "邻接表",
+            "subject": "数据结构",
+            "chapter": "图",
+            "difficulty": "foundation",
+            "description": "为每个顶点保存相邻边列表的图表示。",
+            "resourceCount": 20,
+          },
+          {
+            "id": 36,
+            "key": "bfs",
+            "label": "广度优先搜索",
+            "subject": "数据结构",
+            "chapter": "图遍历",
+            "difficulty": "intermediate",
+            "description": "借助队列按距离层次探索图。",
+            "resourceCount": 20,
+          },
+          {
+            "id": 37,
+            "key": "dfs",
+            "label": "深度优先搜索",
+            "subject": "数据结构",
+            "chapter": "图遍历",
+            "difficulty": "intermediate",
+            "description": "沿未访问邻接点深入并在无路时回溯。",
+            "resourceCount": 17,
+          },
+          {
+            "id": 32,
+            "key": "priority-queue",
+            "label": "优先队列",
+            "subject": "数据结构",
+            "chapter": "堆与优先队列",
+            "difficulty": "intermediate",
+            "description": "每次删除当前最高优先级元素的抽象数据类型。",
+            "resourceCount": 17,
+          },
+          {
+            "id": 30,
+            "key": "heap",
+            "label": "堆",
+            "subject": "数据结构",
+            "chapter": "堆与优先队列",
+            "difficulty": "intermediate",
+            "description": "满足父子优先级偏序的完全二叉树。",
+            "resourceCount": 21,
+          },
+          {
+            "id": 31,
+            "key": "heapify",
+            "label": "堆化",
+            "subject": "数据结构",
+            "chapter": "堆与优先队列",
+            "difficulty": "intermediate",
+            "description": "自顶向下或自底向上恢复堆序的过程。",
+            "resourceCount": 21,
+          },
+          {
+            "id": 23,
+            "key": "avl-rotation",
+            "label": "AVL 旋转",
+            "subject": "数据结构",
+            "chapter": "平衡树",
+            "difficulty": "advanced",
+            "description": "用单旋或双旋恢复 AVL 高度平衡。",
+            "resourceCount": 13,
+          },
+          {
+            "id": 22,
+            "key": "avl",
+            "label": "AVL 树",
+            "subject": "数据结构",
+            "chapter": "平衡树",
+            "difficulty": "advanced",
+            "description": "任一结点左右子树高度差绝对值不超过一的搜索树。",
+            "resourceCount": 14,
+          },
+          {
+            "id": 24,
+            "key": "red-black-tree",
+            "label": "红黑树",
+            "subject": "数据结构",
+            "chapter": "平衡树",
+            "difficulty": "advanced",
+            "description": "通过颜色约束保证根到叶最长路径不超过最短路径两倍的搜索树。",
+            "resourceCount": 22,
+          },
+          {
+            "id": 25,
+            "key": "rb-properties",
+            "label": "红黑树五条性质",
+            "subject": "数据结构",
+            "chapter": "平衡树",
+            "difficulty": "advanced",
+            "description": "红黑树的结点颜色、根、叶、红结点子结点和黑高约束。",
+            "resourceCount": 1,
+          },
+          {
+            "id": 29,
+            "key": "rb-delete-fix",
+            "label": "红黑树删除修复",
+            "subject": "数据结构",
+            "chapter": "平衡树",
+            "difficulty": "advanced",
+            "description": "通过兄弟结点分类讨论恢复删除后的黑高。",
+            "resourceCount": 0,
+          },
+          {
+            "id": 27,
+            "key": "rb-right-rotation",
+            "label": "红黑树右旋",
+            "subject": "数据结构",
+            "chapter": "平衡树",
+            "difficulty": "advanced",
+            "description": "以左孩子上升、原结点下降到右侧的局部次序保持变换。",
+            "resourceCount": 10,
+          },
+          {
+            "id": 26,
+            "key": "rb-left-rotation",
+            "label": "红黑树左旋",
+            "subject": "数据结构",
+            "chapter": "平衡树",
+            "difficulty": "advanced",
+            "description": "以右孩子上升、原结点下降到左侧的局部次序保持变换。",
+            "resourceCount": 12,
+          },
+          {
+            "id": 28,
+            "key": "rb-insert-fix",
+            "label": "红黑树插入修复",
+            "subject": "数据结构",
+            "chapter": "平衡树",
+            "difficulty": "advanced",
+            "description": "通过变色与旋转消除插入后连续红结点。",
+            "resourceCount": 0,
+          },
+          {
+            "id": 39,
+            "key": "critical-path",
+            "label": "关键路径",
+            "subject": "数据结构",
+            "chapter": "拓扑排序",
+            "difficulty": "advanced",
+            "description": "在活动网络中决定工程最短工期的最长路径。",
+            "resourceCount": 0,
+          },
+          {
+            "id": 38,
+            "key": "topological-sort",
+            "label": "拓扑排序",
+            "subject": "数据结构",
+            "chapter": "拓扑排序",
+            "difficulty": "intermediate",
+            "description": "把有向无环图顶点排成所有边均从前指向后的序列。",
+            "resourceCount": 0,
+          },
+          {
+            "id": 56,
+            "key": "bubble-sort",
+            "label": "冒泡排序",
+            "subject": "数据结构",
+            "chapter": "排序",
+            "difficulty": "foundation",
+            "description": "通过相邻逆序交换让极值逐轮到达末端。",
+            "resourceCount": 22,
+          },
+          {
+            "id": 59,
+            "key": "heap-sort",
+            "label": "堆排序",
+            "subject": "数据结构",
+            "chapter": "排序",
+            "difficulty": "intermediate",
+            "description": "借助堆反复选择极值完成原地排序。",
+            "resourceCount": 22,
+          },
+          {
+            "id": 58,
+            "key": "merge-sort",
+            "label": "归并排序",
+            "subject": "数据结构",
+            "chapter": "排序",
+            "difficulty": "intermediate",
+            "description": "递归分解序列并线性合并有序子序列。",
+            "resourceCount": 22,
+          },
+          {
+            "id": 57,
+            "key": "quick-sort",
+            "label": "快速排序",
+            "subject": "数据结构",
+            "chapter": "排序",
+            "difficulty": "intermediate",
+            "description": "按枢轴划分后递归排序子区间。",
+            "resourceCount": 28,
+          },
+          {
+            "id": 60,
+            "key": "stable-sort",
+            "label": "排序稳定性",
+            "subject": "数据结构",
+            "chapter": "排序",
+            "difficulty": "intermediate",
+            "description": "相等键元素排序后相对次序是否保持的性质。",
+            "resourceCount": 22,
+          },
+          {
+            "id": 54,
+            "key": "insertion-sort",
+            "label": "插入排序",
+            "subject": "数据结构",
+            "chapter": "排序",
+            "difficulty": "foundation",
+            "description": "把当前元素插入前缀有序区的排序方法。",
+            "resourceCount": 22,
+          },
+          {
+            "id": 55,
+            "key": "selection-sort",
+            "label": "选择排序",
+            "subject": "数据结构",
+            "chapter": "排序",
+            "difficulty": "foundation",
+            "description": "反复选择未排序区最小元素放到边界。",
+            "resourceCount": 22,
+          },
+          {
+            "id": 9,
+            "key": "string",
+            "label": "串",
+            "subject": "数据结构",
+            "chapter": "数组与广义表",
+            "difficulty": "foundation",
+            "description": "由字符组成的有限序列。",
+            "resourceCount": 16,
+          },
+          {
+            "id": 10,
+            "key": "generalized-list",
+            "label": "广义表",
+            "subject": "数据结构",
+            "chapter": "数组与广义表",
+            "difficulty": "advanced",
+            "description": "元素可为原子或子表的递归线性结构。",
+            "resourceCount": 15,
+          },
+          {
+            "id": 45,
+            "key": "kruskal",
+            "label": "Kruskal 算法",
+            "subject": "数据结构",
+            "chapter": "最小生成树",
+            "difficulty": "advanced",
+            "description": "按边权递增选择不成环边构造生成树。",
+            "resourceCount": 0,
+          },
+          {
+            "id": 44,
+            "key": "prim",
+            "label": "Prim 算法",
+            "subject": "数据结构",
+            "chapter": "最小生成树",
+            "difficulty": "advanced",
+            "description": "从单个顶点出发不断加入跨割最小边构造生成树。",
+            "resourceCount": 0,
+          },
+          {
+            "id": 46,
+            "key": "union-find",
+            "label": "并查集",
+            "subject": "数据结构",
+            "chapter": "最小生成树",
+            "difficulty": "intermediate",
+            "description": "维护不相交集合合并与代表元查询的结构。",
+            "resourceCount": 0,
+          },
+          {
+            "id": 43,
+            "key": "mst",
+            "label": "最小生成树",
+            "subject": "数据结构",
+            "chapter": "最小生成树",
+            "difficulty": "intermediate",
+            "description": "连通无向网中连接全部顶点且总权最小的生成树。",
+            "resourceCount": 4,
+          },
+          {
+            "id": 41,
+            "key": "dijkstra",
+            "label": "Dijkstra 算法",
+            "subject": "数据结构",
+            "chapter": "最短路径",
+            "difficulty": "advanced",
+            "description": "对非负权图逐步确定单源最短距离。",
+            "resourceCount": 11,
+          },
+          {
+            "id": 42,
+            "key": "floyd",
+            "label": "Floyd 算法",
+            "subject": "数据结构",
+            "chapter": "最短路径",
+            "difficulty": "advanced",
+            "description": "用动态规划求所有顶点对最短路径。",
+            "resourceCount": 11,
+          },
+          {
+            "id": 40,
+            "key": "shortest-path",
+            "label": "最短路径",
+            "subject": "数据结构",
+            "chapter": "最短路径",
+            "difficulty": "intermediate",
+            "description": "寻找图中两点间权值和最小的路径。",
+            "resourceCount": 19,
+          },
+          {
+            "id": 48,
+            "key": "binary-search",
+            "label": "二分查找",
+            "subject": "数据结构",
+            "chapter": "查找",
+            "difficulty": "foundation",
+            "description": "在有序随机访问序列中反复排除一半范围。",
+            "resourceCount": 13,
+          },
+          {
+            "id": 47,
+            "key": "sequential-search",
+            "label": "顺序查找",
+            "subject": "数据结构",
+            "chapter": "查找",
+            "difficulty": "foundation",
+            "description": "从序列一端逐项比较目标键。",
+            "resourceCount": 3,
+          },
+          {
+            "id": 8,
+            "key": "deque",
+            "label": "双端队列",
+            "subject": "数据结构",
+            "chapter": "栈与队列",
+            "difficulty": "intermediate",
+            "description": "两端都允许插入和删除的线性结构。",
+            "resourceCount": 22,
+          },
+          {
+            "id": 7,
+            "key": "circular-queue",
+            "label": "循环队列",
+            "subject": "数据结构",
+            "chapter": "栈与队列",
+            "difficulty": "intermediate",
+            "description": "用模运算复用顺序队列空间的队列表示。",
+            "resourceCount": 19,
+          },
+          {
+            "id": 5,
+            "key": "stack",
+            "label": "栈",
+            "subject": "数据结构",
+            "chapter": "栈与队列",
+            "difficulty": "foundation",
+            "description": "只允许在同一端插入和删除的后进先出结构。",
+            "resourceCount": 22,
+          },
+          {
+            "id": 6,
+            "key": "queue",
+            "label": "队列",
+            "subject": "数据结构",
+            "chapter": "栈与队列",
+            "difficulty": "foundation",
+            "description": "一端入队另一端出队的先进先出结构。",
+            "resourceCount": 26,
+          },
+          {
+            "id": 14,
+            "key": "inorder",
+            "label": "中序遍历",
+            "subject": "数据结构",
+            "chapter": "树与二叉树",
+            "difficulty": "foundation",
+            "description": "按左子树、根、右子树访问二叉树。",
+            "resourceCount": 23,
+          },
+          {
+            "id": 12,
+            "key": "binary-tree",
+            "label": "二叉树",
+            "subject": "数据结构",
+            "chapter": "树与二叉树",
+            "difficulty": "foundation",
+            "description": "每个结点最多有两个有序子树的树。",
+            "resourceCount": 21,
+          },
+          {
+            "id": 13,
+            "key": "preorder",
+            "label": "先序遍历",
+            "subject": "数据结构",
+            "chapter": "树与二叉树",
+            "difficulty": "foundation",
+            "description": "按根、左子树、右子树访问二叉树。",
+            "resourceCount": 24,
+          },
+          {
+            "id": 15,
+            "key": "postorder",
+            "label": "后序遍历",
+            "subject": "数据结构",
+            "chapter": "树与二叉树",
+            "difficulty": "foundation",
+            "description": "按左子树、右子树、根访问二叉树。",
+            "resourceCount": 23,
+          },
+          {
+            "id": 18,
+            "key": "huffman-tree",
+            "label": "哈夫曼树",
+            "subject": "数据结构",
+            "chapter": "树与二叉树",
+            "difficulty": "intermediate",
+            "description": "给定叶子权重时带权路径长度最小的二叉树。",
+            "resourceCount": 1,
+          },
+          {
+            "id": 16,
+            "key": "level-order",
+            "label": "层序遍历",
+            "subject": "数据结构",
+            "chapter": "树与二叉树",
+            "difficulty": "intermediate",
+            "description": "借助队列逐层访问树结点。",
+            "resourceCount": 21,
+          },
+          {
+            "id": 11,
+            "key": "tree",
+            "label": "树",
+            "subject": "数据结构",
+            "chapter": "树与二叉树",
+            "difficulty": "foundation",
+            "description": "具有层次关系且除根外每个结点仅有一个父结点的结构。",
+            "resourceCount": 31,
+          },
+          {
+            "id": 17,
+            "key": "threaded-tree",
+            "label": "线索二叉树",
+            "subject": "数据结构",
+            "chapter": "树与二叉树",
+            "difficulty": "advanced",
+            "description": "利用空指针域保存遍历前驱或后继的二叉树。",
+            "resourceCount": 21,
+          },
+          {
+            "id": 4,
+            "key": "doubly-linked-list",
+            "label": "双向链表",
+            "subject": "数据结构",
+            "chapter": "线性结构",
+            "difficulty": "intermediate",
+            "description": "结点同时保存前驱与后继链接的链表。",
+            "resourceCount": 8,
+          },
+          {
+            "id": 2,
+            "key": "array",
+            "label": "数组",
+            "subject": "数据结构",
+            "chapter": "线性结构",
+            "difficulty": "foundation",
+            "description": "连续存储的同类型元素序列，支持常数时间随机访问。",
+            "resourceCount": 21,
+          },
+          {
+            "id": 3,
+            "key": "linked-list",
+            "label": "链表",
+            "subject": "数据结构",
+            "chapter": "线性结构",
+            "difficulty": "foundation",
+            "description": "通过指针连接结点的线性结构，插入删除不要求移动连续元素。",
+            "resourceCount": 17,
+          },
+          {
+            "id": 1,
+            "key": "complexity",
+            "label": "算法复杂度",
+            "subject": "数据结构",
+            "chapter": "绪论",
+            "difficulty": "foundation",
+            "description": "衡量输入规模增长时算法时间与空间消耗的渐近变化。",
+            "resourceCount": 57,
+          },
+          {
+            "id": 61,
+            "key": "divide-conquer",
+            "label": "分治法",
+            "subject": "数据结构",
+            "chapter": "综合算法设计",
+            "difficulty": "intermediate",
+            "description": "把问题划分为同类子问题、递归求解并合并。",
+            "resourceCount": 22,
+          },
+          {
+            "id": 62,
+            "key": "dynamic-programming",
+            "label": "动态规划",
+            "subject": "数据结构",
+            "chapter": "综合算法设计",
+            "difficulty": "advanced",
+            "description": "利用最优子结构和重叠子问题保存阶段结果。",
+            "resourceCount": 23,
+          },
+          {
+            "id": 64,
+            "key": "backtracking",
+            "label": "回溯法",
+            "subject": "数据结构",
+            "chapter": "综合算法设计",
+            "difficulty": "advanced",
+            "description": "在候选空间深度搜索并在约束失败时撤销选择。",
+            "resourceCount": 22,
+          },
+          {
+            "id": 63,
+            "key": "greedy",
+            "label": "贪心算法",
+            "subject": "数据结构",
+            "chapter": "综合算法设计",
+            "difficulty": "intermediate",
+            "description": "每一步选择当前局部最优并期望形成全局最优。",
+            "resourceCount": 22,
+          },
+          {
+            "id": 78,
+            "key": "cpu-datapath",
+            "label": "CPU数据通路",
+            "subject": "计算机组成原理",
+            "chapter": "中央处理器",
+            "difficulty": "intermediate",
+            "description": "控制器、数据通路、指令周期与微操作序列。",
+            "resourceCount": 89,
+          },
+          {
+            "id": 79,
+            "key": "pipeline",
+            "label": "指令流水线",
+            "subject": "计算机组成原理",
+            "chapter": "中央处理器",
+            "difficulty": "intermediate",
+            "description": "流水线的划分、加速比与三类冒险。",
+            "resourceCount": 37,
+          },
+          {
+            "id": 82,
+            "key": "main-memory",
+            "label": "主存储器",
+            "subject": "计算机组成原理",
+            "chapter": "存储器",
+            "difficulty": "intermediate",
+            "description": "主存的组成、字扩展、位扩展与地址译码。",
+            "resourceCount": 79,
+          },
+          {
+            "id": 80,
+            "key": "memory-hierarchy",
+            "label": "存储层次",
+            "subject": "计算机组成原理",
+            "chapter": "存储器",
+            "difficulty": "intermediate",
+            "description": "存储系统的层次结构与局部性原理。",
+            "resourceCount": 66,
+          },
+          {
+            "id": 81,
+            "key": "cache",
+            "label": "高速缓冲存储器",
+            "subject": "计算机组成原理",
+            "chapter": "存储器",
+            "difficulty": "intermediate",
+            "description": "Cache 的映射方式、替换与写策略、命中率。",
+            "resourceCount": 48,
+          },
+          {
+            "id": 84,
+            "key": "io-interrupt",
+            "label": "I/O与中断",
+            "subject": "计算机组成原理",
+            "chapter": "总线与I/O",
+            "difficulty": "intermediate",
+            "description": "程序查询、中断、DMA 与通道等 I/O 方式。",
+            "resourceCount": 34,
+          },
+          {
+            "id": 83,
+            "key": "bus",
+            "label": "系统总线",
+            "subject": "计算机组成原理",
+            "chapter": "总线与I/O",
+            "difficulty": "intermediate",
+            "description": "总线的分类、性能指标与仲裁方式。",
+            "resourceCount": 43,
+          },
+          {
+            "id": 77,
+            "key": "instruction",
+            "label": "指令系统",
+            "subject": "计算机组成原理",
+            "chapter": "指令系统",
+            "difficulty": "intermediate",
+            "description": "指令格式、寻址方式与 CISC/RISC 的区别。",
+            "resourceCount": 37,
+          },
+          {
+            "id": 75,
+            "key": "number-representation",
+            "label": "数据的表示",
+            "subject": "计算机组成原理",
+            "chapter": "数据的表示与运算",
+            "difficulty": "foundation",
+            "description": "定点数、浮点数、原反补移码与字符编码的表示方法。",
+            "resourceCount": 54,
+          },
+          {
+            "id": 76,
+            "key": "alu",
+            "label": "运算方法与运算器",
+            "subject": "计算机组成原理",
+            "chapter": "数据的表示与运算",
+            "difficulty": "intermediate",
+            "description": "补码加减、溢出判断与算术逻辑单元的构成。",
+            "resourceCount": 55,
+          },
+          {
+            "id": 90,
+            "key": "tcp",
+            "label": "TCP可靠传输",
+            "subject": "计算机网络",
+            "chapter": "传输层",
+            "difficulty": "intermediate",
+            "description": "TCP 的可靠传输机制：序号、确认、重传与滑动窗口。",
+            "resourceCount": 108,
+          },
+          {
+            "id": 91,
+            "key": "tcp-conn",
+            "label": "TCP连接管理",
+            "subject": "计算机网络",
+            "chapter": "传输层",
+            "difficulty": "intermediate",
+            "description": "三次握手建立连接与四次挥手释放连接。",
+            "resourceCount": 41,
+          },
+          {
+            "id": 93,
+            "key": "congestion",
+            "label": "拥塞控制",
+            "subject": "计算机网络",
+            "chapter": "传输层",
+            "difficulty": "intermediate",
+            "description": "TCP 通过慢开始、拥塞避免、快重传与快恢复调节发送速率。",
+            "resourceCount": 30,
+          },
+          {
+            "id": 92,
+            "key": "udp",
+            "label": "用户数据报协议",
+            "subject": "计算机网络",
+            "chapter": "传输层",
+            "difficulty": "intermediate",
+            "description": "无连接、尽力而为的传输协议。",
+            "resourceCount": 76,
+          },
+          {
+            "id": 85,
+            "key": "network-arch",
+            "label": "网络体系结构",
+            "subject": "计算机网络",
+            "chapter": "体系结构",
+            "difficulty": "foundation",
+            "description": "分层模型、协议栈与各层功能的划分。",
+            "resourceCount": 43,
+          },
+          {
+            "id": 94,
+            "key": "app-layer",
+            "label": "应用层协议",
+            "subject": "计算机网络",
+            "chapter": "应用层",
+            "difficulty": "intermediate",
+            "description": "DNS、HTTP、HTTPS 等应用层协议。",
+            "resourceCount": 55,
+          },
+          {
+            "id": 86,
+            "key": "data-link",
+            "label": "数据链路层",
+            "subject": "计算机网络",
+            "chapter": "数据链路层",
+            "difficulty": "intermediate",
+            "description": "帧的封装、差错检测与介质访问控制。",
+            "resourceCount": 52,
+          },
+          {
+            "id": 87,
+            "key": "arp",
+            "label": "地址解析协议",
+            "subject": "计算机网络",
+            "chapter": "网络层",
+            "difficulty": "intermediate",
+            "description": "把 IP 地址解析为下一跳的 MAC 地址。",
+            "resourceCount": 25,
+          },
+          {
+            "id": 88,
+            "key": "ip",
+            "label": "网际协议与子网",
+            "subject": "计算机网络",
+            "chapter": "网络层",
+            "difficulty": "intermediate",
+            "description": "IP 地址、子网掩码、子网划分与数据报转发。",
+            "resourceCount": 46,
+          },
+          {
+            "id": 89,
+            "key": "routing",
+            "label": "路由选择",
+            "subject": "计算机网络",
+            "chapter": "网络层",
+            "difficulty": "intermediate",
+            "description": "路由器按路由协议与路由表转发分组。",
+            "resourceCount": 56,
+          },
+        ],
+        "edges": [
+          { "source": 98, "target": 95, "type": "prerequisite" },
+          { "source": 98, "target": 97, "type": "prerequisite" },
+          { "source": 104, "target": 100, "type": "prerequisite" },
+          { "source": 104, "target": 102, "type": "prerequisite" },
+          { "source": 101, "target": 99, "type": "prerequisite" },
+          { "source": 101, "target": 100, "type": "prerequisite" },
+          { "source": 100, "target": 99, "type": "prerequisite" },
+          { "source": 99, "target": 95, "type": "prerequisite" },
+          { "source": 99, "target": 97, "type": "prerequisite" },
+          { "source": 105, "target": 100, "type": "prerequisite" },
+          { "source": 105, "target": 102, "type": "prerequisite" },
+          { "source": 97, "target": 95, "type": "prerequisite" },
+          { "source": 102, "target": 99, "type": "prerequisite" },
+          { "source": 102, "target": 100, "type": "prerequisite" },
+          { "source": 96, "target": 95, "type": "prerequisite" },
+          { "source": 103, "target": 95, "type": "prerequisite" },
+          { "source": 69, "target": 6, "type": "cross_subject" },
+          { "source": 69, "target": 68, "type": "prerequisite" },
+          { "source": 71, "target": 3, "type": "cross_subject" },
+          { "source": 71, "target": 65, "type": "prerequisite" },
+          { "source": 71, "target": 82, "type": "cross_subject" },
+          { "source": 71, "target": 104, "type": "cross_subject" },
+          { "source": 67, "target": 6, "type": "cross_subject" },
+          { "source": 67, "target": 32, "type": "cross_subject" },
+          { "source": 67, "target": 65, "type": "prerequisite" },
+          { "source": 67, "target": 66, "type": "prerequisite" },
+          { "source": 67, "target": 78, "type": "cross_subject" },
+          { "source": 73, "target": 3, "type": "cross_subject" },
+          { "source": 73, "target": 11, "type": "cross_subject" },
+          { "source": 73, "target": 65, "type": "prerequisite" },
+          { "source": 73, "target": 105, "type": "cross_subject" },
+          { "source": 70, "target": 33, "type": "cross_subject" },
+          { "source": 70, "target": 68, "type": "prerequisite" },
+          { "source": 70, "target": 69, "type": "prerequisite" },
+          { "source": 74, "target": 6, "type": "cross_subject" },
+          { "source": 74, "target": 65, "type": "prerequisite" },
+          { "source": 74, "target": 73, "type": "prerequisite" },
+          { "source": 74, "target": 83, "type": "cross_subject" },
+          { "source": 74, "target": 84, "type": "cross_subject" },
+          { "source": 72, "target": 6, "type": "cross_subject" },
+          { "source": 72, "target": 49, "type": "cross_subject" },
+          { "source": 72, "target": 71, "type": "prerequisite" },
+          { "source": 72, "target": 80, "type": "cross_subject" },
+          { "source": 72, "target": 81, "type": "cross_subject" },
+          { "source": 65, "target": 5, "type": "cross_subject" },
+          { "source": 65, "target": 77, "type": "cross_subject" },
+          { "source": 65, "target": 98, "type": "cross_subject" },
+          { "source": 68, "target": 65, "type": "prerequisite" },
+          { "source": 66, "target": 65, "type": "prerequisite" },
+          { "source": 66, "target": 84, "type": "cross_subject" },
+          { "source": 23, "target": 22, "type": "prerequisite" },
+          { "source": 22, "target": 19, "type": "prerequisite" },
+          { "source": 41, "target": 40, "type": "prerequisite" },
+          { "source": 42, "target": 40, "type": "prerequisite" },
+          { "source": 45, "target": 43, "type": "prerequisite" },
+          { "source": 45, "target": 46, "type": "prerequisite" },
+          { "source": 44, "target": 43, "type": "prerequisite" },
+          { "source": 14, "target": 12, "type": "prerequisite" },
+          { "source": 9, "target": 2, "type": "prerequisite" },
+          { "source": 9, "target": 101, "type": "cross_subject" },
+          { "source": 48, "target": 2, "type": "prerequisite" },
+          { "source": 19, "target": 12, "type": "prerequisite" },
+          { "source": 21, "target": 19, "type": "prerequisite" },
+          { "source": 20, "target": 19, "type": "prerequisite" },
+          { "source": 12, "target": 11, "type": "prerequisite" },
+          { "source": 32, "target": 30, "type": "prerequisite" },
+          { "source": 13, "target": 12, "type": "prerequisite" },
+          { "source": 39, "target": 38, "type": "prerequisite" },
+          { "source": 56, "target": 2, "type": "prerequisite" },
+          { "source": 61, "target": 1, "type": "prerequisite" },
+          { "source": 62, "target": 1, "type": "prerequisite" },
+          { "source": 4, "target": 3, "type": "prerequisite" },
+          { "source": 4, "target": 102, "type": "cross_subject" },
+          { "source": 8, "target": 6, "type": "prerequisite" },
+          { "source": 15, "target": 12, "type": "prerequisite" },
+          { "source": 18, "target": 12, "type": "prerequisite" },
+          { "source": 51, "target": 50, "type": "prerequisite" },
+          { "source": 49, "target": 2, "type": "prerequisite" },
+          { "source": 49, "target": 50, "type": "prerequisite" },
+          { "source": 49, "target": 99, "type": "cross_subject" },
+          { "source": 64, "target": 37, "type": "prerequisite" },
+          { "source": 33, "target": 102, "type": "cross_subject" },
+          { "source": 30, "target": 12, "type": "prerequisite" },
+          { "source": 31, "target": 30, "type": "prerequisite" },
+          { "source": 59, "target": 30, "type": "prerequisite" },
+          { "source": 59, "target": 31, "type": "prerequisite" },
+          { "source": 16, "target": 6, "type": "prerequisite" },
+          { "source": 46, "target": 11, "type": "prerequisite" },
+          { "source": 10, "target": 3, "type": "prerequisite" },
+          { "source": 36, "target": 6, "type": "prerequisite" },
+          { "source": 36, "target": 33, "type": "prerequisite" },
+          { "source": 53, "target": 51, "type": "prerequisite" },
+          { "source": 58, "target": 2, "type": "prerequisite" },
+          { "source": 58, "target": 61, "type": "prerequisite" },
+          { "source": 7, "target": 6, "type": "prerequisite" },
+          { "source": 57, "target": 2, "type": "prerequisite" },
+          { "source": 57, "target": 61, "type": "prerequisite" },
+          { "source": 38, "target": 33, "type": "prerequisite" },
+          { "source": 38, "target": 37, "type": "prerequisite" },
+          { "source": 60, "target": 54, "type": "prerequisite" },
+          { "source": 54, "target": 2, "type": "prerequisite" },
+          { "source": 2, "target": 99, "type": "cross_subject" },
+          { "source": 43, "target": 33, "type": "prerequisite" },
+          { "source": 40, "target": 36, "type": "prerequisite" },
+          { "source": 5, "target": 2, "type": "prerequisite" },
+          { "source": 5, "target": 3, "type": "prerequisite" },
+          { "source": 37, "target": 5, "type": "prerequisite" },
+          { "source": 37, "target": 33, "type": "prerequisite" },
+          { "source": 24, "target": 19, "type": "prerequisite" },
+          { "source": 25, "target": 24, "type": "prerequisite" },
+          { "source": 29, "target": 25, "type": "prerequisite" },
+          { "source": 27, "target": 25, "type": "prerequisite" },
+          { "source": 26, "target": 25, "type": "prerequisite" },
+          { "source": 28, "target": 26, "type": "prerequisite" },
+          { "source": 28, "target": 27, "type": "prerequisite" },
+          { "source": 17, "target": 12, "type": "prerequisite" },
+          { "source": 63, "target": 1, "type": "prerequisite" },
+          { "source": 55, "target": 2, "type": "prerequisite" },
+          { "source": 34, "target": 33, "type": "prerequisite" },
+          { "source": 35, "target": 33, "type": "prerequisite" },
+          { "source": 52, "target": 51, "type": "prerequisite" },
+          { "source": 3, "target": 2, "type": "prerequisite" },
+          { "source": 3, "target": 100, "type": "cross_subject" },
+          { "source": 3, "target": 104, "type": "cross_subject" },
+          { "source": 6, "target": 2, "type": "prerequisite" },
+          { "source": 6, "target": 3, "type": "prerequisite" },
+          { "source": 47, "target": 2, "type": "prerequisite" },
+          { "source": 78, "target": 76, "type": "prerequisite" },
+          { "source": 78, "target": 77, "type": "prerequisite" },
+          { "source": 84, "target": 78, "type": "prerequisite" },
+          { "source": 84, "target": 83, "type": "prerequisite" },
+          { "source": 82, "target": 80, "type": "prerequisite" },
+          { "source": 80, "target": 78, "type": "prerequisite" },
+          { "source": 79, "target": 78, "type": "prerequisite" },
+          { "source": 77, "target": 75, "type": "prerequisite" },
+          { "source": 75, "target": 95, "type": "cross_subject" },
+          { "source": 83, "target": 80, "type": "prerequisite" },
+          { "source": 76, "target": 75, "type": "prerequisite" },
+          { "source": 76, "target": 96, "type": "cross_subject" },
+          { "source": 81, "target": 80, "type": "prerequisite" },
+          { "source": 90, "target": 6, "type": "cross_subject" },
+          { "source": 90, "target": 85, "type": "prerequisite" },
+          { "source": 90, "target": 88, "type": "prerequisite" },
+          { "source": 91, "target": 90, "type": "prerequisite" },
+          { "source": 87, "target": 86, "type": "prerequisite" },
+          { "source": 87, "target": 88, "type": "prerequisite" },
+          { "source": 94, "target": 85, "type": "prerequisite" },
+          { "source": 94, "target": 90, "type": "prerequisite" },
+          { "source": 94, "target": 92, "type": "prerequisite" },
+          { "source": 93, "target": 6, "type": "cross_subject" },
+          { "source": 93, "target": 90, "type": "prerequisite" },
+          { "source": 86, "target": 75, "type": "cross_subject" },
+          { "source": 86, "target": 85, "type": "prerequisite" },
+          { "source": 92, "target": 85, "type": "prerequisite" },
+          { "source": 92, "target": 88, "type": "prerequisite" },
+          { "source": 85, "target": 65, "type": "cross_subject" },
+          { "source": 88, "target": 76, "type": "cross_subject" },
+          { "source": 88, "target": 85, "type": "prerequisite" },
+          { "source": 89, "target": 33, "type": "cross_subject" },
+          { "source": 89, "target": 41, "type": "cross_subject" },
+          { "source": 89, "target": 88, "type": "prerequisite" },
+        ],
+      };
+    </script>
+    <script>
+      /* ===========================================================================
+   独立知识点详情页
+   ---------------------------------------------------------------------------
+   1) 读取 URL：?node=<知识点名称> [&key=<节点key>]  或  ?subject=<课程>&chapter=<章节>
+   2) 在真实图谱数据中定位节点，提取前置依赖 / 后继 / 同章节 / 跨课程关联
+   3) 知识点模式渲染：① 标题 ② 知识概述与定义 ③ 核心考点 ④ 前置依赖 ⑤ 简单例题与解析
+      课程模式（课程 / 章节节点跳转而来）渲染：课程概述 + 章节考查要点 + 跨课程关联 + 综合例题
+   =========================================================================== */
+      (function () {
+        "use strict";
+
+        var RAW = window.KG_DATA || { nodes: [], edges: [] };
+        var nodes = RAW.nodes || [];
+        var edges = RAW.edges || [];
+        /* 注意：edges 里的 source/target 是节点 id（不是 key），必须用 id 索引 */
+        var byId = {},
+          byKey = {},
+          byLabel = {},
+          subjects = [];
+        nodes.forEach(function (n) {
+          byId[n.id] = n;
+          byKey[n.key] = n;
+          if (!byLabel[n.label]) byLabel[n.label] = [];
+          byLabel[n.label].push(n);
+          if (subjects.indexOf(n.subject) < 0) subjects.push(n.subject);
+        });
+
+        /* ---------------- URL 参数 ---------------- */
+        function param(name) {
+          var m = new RegExp("[?&]" + name + "=([^&]*)").exec(window.location.search);
+          return m ? decodeURIComponent(m[1].replace(/\+/g, " ")) : "";
+        }
+        function detailHref(n) {
+          return (
+            "knowledge-detail.html?node=" + encodeURIComponent(n.label) + "&key=" + encodeURIComponent(n.key)
+          );
+        }
+        function subjectHref(s) {
+          return "knowledge-detail.html?node=" + encodeURIComponent(s);
+        }
+
+        var qKey = param("key"),
+          qName = param("node"),
+          qSubject = param("subject"),
+          qChapter = param("chapter");
+
+        /* 定位：知识点 → 课程 → 模糊 */
+        var current = (qKey && byKey[qKey]) || (qName && byLabel[qName] && byLabel[qName][0]) || null;
+        var courseSubject = null;
+        if (!current) {
+          var want = qSubject || qName;
+          if (want) {
+            courseSubject =
+              subjects.filter(function (s) {
+                return s === want;
+              })[0] ||
+              subjects.filter(function (s) {
+                return s.indexOf(want) >= 0 || want.indexOf(s) >= 0;
+              })[0] ||
+              null;
+          }
+        }
+        if (!current && !courseSubject && qName) {
+          var lower = qName.toLowerCase();
+          current =
+            nodes.filter(function (n) {
+              return n.label.toLowerCase().indexOf(lower) >= 0;
+            })[0] || null;
+        }
+        var isCourse = !current && Boolean(courseSubject);
+        document.title = (current ? current.label : isCourse ? courseSubject : "未找到") + " · 知识图谱详情";
+
+        /* ---------------- 关系 ---------------- */
+        var rel = { prereq: [], next: [], crossIn: [], crossOut: [] };
+        if (current) {
+          edges.forEach(function (e) {
+            var s = byId[e.source],
+              t = byId[e.target];
+            if (!s || !t) return;
+            if (t.key === current.key) {
+              (e.type === "cross_subject" ? rel.crossIn : rel.prereq).push(s);
+            } else if (s.key === current.key) {
+              (e.type === "cross_subject" ? rel.crossOut : rel.next).push(t);
+            }
+          });
+        }
+        var sameChapter = current
+          ? nodes.filter(function (n) {
+              return n.subject === current.subject && n.chapter === current.chapter && n.key !== current.key;
+            })
+          : [];
+        var sameSubject = current
+          ? nodes.filter(function (n) {
+              return n.subject === current.subject;
+            })
+          : [];
+
+        /* ---------------- 工具 ---------------- */
+        function esc(s) {
+          return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+            return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+          });
+        }
+        function hash(s) {
+          var h = 2166136261;
+          for (var i = 0; i < s.length; i++) {
+            h ^= s.charCodeAt(i);
+            h = Math.imul(h, 16777619);
+          }
+          return Math.abs(h);
+        }
+        function pick(arr, seed) {
+          return arr[seed % arr.length];
+        }
+        function kpChip(n, isCross) {
+          return (
+            '<a class="rel__item' +
+            (isCross ? " rel__item--cross" : "") +
+            '" href="' +
+            detailHref(n) +
+            '">' +
+            esc(n.label) +
+            "<em>" +
+            esc(n.subject) +
+            "</em></a>"
+          );
+        }
+        function diffText(d) {
+          return d === "advanced" ? "进阶" : d === "challenge" ? "综合难点" : "基础";
+        }
+        function uniqByKey(list) {
+          var seen = {},
+            out = [];
+          list.forEach(function (n) {
+            if (!seen[n.key]) {
+              seen[n.key] = true;
+              out.push(n);
+            }
+          });
+          return out;
+        }
+
+        /* ---------------- 文案模板 ---------------- */
+        var EXAM = {
+          "数据结构": [
+            "手写实现与复杂度分析：给定 {n} 的最坏 / 平均时间与空间复杂度，说明推导过程。",
+            "结构对比题：把 {n} 与顺序表、链表、哈希表、平衡二叉树对比，说明各自适用场景。",
+            "应用判断题：给出业务场景（大数据量 / 频繁删改 / 区间查询），判断是否该用 {n} 并说明理由。",
+            "代码追踪题：画出 {n} 在若干次插入、删除后的结构演变图，标出关键指针变化。",
+          ],
+          "计算机组成原理": [
+            "计算题：围绕 {n} 写出地址划分、位数计算或时序推导的完整过程。",
+            "原理说明题：解释 {n} 的工作机制，并说明它对 CPU 性能（CPI / 主频 / 存储层次）的影响。",
+            "对比题：{n} 与其他同类部件 / 方案的差异与取舍。",
+            "设计题：给定容量或速度要求，为 {n} 选择合适参数并说明依据。",
+          ],
+          "操作系统": [
+            "机制说明题：讲清 {n} 的设计目标、核心数据结构与关键流程。",
+            "场景分析题：给出并发 / 资源紧张场景，分析 {n} 下会发生什么（死锁、抖动、饥饿等）。",
+            "算法对比题：{n} 中涉及的调度 / 置换 / 分配策略之间的优劣比较。",
+            "计算题：按 {n} 的规则计算命中率、等待时间或页面走向。",
+          ],
+          "计算机网络": [
+            "协议流程题：画出 {n} 的报文 / 握手交互时序，标注关键字段与状态迁移。",
+            "计算题：结合 {n} 计算时延、窗口、吞吐量或利用率。",
+            "排错题：网络出现异常（丢包、超时、拥塞），用 {n} 的机制定位原因。",
+            "对比题：{n} 与其他层协议 / 版本的差异，以及分层设计的意义。",
+          ],
+          "C语言": [
+            "语义细节题：说明 {n} 在编译期与运行期的行为，特别是内存与类型规则。",
+            "代码改错题：给出含 {n} 相关典型错误的代码，指出问题并修正。",
+            "指针 / 内存题：分析 {n} 与指针、数组、动态内存的关系。",
+            "工程实践题：在模块化项目中如何正确使用 {n}，避免未定义行为。",
+          ],
+        };
+
+        var EXAMPLES = {
+          "数据结构": [
+            {
+              q: "在 10 万条记录上需要频繁执行「插入 + 删除 + 按 key 查询」。请说明 {n} 是否合适，并分析时间复杂度。",
+              steps: [
+                [
+                  "定位问题",
+                  "先明确三类操作的相对频次与数据规模：插入、删除各占多少，查询是点查还是范围查。",
+                ],
+                ["套用结论", "由 {n} 的定义与结构性质，写出它在最好 / 最坏 / 平均情况下的时间与空间复杂度。"],
+                [
+                  "对比取舍",
+                  "与顺序表（O(n) 插入删除、O(1) 随机访问）、哈希表（O(1) 平均查询但无序）、平衡树（O(log n) 且有序）对比。",
+                ],
+                [
+                  "落回场景",
+                  "若查询远多于删改，优先考虑 {n}；若删改占主导，需要重新评估并可能改用链式结构。",
+                ],
+              ],
+              a: "先给结论（是否采用 {n}），再给复杂度推导，最后说明适用边界 —— 结论 + 依据 + 边界，三步齐全才是满分结构。",
+            },
+            {
+              q: "手写 {n} 的核心操作（初始化、插入、删除、查找），并说明如何防止越界与内存泄漏。",
+              steps: [
+                ["确定接口", "先定义数据结构体与函数签名，明确返回值含义（成功标志 / 指针 / 状态码）。"],
+                ["边界检查", "空结构、满结构、目标不存在、重复 key 四类边界必须先判断，再执行业务逻辑。"],
+                ["实现主体", "按 {n} 的结构性质逐句实现，注意指针与下标的更新顺序，避免先移动后读取。"],
+                ["释放资源", "有动态申请的节点，删除时必须逐级 free，并在删除后置空指针防止悬垂引用。"],
+              ],
+              a: "评分点集中在边界处理与资源释放：功能正确只占一半，另一半是健壮性。",
+            },
+          ],
+          "操作系统": [
+            {
+              q: "请说明 {n} 的基本工作流程，并分析它在高并发场景下可能引发的问题。",
+              steps: [
+                [
+                  "描述机制",
+                  "先给出 {n} 的设计目标：它解决的是什么资源矛盾（CPU 利用率、内存容量、并发冲突）。",
+                ],
+                ["梳理流程", "按时间顺序写出关键数据结构的变化（队列、页表、位图等）与状态迁移。"],
+                ["压力分析", "在竞争激烈时分析是否会出现饥饿、死锁、抖动或优先级反转。"],
+                ["改进方案", "给出至少一项改进或参数调优建议，并说明代价。"],
+              ],
+              a: "机制 + 流程 + 问题 + 改进，四段式回答能覆盖绝大多数操作系统简答题的得分点。",
+            },
+            {
+              q: "围绕 {n} 计算一道典型题目（命中率 / 周转时间 / 页面走向），并解释结果含义。",
+              steps: [
+                ["列出已知", "把题目给出的序列、容量、时间参数逐条抄成表格，避免中途读错。"],
+                ["按规则推演", "严格按 {n} 的规则逐步推演，建议画表格跟踪每一步的状态。"],
+                ["统计指标", "由推演过程统计命中次数、缺页次数或等待时间。"],
+                ["解释含义", "说明该结果意味着什么：容量是否不足、策略是否需要调整。"],
+              ],
+              a: "计算题的分数在过程：表格清晰、逐步可查，比直接写答案更容易拿全分。",
+            },
+          ],
+          "计算机组成原理": [
+            {
+              q: "围绕 {n} 完成一道计算题：给定容量 / 位宽 / 频率，求地址划分或访问时间。",
+              steps: [
+                ["统一单位", "先把容量、块大小、字长统一到 bit 或 byte，再开算。"],
+                ["拆地址", "按 {n} 的结构把地址拆成标记、组号 / 行号、块内偏移三段。"],
+                ["算位数", "分别计算各段所需位数，验证三段之和等于地址总线宽度。"],
+                ["回代检查", "把结果代回题目条件，检查是否存在未命中的情况需要补算。"],
+              ],
+              a: "组成原理计算题的关键是地址分段不重不漏：写完用「段宽之和 = 地址位数」自检。",
+            },
+            {
+              q: "说明 {n} 的工作原理，并分析它对整机性能的影响。",
+              steps: [
+                ["讲清部件", "说明 {n} 由哪些部件组成、各部件作用与相互连接方式。"],
+                ["走一遍时序", "用一次典型访问描述时序：取指 / 译码 / 执行 / 访存 / 写回中哪几步被加速。"],
+                ["量化收益", "用命中率、并行度或带宽估算性能提升倍率。"],
+                ["指出瓶颈", "说明提升的边界在哪里（命中率上限、带宽瓶颈、一致性代价）。"],
+              ],
+              a: "把「原理 — 时序 — 收益 — 瓶颈」串成一条线，就是从概念到性能分析的完整作答结构。",
+            },
+          ],
+          "计算机网络": [
+            {
+              q: "描述 {n} 的协议交互过程，并说明关键字段与时序的含义。",
+              steps: [
+                ["明确层次", "先定位 {n} 属于哪一层、承载在什么协议之上。"],
+                ["画时序图", "按时间顺序画出交互双方与中间设备的报文往返，标注状态变化。"],
+                ["解释字段", "说明关键字段的作用，以及取值不同时行为如何改变。"],
+                ["异常处理", "说明丢包、超时、重复报文时协议如何恢复。"],
+              ],
+              a: "网络题的得分点在时序图：先画图再写字，条理清楚且便于自检。",
+            },
+            {
+              q: "结合 {n} 计算时延 / 窗口 / 吞吐量，并解释结果对实际网络的意义。",
+              steps: [
+                ["列出分量", "把总时延拆成发送、传播、处理、排队四部分，逐项写出公式。"],
+                ["代入数据", "统一单位后代入，注意带宽与传播速度的单位换算。"],
+                ["得出结果", "算出目标指标，并检查数量级是否合理。"],
+                ["解释意义", "说明该结果反映了什么瓶颈（带宽受限还是时延受限），以及如何优化。"],
+              ],
+              a: "先拆分量、再代数据、最后解释瓶颈，能让计算题从「算对」升级为「讲透」。",
+            },
+          ],
+          "C语言": [
+            {
+              q: "分析下面这段与 {n} 有关的代码在编译期与运行期的行为，指出潜在问题。",
+              steps: [
+                ["读语义", "逐行写出 {n} 在标准中的确切语义，注意类型转换与求值顺序。"],
+                ["找陷阱", "检查数组越界、未初始化、悬垂指针、未定义行为四类常见问题。"],
+                ["判断后果", "说明问题在不同编译器 / 优化级别下的表现差异。"],
+                ["给出修正", "用更安全的写法重写，并说明为什么这样写是对的。"],
+              ],
+              a: "C 语言题的常考点是「未定义行为」：能指出它并给出符合标准的替代写法，就是完整作答。",
+            },
+            {
+              q: "请用 {n} 完成一个小功能的实现，并说明内存与类型上的注意点。",
+              steps: [
+                ["设计接口", "先写函数原型与数据结构定义，明确所有权（谁申请、谁释放）。"],
+                ["实现逻辑", "按功能分解实现，保持单一职责，避免过长函数。"],
+                ["资源管理", "申请与释放配对出现，出错路径也要回收，防止内存泄漏。"],
+                ["验证", "构造正常、边界、异常三组输入验证行为。"],
+              ],
+              a: "写代码题按「接口 — 实现 — 资源 — 验证」四步走，既清晰又便于复查。",
+            },
+          ],
+        };
+
+        /* ---------------- 未找到 ---------------- */
+        function renderNotFound() {
+          document.getElementById("crumb").textContent = "知识图谱详情";
+          document.getElementById("root").innerHTML =
+            '<div class="notfound"><h1>未找到' +
+            (qName ? "：" + esc(qName) : "该节点") +
+            "</h1>" +
+            "<p>该知识点可能已重命名，或链接参数不完整。请返回图谱首页重新选择。</p>" +
+            '<a class="back" href="knowledge-graph.html" style="display:inline-flex">← 返回图谱首页</a></div>';
+        }
+
+        function quizHtml(subject, label, seed) {
+          var bank = EXAMPLES[subject] || EXAMPLES["数据结构"];
+          var q = pick(bank, seed);
+          var question = q.q.replace(/\{n\}/g, label);
+          var steps = q.steps
+            .map(function (s) {
+              return (
+                "<div><span>" + esc(s[0]) + "</span><p>" + esc(s[1].replace(/\{n\}/g, label)) + "</p></div>"
+              );
+            })
+            .join("");
+          return (
+            '<div class="quiz__q"><b>题目</b>' +
+            esc(question) +
+            "</div>" +
+            '<div class="quiz__step">' +
+            steps +
+            "</div>" +
+            '<div class="quiz__ans"><b>解析要点：</b>' +
+            esc(q.a.replace(/\{n\}/g, label)) +
+            "</div>"
+          );
+        }
+
+        /* ---------------- 知识点模式 ---------------- */
+        function renderKnowledge(n) {
+          var seed = hash(n.key);
+          var defSentence =
+            "<strong>" +
+            esc(n.label) +
+            "</strong> 是《" +
+            esc(n.subject) +
+            "》中「" +
+            esc(n.chapter) +
+            "」章节的核心内容，属于" +
+            diffText(n.difficulty) +
+            "层次的知识点。" +
+            (n.description ? esc(n.description) : "掌握它需要理解其定义、结构与适用场景。");
+          var concept = [
+            "定义与边界：说清 " + n.label + " 是什么、解决什么问题，以及它与相邻概念的界限。",
+            "结构 / 机制：记住它的组成要素与运作流程，这是推导一切结论的起点。",
+            "性能特征：明确时间与空间代价，以及在不同数据规模下的表现差异。",
+            "适用场景：知道什么时候该用它，什么时候必须换别的方案。",
+          ];
+          var exam = (EXAM[n.subject] || EXAM["数据结构"]).map(function (t) {
+            return t.replace(/\{n\}/g, n.label);
+          });
+
+          function group(title, list, isCross) {
+            if (!list.length) return "";
+            var uniq = uniqByKey(list);
+            return (
+              '<div class="rel__group"><div class="rel__label">' +
+              title +
+              "<span></span>" +
+              uniq.length +
+              ' 个</div><div class="rel__list">' +
+              uniq
+                .map(function (m) {
+                  return kpChip(m, isCross);
+                })
+                .join("") +
+              "</div></div>"
+            );
+          }
+          var hasRel = rel.prereq.length || rel.next.length || rel.crossIn.length || rel.crossOut.length;
+          var relHtml = hasRel
+            ? group("前置依赖 · 学它之前建议先掌握", rel.prereq) +
+              group("后继知识点 · 学完之后通常继续学", rel.next) +
+              group("跨课程关联 · 其他课程中的对应内容", rel.crossIn.concat(rel.crossOut), true)
+            : '<div class="empty">该知识点在图谱中没有记录前置依赖，可作为本课程的入门节点直接学习。</div>';
+
+          var chapterHtml = sameChapter.length
+            ? '<div class="rel__list">' +
+              uniqByKey(sameChapter)
+                .slice(0, 16)
+                .map(function (m) {
+                  return kpChip(m);
+                })
+                .join("") +
+              "</div>"
+            : '<div class="empty">本章节暂无其他知识点。</div>';
+
+          var navHtml = sameSubject
+            .map(function (m) {
+              return (
+                '<a class="' +
+                (m.key === n.key ? "is-current" : "") +
+                '" href="' +
+                detailHref(m) +
+                '">' +
+                esc(m.label) +
+                "<em>" +
+                esc(m.chapter) +
+                "</em></a>"
+              );
+            })
+            .join("");
+
+          /* 同名知识点：只给出名称参数时会有歧义，这里给出切换入口 */
+          var twins = (byLabel[n.label] || []).filter(function (m) {
+            return m.key !== n.key;
+          });
+          var twinHtml = twins.length
+            ? '<div class="twin">图谱中存在同名知识点，当前展示的是《' +
+              esc(n.subject) +
+              "》的「" +
+              esc(n.label) +
+              "」。切换到：" +
+              twins
+                .map(function (m) {
+                  return '<a href="' + detailHref(m) + '">' + esc(m.label) + "（" + esc(m.subject) + "）</a>";
+                })
+                .join("、") +
+              "</div>"
+            : "";
+
+          document.getElementById("crumb").innerHTML = "知识点详情 <b>" + esc(n.subject) + "</b>";
+          document.getElementById("stat").textContent =
+            "本课程共 " + sameSubject.length + " 个知识点 · 关联资源 " + (n.resourceCount || 0) + " 个";
+
+          document.getElementById("root").innerHTML =
+            '<section class="hero">' +
+            '<span class="hero__subject"><i></i>' +
+            esc(n.subject) +
+            " · " +
+            esc(n.chapter) +
+            "</span>" +
+            "<h1>" +
+            esc(n.label) +
+            "</h1>" +
+            '<p class="hero__desc">' +
+            (n.description
+              ? esc(n.description)
+              : "《" + esc(n.subject) + "》" + esc(n.chapter) + "章节知识点") +
+            "</p>" +
+            '<div class="hero__meta">' +
+            '<span class="chip diff-' +
+            esc(n.difficulty) +
+            '">难度：<b>' +
+            diffText(n.difficulty) +
+            "</b></span>" +
+            '<span class="chip">前置依赖：<b>' +
+            uniqByKey(rel.prereq).length +
+            " 个</b></span>" +
+            '<span class="chip">后续知识：<b>' +
+            uniqByKey(rel.next).length +
+            " 个</b></span>" +
+            '<span class="chip">跨课程关联：<b>' +
+            uniqByKey(rel.crossIn.concat(rel.crossOut)).length +
+            " 个</b></span>" +
+            '<span class="chip">关联资源：<b>' +
+            (n.resourceCount || 0) +
+            " 个</b></span>" +
+            "</div>" +
+            '<div class="pathbar">' +
+            '<a href="' +
+            subjectHref(n.subject) +
+            '">' +
+            esc(n.subject) +
+            "</a><i>›</i><span>" +
+            esc(n.chapter) +
+            "</span><i>›</i><span>" +
+            esc(n.label) +
+            "</span></div>" +
+            twinHtml +
+            "</section>" +
+            '<div class="grid">' +
+            '<div class="col">' +
+            '<section class="card"><div class="card__head"><span class="card__no">1</span><h2>知识概述与定义</h2><em>CONCEPT</em></div>' +
+            '<p class="def">' +
+            defSentence +
+            "</p>" +
+            "<p>学习 " +
+            esc(n.label) +
+            " 时，建议按以下四条线索建立完整认知：</p>" +
+            '<ol class="points">' +
+            concept
+              .map(function (c) {
+                return "<li>" + esc(c) + "</li>";
+              })
+              .join("") +
+            "</ol></section>" +
+            '<section class="card"><div class="card__head"><span class="card__no">2</span><h2>核心考点</h2><em>KEY POINTS</em></div>' +
+            "<p>该知识点在考试与面试中主要以以下形式出现：</p>" +
+            '<ol class="points">' +
+            exam
+              .map(function (c) {
+                return "<li>" + esc(c) + "</li>";
+              })
+              .join("") +
+            "</ol></section>" +
+            '<section class="card"><div class="card__head"><span class="card__no">3</span><h2>简单例题与解析</h2><em>EXAMPLE</em></div>' +
+            quizHtml(n.subject, n.label, seed) +
+            "</section>" +
+            "</div>" +
+            '<div class="col">' +
+            '<section class="card"><div class="card__head"><span class="card__no">4</span><h2>知识点前置依赖</h2><em>PREREQUISITE</em></div>' +
+            '<div class="rel">' +
+            relHtml +
+            "</div></section>" +
+            '<section class="card"><div class="card__head"><span class="card__no">5</span><h2>同章节知识点</h2><em>CHAPTER</em></div>' +
+            chapterHtml +
+            "</section>" +
+            '<section class="card"><div class="card__head"><span class="card__no">6</span><h2>' +
+            esc(n.subject) +
+            " · 全部知识点</h2><em>NAV</em></div>" +
+            '<div class="side__list">' +
+            navHtml +
+            "</div></section>" +
+            "</div>" +
+            "</div>";
+        }
+
+        /* ---------------- 课程模式（点击课程 / 章节节点跳转而来） ---------------- */
+        function renderCourse(subject) {
+          var courseNodes = nodes.filter(function (n) {
+            return n.subject === subject;
+          });
+          var chapterNames = [];
+          var byChapter = {};
+          courseNodes.forEach(function (n) {
+            if (!byChapter[n.chapter]) {
+              byChapter[n.chapter] = [];
+              chapterNames.push(n.chapter);
+            }
+            byChapter[n.chapter].push(n);
+          });
+
+          /* 跨课程关联：本课程与其他课程之间的 cross_subject 关系 */
+          var crossBySubject = {};
+          edges.forEach(function (e) {
+            if (e.type !== "cross_subject") return;
+            var s = byId[e.source],
+              t = byId[e.target];
+            if (!s || !t) return;
+            var other = null;
+            if (s.subject === subject && t.subject !== subject)
+              other = { subject: t.subject, self: s, peer: t };
+            else if (t.subject === subject && s.subject !== subject)
+              other = { subject: s.subject, self: t, peer: s };
+            if (!other) return;
+            if (!crossBySubject[other.subject]) crossBySubject[other.subject] = [];
+            crossBySubject[other.subject].push(other);
+          });
+          var crossSubjects = Object.keys(crossBySubject);
+          var crossHtml = crossSubjects.length
+            ? '<div class="rel__group"><div class="rel__label">关联课程<span></span>' +
+              crossSubjects.length +
+              ' 门</div><div class="rel__list">' +
+              crossSubjects
+                .map(function (s2) {
+                  return (
+                    '<a class="rel__item rel__item--cross" href="' +
+                    subjectHref(s2) +
+                    '">' +
+                    esc(s2) +
+                    "<em>" +
+                    crossBySubject[s2].length +
+                    " 条关联</em></a>"
+                  );
+                })
+                .join("") +
+              "</div></div>" +
+              '<div class="rel__group" style="margin-top:12px"><div class="rel__label">具体跨课程知识点<span></span></div>' +
+              '<div class="rel__list">' +
+              crossSubjects
+                .reduce(function (acc, s2) {
+                  return acc.concat(
+                    crossBySubject[s2].map(function (p) {
+                      return kpChip(p.peer, true);
+                    }),
+                  );
+                }, [])
+                .map(function (html) {
+                  return html;
+                })
+                .join("") +
+              "</div></div>"
+            : '<div class="empty">该课程在图谱中暂无跨课程关联记录。</div>';
+
+          var focus = qChapter || "";
+          var chapterHtml = chapterNames
+            .map(function (name) {
+              var list = byChapter[name];
+              var isFocus = focus && (name === focus || name.indexOf(focus) >= 0 || focus.indexOf(name) >= 0);
+              var keyPoint =
+                "本章共 " +
+                list.length +
+                " 个知识点，考查重点是" +
+                list
+                  .slice(0, 3)
+                  .map(function (n) {
+                    return n.label;
+                  })
+                  .join("、") +
+                (list.length > 3 ? " 等" : "") +
+                "；答题时注意与相邻章节知识点的结合应用。";
+              return (
+                '<div class="chapter' +
+                (isFocus ? " is-focus" : "") +
+                '" id="ch-' +
+                encodeURIComponent(name) +
+                '">' +
+                '<div class="chapter__head"><b>' +
+                esc(name) +
+                "</b><em>" +
+                list.length +
+                " 个知识点</em></div>" +
+                '<p class="chapter__key">' +
+                esc(keyPoint) +
+                "</p>" +
+                '<div class="rel__list">' +
+                list
+                  .map(function (n) {
+                    return kpChip(n);
+                  })
+                  .join("") +
+                "</div></div>"
+              );
+            })
+            .join("");
+
+          var exam = (EXAM[subject] || EXAM["数据结构"]).map(function (t) {
+            return t.replace(/\{n\}/g, subject + "中的核心知识点");
+          });
+
+          document.getElementById("crumb").innerHTML = "课程详情 <b>" + esc(subject) + "</b>";
+          document.getElementById("stat").textContent =
+            "共 " + chapterNames.length + " 个章节 · " + courseNodes.length + " 个知识点";
+
+          document.getElementById("root").innerHTML =
+            '<section class="hero">' +
+            '<span class="hero__subject"><i></i>课程' +
+            (focus ? " · 聚焦章节 " + esc(focus) : "") +
+            "</span>" +
+            "<h1>" +
+            esc(subject) +
+            "</h1>" +
+            '<p class="hero__desc">《' +
+            esc(subject) +
+            "》共 " +
+            chapterNames.length +
+            " 个章节、" +
+            courseNodes.length +
+            " 个知识点，覆盖" +
+            chapterNames.slice(0, 4).map(esc).join("、") +
+            (chapterNames.length > 4 ? " 等" : "") +
+            "内容。点击下方任意知识点可进入其独立详情页。</p>" +
+            '<div class="hero__meta">' +
+            '<span class="chip">章节：<b>' +
+            chapterNames.length +
+            " 个</b></span>" +
+            '<span class="chip">知识点：<b>' +
+            courseNodes.length +
+            " 个</b></span>" +
+            '<span class="chip">关联课程：<b>' +
+            crossSubjects.length +
+            " 门</b></span>" +
+            "</div>" +
+            '<div class="pathbar"><span>图谱位置</span><i>›</i><span>' +
+            esc(subject) +
+            "</span></div>" +
+            "</section>" +
+            '<div class="grid">' +
+            '<div class="col">' +
+            '<section class="card"><div class="card__head"><span class="card__no">1</span><h2>课程概述与章节结构</h2><em>OVERVIEW</em></div>' +
+            '<p class="def">《' +
+            esc(subject) +
+            "》的知识图谱由 " +
+            chapterNames.length +
+            " 个章节、" +
+            courseNodes.length +
+            " 个知识点与 " +
+            edges.filter(function (e) {
+              var s = byId[e.source],
+                t = byId[e.target];
+              return s && t && s.subject === subject && t.subject === subject;
+            }).length +
+            " 条课程内关联构成，下列章节按图谱中的顺序展开。</p>" +
+            chapterHtml +
+            "</section>" +
+            '<section class="card"><div class="card__head"><span class="card__no">2</span><h2>核心考点</h2><em>KEY POINTS</em></div>' +
+            '<ol class="points">' +
+            exam
+              .map(function (c) {
+                return "<li>" + esc(c) + "</li>";
+              })
+              .join("") +
+            "</ol></section>" +
+            '<section class="card"><div class="card__head"><span class="card__no">3</span><h2>综合例题与解析</h2><em>EXAMPLE</em></div>' +
+            quizHtml(subject, subject + " 的多个知识点", hash(subject)) +
+            "</section>" +
+            "</div>" +
+            '<div class="col">' +
+            '<section class="card"><div class="card__head"><span class="card__no">4</span><h2>跨课程关联</h2><em>CROSS SUBJECT</em></div>' +
+            '<div class="rel">' +
+            crossHtml +
+            "</div></section>" +
+            '<section class="card"><div class="card__head"><span class="card__no">5</span><h2>章节导航</h2><em>CHAPTER</em></div>' +
+            '<div class="side__list">' +
+            chapterNames
+              .map(function (name) {
+                return (
+                  '<a href="#ch-' +
+                  encodeURIComponent(name) +
+                  '">' +
+                  esc(name) +
+                  "<em>" +
+                  byChapter[name].length +
+                  "</em></a>"
+                );
+              })
+              .join("") +
+            "</div></section>" +
+            '<section class="card"><div class="card__head"><span class="card__no">6</span><h2>' +
+            esc(subject) +
+            " · 全部知识点</h2><em>NAV</em></div>" +
+            '<div class="side__list">' +
+            courseNodes
+              .map(function (m) {
+                return (
+                  '<a href="' + detailHref(m) + '">' + esc(m.label) + "<em>" + esc(m.chapter) + "</em></a>"
+                );
+              })
+              .join("") +
+            "</div></section>" +
+            "</div>" +
+            "</div>";
+
+          /* 聚焦章节滚到视野内 */
+          if (focus) {
+            var target = document.querySelector(".chapter.is-focus");
+            if (target)
+              window.setTimeout(function () {
+                target.scrollIntoView({ behavior: "smooth", block: "center" });
+              }, 120);
+          }
+        }
+
+        /* ---------------- 返回按钮：优先回退到图谱页，否则直接跳 ---------------- */
+        document.getElementById("btnBack").addEventListener("click", function (event) {
+          if (window.history.length > 1 && document.referrer.indexOf("knowledge-graph") >= 0) {
+            event.preventDefault();
+            window.history.back();
+          }
+        });
+
+        if (current) renderKnowledge(current);
+        else if (isCourse) renderCourse(courseSubject);
+        else renderNotFound();
+      })();
+    </script>
+  </body>
+</html>

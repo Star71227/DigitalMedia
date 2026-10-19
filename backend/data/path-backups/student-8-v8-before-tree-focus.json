@@ -1,0 +1,205 @@
+{
+  "title": "先攻克处理机调度的个性化学习路径",
+  "snapshot": {
+    "title": "先攻克处理机调度的个性化学习路径",
+    "stages": [
+      {
+        "key": "stage-1",
+        "goals": [
+          "个性化依据：当前掌握度 50%，按薄弱度排序",
+          "本阶段行动：先用思维导图重建概念关系",
+          "验收目标：能解释处理机调度的条件、过程与边界",
+          "完成后再进入下一阶段"
+        ],
+        "title": "1. 处理机调度 · 补基础",
+        "subject": "操作系统",
+        "dependsOn": [],
+        "completion": {
+          "ids": [
+            "mind_map"
+          ],
+          "type": "resource"
+        },
+        "questionIds": [
+          "OS_BASE_003",
+          "OS_BASE_004",
+          "OS_BASE_020",
+          "OS_BASE_065"
+        ],
+        "codeExerciseIds": [
+          "OS_CODE_001",
+          "OS_CODE_002",
+          "OS_CODE_003",
+          "OS_CODE_004"
+        ],
+        "durationMinutes": 40,
+        "knowledgePoints": [
+          "处理机调度"
+        ]
+      },
+      {
+        "key": "stage-2",
+        "goals": [
+          "个性化依据：当前掌握度 50%，按薄弱度排序",
+          "本阶段行动：先用思维导图重建概念关系",
+          "验收目标：能解释磁盘与I/O管理的条件、过程与边界",
+          "完成后再进入下一阶段"
+        ],
+        "title": "2. 磁盘与I/O管理 · 补基础",
+        "subject": "操作系统",
+        "dependsOn": [
+          "stage-1"
+        ],
+        "completion": {
+          "ids": [
+            "mind_map"
+          ],
+          "type": "resource"
+        },
+        "questionIds": [
+          "OS_BASE_017",
+          "OS_BASE_018",
+          "OS_BASE_064",
+          "OS_BASE_069"
+        ],
+        "codeExerciseIds": [
+          "OS_CODE_011",
+          "OS_CODE_012"
+        ],
+        "durationMinutes": 40,
+        "knowledgePoints": [
+          "磁盘与I/O管理"
+        ]
+      },
+      {
+        "key": "stage-3",
+        "goals": [
+          "个性化依据：当前掌握度 50%，按薄弱度排序",
+          "本阶段行动：完成 3 道已审核测验题",
+          "验收目标：能解释存储层次的条件、过程与边界",
+          "完成后再进入下一阶段"
+        ],
+        "title": "3. 存储层次 · 针对性测验",
+        "subject": "计算机组成原理",
+        "dependsOn": [
+          "stage-2"
+        ],
+        "completion": {
+          "ids": [
+            "CO_ADAPT_019",
+            "CO_ADAPT_020",
+            "CO_ADAPT_021"
+          ],
+          "type": "quiz"
+        },
+        "questionIds": [
+          "CO_ADAPT_019",
+          "CO_ADAPT_020",
+          "CO_ADAPT_021",
+          "CO_ADAPT_049",
+          "CO_BASE_005",
+          "CO_BASE_008"
+        ],
+        "codeExerciseIds": [],
+        "durationMinutes": 40,
+        "knowledgePoints": [
+          "存储层次"
+        ]
+      },
+      {
+        "key": "stage-4",
+        "goals": [
+          "个性化依据：当前掌握度 50%，按薄弱度排序",
+          "本阶段行动：完成 3 道已审核测验题",
+          "验收目标：能解释地址解析协议的条件、过程与边界",
+          "完成后再进入下一阶段"
+        ],
+        "title": "4. 地址解析协议 · 针对性测验",
+        "subject": "计算机网络",
+        "dependsOn": [
+          "stage-3"
+        ],
+        "completion": {
+          "ids": [
+            "CN_BASE_010",
+            "CN_BASE_072",
+            "CN_BASE_080"
+          ],
+          "type": "quiz"
+        },
+        "questionIds": [
+          "CN_BASE_010",
+          "CN_BASE_072",
+          "CN_BASE_080"
+        ],
+        "codeExerciseIds": [],
+        "durationMinutes": 40,
+        "knowledgePoints": [
+          "地址解析协议"
+        ]
+      },
+      {
+        "key": "stage-5",
+        "goals": [
+          "个性化依据：当前掌握度 50%，按薄弱度排序",
+          "本阶段行动：完成 3 道已审核测验题",
+          "验收目标：能解释动态内存管理的条件、过程与边界",
+          "完成后再进入下一阶段"
+        ],
+        "title": "5. 动态内存管理 · 针对性测验",
+        "subject": "C 语言程序设计",
+        "dependsOn": [
+          "stage-4"
+        ],
+        "completion": {
+          "ids": [
+            "C_BASE_019",
+            "C_BASE_020",
+            "C_BASE_030"
+          ],
+          "type": "quiz"
+        },
+        "questionIds": [
+          "C_BASE_019",
+          "C_BASE_020",
+          "C_BASE_030"
+        ],
+        "codeExerciseIds": [],
+        "durationMinutes": 40,
+        "knowledgePoints": [
+          "动态内存管理"
+        ]
+      },
+      {
+        "key": "stage-6",
+        "goals": [
+          "个性化依据：当前掌握度 50%，按薄弱度排序",
+          "本阶段行动：完成 2 道已审核测验题",
+          "验收目标：能解释堆的条件、过程与边界",
+          "完成后再进入下一阶段"
+        ],
+        "title": "6. 堆 · 针对性测验",
+        "subject": "数据结构",
+        "dependsOn": [
+          "stage-5"
+        ],
+        "completion": {
+          "ids": [
+            "DS_BASE_017",
+            "DS_BASE_053"
+          ],
+          "type": "quiz"
+        },
+        "questionIds": [
+          "DS_BASE_017",
+          "DS_BASE_053"
+        ],
+        "codeExerciseIds": [],
+        "durationMinutes": 40,
+        "knowledgePoints": [
+          "堆"
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,394 @@
+/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* ===========================================================================
+   班级排名页右侧的「班级信息」面板
+   —— 与排名正文两栏并排；窄屏自动落到下方。
+   =========================================================================== */
+.bp-ranking-layout {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 320px);
+  align-items: start;
+}
+@media (max-width: 1180px) {
+  .bp-ranking-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.bp-ranking-main {
+  display: grid;
+  min-width: 0;
+}
+
+.bp-class-panel {
+  display: grid;
+  gap: 14px;
+  padding: 18px 18px 20px;
+  border: 1px solid var(--bp-line, #e3ded4);
+  border-radius: 16px;
+  background: rgb(255 255 255 / 0.62);
+  box-shadow: 0 12px 30px rgb(7 50 92 / 0.07);
+}
+.bp-class-panel__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.bp-class-panel__head span {
+  color: #8b8073;
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+}
+.bp-class-panel__head h3 {
+  margin: 2px 0 0;
+  font-size: 16px;
+  letter-spacing: 0.02em;
+}
+.bp-class-panel__refresh {
+  margin-left: auto;
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border: 1px solid var(--bp-line, #e3ded4);
+  border-radius: 8px;
+  background: rgb(255 255 255 / 0.8);
+  color: #526d84;
+  cursor: pointer;
+}
+.bp-class-panel__refresh svg {
+  width: 15px;
+  height: 15px;
+}
+.bp-class-panel__refresh:hover:not(:disabled) {
+  border-color: #086fe7;
+  color: #086fe7;
+}
+.bp-class-panel__refresh svg.is-spinning {
+  animation: bp-class-spin 0.9s linear infinite;
+}
+@keyframes bp-class-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.bp-class-panel__rank {
+  display: flex;
+  margin: 0;
+  padding: 9px 12px;
+  align-items: center;
+  gap: 8px;
+  border-radius: 10px;
+  background: rgb(8 111 231 / 0.07);
+  color: #0f315b;
+  font-size: 12.5px;
+}
+.bp-class-panel__rank svg {
+  width: 15px;
+  height: 15px;
+  color: #086fe7;
+}
+.bp-class-panel__rank b {
+  margin-left: auto;
+  color: #086fe7;
+}
+
+.bp-class-panel__block {
+  display: grid;
+  gap: 9px;
+}
+.bp-class-panel__block h4 {
+  display: flex;
+  margin: 0;
+  align-items: center;
+  gap: 7px;
+  color: #47607a;
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+}
+.bp-class-panel__block h4 svg {
+  width: 15px;
+  height: 15px;
+  color: #086fe7;
+}
+.bp-class-panel__block h4 em {
+  margin-left: auto;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: rgb(8 111 231 / 0.1);
+  color: #086fe7;
+  font-size: 11px;
+  font-style: normal;
+}
+.bp-class-panel__empty {
+  margin: 0;
+  color: #8b8073;
+  font-size: 12.5px;
+  line-height: 1.7;
+}
+
+.bp-class-list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  gap: 8px;
+  list-style: none;
+}
+.bp-class-list li {
+  display: flex;
+  padding: 10px 11px;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--bp-line, #e3ded4);
+  border-radius: 11px;
+  background: rgb(255 255 255 / 0.72);
+}
+.bp-class-list__main {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+.bp-class-list__main strong {
+  color: #16232f;
+  font-size: 13px;
+}
+.bp-class-list__main small {
+  color: #8b8073;
+  font-size: 11px;
+  line-height: 1.55;
+}
+.bp-class-list__action {
+  margin-left: auto;
+  flex: 0 0 auto;
+  padding: 6px 11px;
+  border: 1px solid #086fe7;
+  border-radius: 8px;
+  background: rgb(8 111 231 / 0.08);
+  color: #086fe7;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+.bp-class-list__action:hover:not(:disabled) {
+  background: #086fe7;
+  color: #fff;
+}
+.bp-class-list__action:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.bp-class-list__action.is-danger {
+  border-color: #d9b3ab;
+  background: rgb(184 64 42 / 0.07);
+  color: #b8402a;
+}
+.bp-class-list__action.is-danger:hover:not(:disabled) {
+  background: #b8402a;
+  color: #fff;
+}
+.bp-class-list__state {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #0f8a63;
+  font-size: 11.5px;
+}
+.bp-class-list__state svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* 我的作业：放在「加入班级」下面，沿用班级列表的卡片语言，只占右侧面板位置，不挤占左侧排行榜。 */
+.bp-class-panel__block--homework {
+  margin-top: 4px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--bp-line, #e3ded4);
+}
+.bp-homework-list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  gap: 8px;
+  list-style: none;
+}
+.bp-homework-list li {
+  display: flex;
+  padding: 10px 11px;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--bp-line, #e3ded4);
+  /* 左侧状态色条已按要求去掉：状态改由文字标签与底色区分，卡片保持统一的细描边 */
+  border-radius: 11px;
+  background: rgb(255 255 255 / 0.72);
+}
+.bp-homework-list li.is-pending {
+  background: linear-gradient(100deg, rgb(255 249 233 / 0.9), rgb(255 255 255 / 0.72));
+}
+.bp-homework-list li.is-done {
+  background: rgb(240 249 245 / 0.6);
+}
+
+/* 悬停：一道很淡的光泽扫过 + 极轻抬起（1px）。刻意做得很克制——
+   光泽峰值透明度只有 .5、行程 70%、整段 560ms，指针离开即回位；
+   同时尊重侧栏「界面动效=减弱」开关与系统 prefers-reduced-motion。
+   注意 overflow:hidden 只裁卡片自身的装饰层，不会影响里面的按钮点击。 */
+.bp-homework-list li {
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform 180ms ease,
+    box-shadow 220ms ease,
+    border-color 180ms ease,
+    background-color 220ms ease;
+}
+.bp-homework-list li::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(104deg, transparent 40%, rgb(255 255 255 / 0.5) 50%, transparent 60%);
+  transform: translateX(-35%);
+  transition:
+    opacity 200ms ease,
+    transform 560ms cubic-bezier(0.22, 0.8, 0.2, 1);
+}
+.bp-homework-list li:hover {
+  border-color: rgb(8 111 231 / 0.26);
+  box-shadow: 0 7px 16px rgb(8 57 98 / 0.07);
+  transform: translateY(-1px);
+}
+.bp-homework-list li:hover::after {
+  opacity: 1;
+  transform: translateX(35%);
+}
+
+html[data-motion="reduce"] .bp-homework-list li,
+html[data-motion="reduce"] .bp-homework-list li::after {
+  transition: none;
+}
+html[data-motion="reduce"] .bp-homework-list li:hover {
+  transform: none;
+}
+html[data-motion="reduce"] .bp-homework-list li::after {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bp-homework-list li,
+  .bp-homework-list li::after {
+    transition: none;
+  }
+  .bp-homework-list li:hover {
+    transform: none;
+  }
+  .bp-homework-list li::after {
+    display: none;
+  }
+}
+.bp-homework-list__main {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+.bp-homework-list__main strong {
+  color: #16232f;
+  font-size: 13px;
+}
+.bp-homework-list__main small {
+  color: #8b8073;
+  font-size: 11px;
+  line-height: 1.55;
+}
+.bp-homework-list__side {
+  margin-left: auto;
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 8px;
+}
+.bp-homework-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  white-space: nowrap;
+}
+.bp-homework-state svg {
+  width: 13px;
+  height: 13px;
+}
+.bp-homework-state.is-pending {
+  color: #a8690f;
+}
+.bp-homework-state.is-done {
+  color: #0f8a63;
+}
+
+.bp-class-search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 4px 4px 10px;
+  border: 1px solid var(--bp-line, #e3ded4);
+  border-radius: 10px;
+  background: rgb(255 255 255 / 0.8);
+}
+.bp-class-search svg {
+  width: 15px;
+  height: 15px;
+  color: #8b8073;
+  flex: 0 0 auto;
+}
+.bp-class-search input {
+  min-width: 0;
+  flex: 1 1 auto;
+  border: 0;
+  background: transparent;
+  color: #16232f;
+  font: inherit;
+  font-size: 12.5px;
+  outline: none;
+}
+.bp-class-search button {
+  flex: 0 0 auto;
+  padding: 5px 10px;
+  border: 0;
+  border-radius: 7px;
+  background: #086fe7;
+  color: #fff;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.bp-class-search button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.bp-class-panel__foot {
+  display: flex;
+}
+.bp-class-panel__foot .bp-primary-action,
+.bp-class-panel__foot .bp-line-button {
+  width: 100%;
+  justify-content: center;
+}
+
+.bp-class-panel__notice {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.bp-class-panel__notice.is-ok {
+  color: #0f8a63;
+}
+.bp-class-panel__notice.is-error {
+  color: #b8402a;
+}
+.bp-class-panel__notice.is-info {
+  color: #8b8073;
+}

@@ -1,0 +1,17 @@
+{
+  "points": [
+    ["process-thread","进程与线程","进程是程序的一次执行实例，拥有独立地址空间；线程是进程内的调度单元，共享进程资源。","进程管理","foundation",["进程","线程","Process","Thread","PCB","TCB","并发"]],
+    ["process-state","进程状态与转换","进程在就绪、运行、阻塞等状态间因调度和事件而转换。","进程管理","foundation",["就绪","运行","阻塞","状态转换","三态模型","五态模型","挂起"]],
+    ["cpu-scheduling","处理机调度","按一定算法从就绪队列中选择进程占用 CPU。","处理机调度","intermediate",["调度算法","先来先服务","FCFS","短作业优先","SJF","时间片轮转","RR","优先级调度","多级反馈队列"]],
+    ["process-sync","进程同步与互斥","协调并发进程对共享资源的访问，避免竞争与不一致。","进程同步","intermediate",["临界区","互斥","同步","临界资源","竞争条件","race condition"]],
+    ["semaphore","信号量与PV操作","用信号量原语实现互斥、同步与资源计数。","进程同步","intermediate",["信号量","P操作","V操作","wait","signal","生产者消费者","Semaphore"]],
+    ["deadlock","死锁","多个进程因循环等待对方资源而永久阻塞。","死锁","intermediate",["死锁","死锁预防","死锁避免","银行家算法","Banker","环路等待","资源分配图"]],
+    ["memory-management","内存管理","对主存进行分配、回收、地址变换与保护。","内存管理","intermediate",["分区","分页","分段","页表","地址变换","连续分配","动态分区"]],
+    ["virtual-memory","虚拟内存与页面置换","用外存扩展逻辑地址空间并按需调入页面。","内存管理","intermediate",["虚拟内存","页面置换","LRU","FIFO","OPT","缺页","局部性","请求分页"]],
+    ["file-system","文件系统","文件的逻辑结构、物理组织、目录与空间管理。","文件管理","intermediate",["文件","目录","索引节点","inode","文件分配","FAT","空闲空间管理"]],
+    ["disk-io","磁盘与I/O管理","磁盘调度、设备管理与输入输出控制方式。","设备管理","intermediate",["磁盘调度","SCAN","SSTF","FCFS","I/O","中断","DMA","缓冲","SPOOLing"]]
+  ],
+  "relations": [
+    ["process-state","process-thread"],["cpu-scheduling","process-state"],["process-sync","process-thread"],["semaphore","process-sync"],["deadlock","process-sync"],["memory-management","process-thread"],["virtual-memory","memory-management"],["disk-io","file-system"]
+  ,["cpu-scheduling","process-thread"],["deadlock","semaphore"],["file-system","process-thread"],["disk-io","process-thread"]]
+}

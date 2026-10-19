@@ -1,0 +1,406 @@
+{
+  "version": 1,
+  "description": "补充别名。组员 catalog.json 里每个知识点的 aliases 只覆盖了教材常用叫法，而测验/开放题/代码练习/掌握度/错题里还用了另外一批名称；这些名称放不进 catalog 又需要能挂到图谱上，因此单独成文，由 seedKnowledgeGraph.js 写入 knowledge_point_aliases（INSERT IGNORE，幂等）。章节级名称（如“树与二叉树”）统一映射到该章最核心的那个知识点。",
+  "aliases": [
+    {
+      "dir": "data-structures",
+      "key": "complexity",
+      "name": "算法复杂度",
+      "aliases": [
+        "复杂度分析"
+      ]
+    },
+    {
+      "dir": "data-structures",
+      "key": "array",
+      "name": "数组",
+      "aliases": [
+        "线性表"
+      ]
+    },
+    {
+      "dir": "data-structures",
+      "key": "linked-list",
+      "name": "链表",
+      "aliases": [
+        "顺序表与链表",
+        "线性表"
+      ]
+    },
+    {
+      "dir": "data-structures",
+      "key": "stack",
+      "name": "栈",
+      "aliases": [
+        "栈与队列"
+      ]
+    },
+    {
+      "dir": "data-structures",
+      "key": "queue",
+      "name": "队列",
+      "aliases": [
+        "栈与队列"
+      ]
+    },
+    {
+      "dir": "data-structures",
+      "key": "tree",
+      "name": "树",
+      "aliases": [
+        "树与二叉树"
+      ]
+    },
+    {
+      "dir": "data-structures",
+      "key": "binary-tree",
+      "name": "二叉树",
+      "aliases": [
+        "树与二叉树",
+        "二叉树遍历"
+      ]
+    },
+    {
+      "dir": "data-structures",
+      "key": "preorder",
+      "name": "先序遍历",
+      "aliases": [
+        "二叉树前序遍历"
+      ]
+    },
+    {
+      "dir": "data-structures",
+      "key": "inorder",
+      "name": "中序遍历",
+      "aliases": [
+        "二叉树中序遍历"
+      ]
+    },
+    {
+      "dir": "data-structures",
+      "key": "graph",
+      "name": "图",
+      "aliases": [
+        "图结构"
+      ]
+    },
+    {
+      "dir": "data-structures",
+      "key": "dfs",
+      "name": "深度优先搜索",
+      "aliases": [
+        "图遍历"
+      ]
+    },
+    {
+      "dir": "data-structures",
+      "key": "bfs",
+      "name": "广度优先搜索",
+      "aliases": [
+        "图遍历"
+      ]
+    },
+    {
+      "dir": "data-structures",
+      "key": "heap",
+      "name": "堆",
+      "aliases": [
+        "堆与优先队列"
+      ]
+    },
+    {
+      "dir": "data-structures",
+      "key": "insertion-sort",
+      "name": "插入排序",
+      "aliases": [
+        "排序",
+        "插入排序与选择排序"
+      ]
+    },
+    {
+      "dir": "data-structures",
+      "key": "selection-sort",
+      "name": "选择排序",
+      "aliases": [
+        "插入排序与选择排序"
+      ]
+    },
+    {
+      "dir": "data-structures",
+      "key": "sequential-search",
+      "name": "顺序查找",
+      "aliases": [
+        "查找"
+      ]
+    },
+    {
+      "dir": "data-structures",
+      "key": "red-black-tree",
+      "name": "红黑树",
+      "aliases": [
+        "红黑树旋转"
+      ]
+    },
+    {
+      "dir": "operating-systems",
+      "key": "process-thread",
+      "name": "进程与线程",
+      "aliases": [
+        "进程、线程、调度与上下文切换"
+      ]
+    },
+    {
+      "dir": "operating-systems",
+      "key": "process-state",
+      "name": "进程状态与转换",
+      "aliases": [
+        "进程状态",
+        "系统调用与中断"
+      ]
+    },
+    {
+      "dir": "operating-systems",
+      "key": "cpu-scheduling",
+      "name": "处理机调度",
+      "aliases": [
+        "时间片轮转调度",
+        "调度算法评价"
+      ]
+    },
+    {
+      "dir": "operating-systems",
+      "key": "process-sync",
+      "name": "进程同步与互斥",
+      "aliases": [
+        "临界区与互斥",
+        "同步与互斥"
+      ]
+    },
+    {
+      "dir": "operating-systems",
+      "key": "semaphore",
+      "name": "信号量与PV操作",
+      "aliases": [
+        "信号量与死锁"
+      ]
+    },
+    {
+      "dir": "operating-systems",
+      "key": "deadlock",
+      "name": "死锁",
+      "aliases": [
+        "死锁条件"
+      ]
+    },
+    {
+      "dir": "operating-systems",
+      "key": "memory-management",
+      "name": "内存管理",
+      "aliases": [
+        "连续分配管理",
+        "分页管理"
+      ]
+    },
+    {
+      "dir": "operating-systems",
+      "key": "virtual-memory",
+      "name": "虚拟内存与页面置换",
+      "aliases": [
+        "页面置换算法"
+      ]
+    },
+    {
+      "dir": "operating-systems",
+      "key": "file-system",
+      "name": "文件系统",
+      "aliases": [
+        "文件目录与索引",
+        "文件系统与I/O"
+      ]
+    },
+    {
+      "dir": "operating-systems",
+      "key": "disk-io",
+      "name": "磁盘与I/O管理",
+      "aliases": [
+        "设备管理"
+      ]
+    },
+    {
+      "dir": "computer-organization",
+      "key": "number-representation",
+      "name": "数据的表示",
+      "aliases": [
+        "数据表示",
+        "补码表示",
+        "浮点数表示"
+      ]
+    },
+    {
+      "dir": "computer-organization",
+      "key": "alu",
+      "name": "运算方法与运算器",
+      "aliases": [
+        "运算器"
+      ]
+    },
+    {
+      "dir": "computer-organization",
+      "key": "cpu-datapath",
+      "name": "CPU数据通路",
+      "aliases": [
+        "CPU结构"
+      ]
+    },
+    {
+      "dir": "computer-organization",
+      "key": "memory-hierarchy",
+      "name": "存储层次",
+      "aliases": [
+        "存储层次结构",
+        "虚拟存储"
+      ]
+    },
+    {
+      "dir": "computer-organization",
+      "key": "cache",
+      "name": "高速缓冲存储器",
+      "aliases": [
+        "Cache 映射方式",
+        "Cache 写策略"
+      ]
+    },
+    {
+      "dir": "computer-organization",
+      "key": "main-memory",
+      "name": "主存储器",
+      "aliases": [
+        "存储系统",
+        "主存编址"
+      ]
+    },
+    {
+      "dir": "computer-organization",
+      "key": "bus",
+      "name": "系统总线",
+      "aliases": [
+        "总线结构"
+      ]
+    },
+    {
+      "dir": "computer-organization",
+      "key": "io-interrupt",
+      "name": "I/O与中断",
+      "aliases": [
+        "中断机制",
+        "I/O 控制方式",
+        "输入输出系统"
+      ]
+    },
+    {
+      "dir": "computer-networks",
+      "key": "network-arch",
+      "name": "网络体系结构",
+      "aliases": [
+        "分层模型",
+        "网络分层模型"
+      ]
+    },
+    {
+      "dir": "computer-networks",
+      "key": "data-link",
+      "name": "数据链路层",
+      "aliases": [
+        "物理层与数据链路层",
+        "以太网与 MAC"
+      ]
+    },
+    {
+      "dir": "computer-networks",
+      "key": "ip",
+      "name": "网际协议与子网",
+      "aliases": [
+        "IP地址与子网",
+        "IP 地址与子网划分",
+        "网络层转发",
+        "NAT"
+      ]
+    },
+    {
+      "dir": "computer-networks",
+      "key": "arp",
+      "name": "地址解析协议",
+      "aliases": [
+        "ARP 与 ICMP"
+      ]
+    },
+    {
+      "dir": "computer-networks",
+      "key": "routing",
+      "name": "路由选择",
+      "aliases": [
+        "路由协议"
+      ]
+    },
+    {
+      "dir": "computer-networks",
+      "key": "tcp",
+      "name": "TCP可靠传输",
+      "aliases": [
+        "TCP 可靠传输",
+        "可靠传输与控制",
+        "TCP与UDP"
+      ]
+    },
+    {
+      "dir": "computer-networks",
+      "key": "tcp-conn",
+      "name": "TCP连接管理",
+      "aliases": [
+        "TCP连接建立、数据传输与连接释放",
+        "TCP 连接管理"
+      ]
+    },
+    {
+      "dir": "computer-networks",
+      "key": "app-layer",
+      "name": "应用层协议",
+      "aliases": [
+        "DNS与HTTP",
+        "Web 访问流程"
+      ]
+    },
+    {
+      "dir": "c-language",
+      "key": "c-basics",
+      "name": "数据类型与变量",
+      "aliases": [
+        "数据类型与运算符"
+      ]
+    },
+    {
+      "dir": "c-language",
+      "key": "c-control",
+      "name": "流程控制",
+      "aliases": [
+        "分支与循环"
+      ]
+    },
+    {
+      "dir": "c-language",
+      "key": "c-functions",
+      "name": "函数",
+      "aliases": [
+        "函数与递归"
+      ]
+    },
+    {
+      "dir": "c-language",
+      "key": "c-memory",
+      "name": "动态内存管理",
+      "aliases": [
+        "动态内存与文件"
+      ]
+    }
+  ]
+}

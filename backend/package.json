@@ -1,0 +1,52 @@
+{
+  "name": "edusmart-backend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "智课研伴 Node/Express/MySQL 后端基础骨架",
+  "main": "src/index.js",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js",
+    "db:assignment-question-types": "node scripts/applyAssignmentQuestionTypes.js",
+    "test": "node --test \"test/**/*.test.js\" \"test/**/*.integration.test.js\"",
+    "db:init": "node scripts/initDatabase.js",
+    "demo:seed": "node scripts/seedCompetitionDemo.js",
+    "demo:verify": "node scripts/verifyCompetitionDemo.js",
+    "demo:reset": "node scripts/resetCompetitionDemo.js",
+    "demo:adopt-legacy": "node scripts/adoptLegacyDemoAccounts.js",
+    "seed:base-questions": "node scripts/seedBaseQuestionBank.js",
+    "import:extended-questions": "node scripts/importExtendedQuestionBank.js",
+    "question-bank:verify": "node scripts/verifyQuestionBank.js",
+    "import:open-questions": "node scripts/importOpenQuestionBank.js",
+    "seed:code-exercises": "node scripts/seedCodeExercises.js",
+    "seed:code-judge-upgrade": "node scripts/importCodeJudgeUpgrade.js",
+    "seed:learning-loop": "node scripts/seedLearningLoopDemo.js",
+    "reset:learning-resources": "node scripts/resetLearningResourceDemo.js",
+    "verify:pptx": "node scripts/verifyPptx.js",
+    "import:knowledge-base": "node scripts/importKnowledgeBase.js",
+    "seed:knowledge-graph": "node scripts/seedKnowledgeGraph.js",
+    "verify:knowledge-base": "node scripts/verifyKnowledgeBase.js",
+    "code-runner:build": "docker build -t learnmate/code-runner-c:2.4a docker/code-runner-c",
+    "code-runner:verify": "node scripts/verifyCodeRunnerDocker.js",
+    "code-runner:verify-api": "node scripts/verifyCodeApiDocker.js",
+    "code-case:verify-trusted": "node scripts/verifyTrustedCodeCaseExercises.js",
+    "test:docker-judge": "node --test docker-tests/dockerJudge.integration.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "jszip": "^3.10.1",
+    "mysql2": "^3.11.5",
+    "pptxgenjs": "^4.0.1",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "supertest": "^7.1.4"
+  }
+}

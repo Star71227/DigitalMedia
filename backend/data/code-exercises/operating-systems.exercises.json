@@ -1,0 +1,282 @@
+[
+  {
+    "exercise_id": "OS_CODE_001",
+    "subject": "操作系统",
+    "knowledge_point": "处理机调度",
+    "title": "先来先服务调度算法 FCFS",
+    "description": "给定 3 个进程的到达时间与服务时间，按 FCFS（先来先服务）规则计算各进程的完成时间、周转时间、带权周转时间，以及平均周转时间和平均带权周转时间。数据已写死在 main() 中，只需补全 fcfs() 函数，无需从 stdin 读入。",
+    "language": "c",
+    "difficulty": "基础",
+    "starter_code": "#include <stdio.h>\n\n#define N 3\n\n/* 计算 FCFS（先来先服务）调度结果\n * 参数：\n *   n            进程数\n *   arrive[]     各进程到达时间\n *   service[]    各进程服务时间\n *   finish[]     输出：各进程完成时间\n *   turnaround[] 输出：各进程周转时间 = 完成时间 - 到达时间\n *   wturn[]      输出：各进程带权周转时间 = 周转时间 / 服务时间\n * 提示：用 cur 表示当前时间，按到达先后依次执行：\n *   if (cur < arrive[i]) cur = arrive[i];      // CPU 空闲则等待进程到达\n *   finish[i] = cur + service[i];\n *   cur = finish[i];\n *   turnaround[i] = finish[i] - arrive[i];\n *   wturn[i] = (double)turnaround[i] / service[i];\n * 返回值：0\n */\nint fcfs(int n, const int arrive[], const int service[], int finish[],\n         int turnaround[], double wturn[])\n{\n    /* ===== TODO BEGIN ===== */\n    /* TODO: 在这里实现 FCFS 调度算法，填写 finish / turnaround / wturn */\n    (void)n; (void)arrive; (void)service;\n    (void)finish; (void)turnaround; (void)wturn;\n    return 0;\n    /* ===== TODO END ===== */\n}\n\nint main(void)\n{\n    const int arrive[N] = {0, 1, 2};\n    const int service[N] = {3, 6, 4};\n    int finish[N] = {0};\n    int turnaround[N] = {0};\n    double wturn[N] = {0.0};\n    double sum_t = 0.0, sum_w = 0.0;\n\n    fcfs(N, arrive, service, finish, turnaround, wturn);\n\n    printf(\"进程\\t完成时间\\t周转时间\\t带权周转时间\\n\");\n    for (int i = 0; i < N; i++) {\n        printf(\"P%d\\t%d\\t%d\\t%.2f\\n\", i + 1, finish[i], turnaround[i], wturn[i]);\n        sum_t += turnaround[i];\n        sum_w += wturn[i];\n    }\n    printf(\"平均周转时间：%.2f\\n\", sum_t / N);\n    printf(\"平均带权周转时间：%.2f\\n\", sum_w / N);\n    return 0;\n}\n",
+    "sample_input": "（数据已写死在 main() 中，无需输入）\n等价输入格式：\n3\n0 3\n1 6\n2 4\n（第一行进程数，其后每行：到达时间 服务时间）",
+    "sample_output": "进程\t完成时间\t周转时间\t带权周转时间\nP1\t3\t3\t1.00\nP2\t9\t8\t1.33\nP3\t13\t11\t2.75\n平均周转时间：7.33\n平均带权周转时间：1.69",
+    "explanation": "FCFS 严格按到达顺序执行：P1(0,3) 在 0 时刻开始、3 时刻完成；P2(1,6) 等待到 3 时刻开始、9 时刻完成；P3(2,4) 等待到 9 时刻开始、13 时刻完成。周转时间＝完成时间−到达时间，分别为 3、8、11，平均 (3+8+11)/3＝7.33；带权周转时间＝周转时间/服务时间，分别为 3/3＝1.00、8/6≈1.33、11/4＝2.75，平均 (1.00+1.3333+2.75)/3≈1.69。注意 P2、P3 的等待是 FCFS 出现“护航效应”的原因。",
+    "tags": [
+      "处理机调度",
+      "FCFS",
+      "周转时间",
+      "带权周转时间"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "OS_CODE_002",
+    "subject": "操作系统",
+    "knowledge_point": "处理机调度",
+    "title": "短作业优先调度算法 SJF（非抢占）",
+    "description": "4 个进程的到达时间与服务时间已给出，按非抢占式 SJF 规则确定执行顺序，输出执行顺序、各进程完成时间、周转时间、带权周转时间及两个平均值。服务时间相同时选择下标较小的进程，保证结果唯一。",
+    "language": "c",
+    "difficulty": "基础",
+    "starter_code": "#include <stdio.h>\n\n#define N 4\n\n/* 非抢占式 SJF（短作业优先）调度\n * 参数：\n *   n            进程数\n *   arrive[]     各进程到达时间（按输入顺序非递减）\n *   service[]    各进程服务时间\n *   finish[]     输出：完成时间\n *   turnaround[] 输出：周转时间 = 完成时间 - 到达时间\n *   wturn[]      输出：带权周转时间 = 周转时间 / 服务时间\n *   order[]      输出：实际执行顺序，存放进程下标 0..n-1\n * 规则：\n *   1) 在已到达（arrive[i] <= 当前时间）且未完成的进程中，选服务时间最短者执行；\n *      服务时间相同时选下标较小者。\n *   2) 若当前没有进程到达，把当前时间直接推进到最近一个进程的到达时刻。\n *   3) 非抢占：进程一旦开始执行就运行到结束。\n * 提示：用 done[] 标记已完成进程，外层循环执行 n 次。\n * 返回值：0\n */\nint sjf(int n, const int arrive[], const int service[], int finish[],\n        int turnaround[], double wturn[], int order[])\n{\n    /* ===== TODO BEGIN ===== */\n    /* TODO: 在这里实现非抢占式 SJF 调度算法 */\n    (void)n; (void)arrive; (void)service;\n    (void)finish; (void)turnaround; (void)wturn; (void)order;\n    return 0;\n    /* ===== TODO END ===== */\n}\n\nint main(void)\n{\n    const int arrive[N] = {0, 2, 4, 5};\n    const int service[N] = {7, 4, 1, 4};\n    int finish[N] = {0};\n    int turnaround[N] = {0};\n    double wturn[N] = {0.0};\n    int order[N] = {0};\n    double sum_t = 0.0, sum_w = 0.0;\n\n    sjf(N, arrive, service, finish, turnaround, wturn, order);\n\n    printf(\"执行顺序：\");\n    for (int i = 0; i < N; i++) {\n        printf(\"%sP%d\", i ? \" -> \" : \"\", order[i] + 1);\n    }\n    printf(\"\\n\");\n    printf(\"进程\\t完成时间\\t周转时间\\t带权周转时间\\n\");\n    for (int i = 0; i < N; i++) {\n        printf(\"P%d\\t%d\\t%d\\t%.2f\\n\", i + 1, finish[i], turnaround[i], wturn[i]);\n        sum_t += turnaround[i];\n        sum_w += wturn[i];\n    }\n    printf(\"平均周转时间：%.2f\\n\", sum_t / N);\n    printf(\"平均带权周转时间：%.2f\\n\", sum_w / N);\n    return 0;\n}\n",
+    "sample_input": "（数据已写死在 main() 中，无需输入）\n等价输入格式：\n4\n0 7\n2 4\n4 1\n5 4\n（第一行进程数，其后每行：到达时间 服务时间）",
+    "sample_output": "执行顺序：P1 -> P3 -> P2 -> P4\n进程\t完成时间\t周转时间\t带权周转时间\nP1\t7\t7\t1.00\nP2\t12\t10\t2.50\nP3\t8\t4\t4.00\nP4\t16\t11\t2.75\n平均周转时间：8.00\n平均带权周转时间：2.56",
+    "explanation": "t=0 时只有 P1 到达，执行 P1（0→7）；t=7 时 P2、P3、P4 均已到达，服务时间为 4、1、4，选最短的 P3（7→8）；t=8 时 P2、P4 服务时间都是 4，按下标小者选 P2（8→12）；最后执行 P4（12→16）。执行顺序 P1→P3→P2→P4。周转时间＝完成时间−到达时间：7、10、4、11，平均 32/4＝8.00；带权周转时间：7/7＝1.00、10/4＝2.50、4/1＝4.00、11/4＝2.75，平均 10.25/4≈2.56。",
+    "tags": [
+      "处理机调度",
+      "SJF",
+      "周转时间",
+      "执行顺序"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "OS_CODE_003",
+    "subject": "操作系统",
+    "knowledge_point": "处理机调度",
+    "title": "时间片轮转调度算法 RR",
+    "description": "3 个进程，时间片 q=2，按 RR 规则模拟调度过程：输出每个时间片的执行区间（进程与起止时刻），以及各进程完成时间、周转时间、带权周转时间和平均值。入队规则在函数注释中给出：时间片结束时先让新到达且未入队的进程入队，再把用完时间片仍未结束的进程排到队尾；就绪队列为空时时间推进到下一个到达时刻。",
+    "language": "c",
+    "difficulty": "提高",
+    "starter_code": "#include <stdio.h>\n\n#define N 3\n#define QUANTUM 2\n\n/* 时间片轮转调度 RR（时间片 = QUANTUM）\n * 参数：\n *   n            进程数\n *   arrive[]     各进程到达时间\n *   service[]    各进程服务时间\n *   quantum      时间片大小\n *   finish[]     输出：完成时间\n *   turnaround[] 输出：周转时间 = 完成时间 - 到达时间\n *   wturn[]      输出：带权周转时间 = 周转时间 / 服务时间\n *   sched_pid[]  输出：第 k 个时间片执行的进程下标\n *   sched_start[]输出：第 k 个时间片的开始时刻\n *   sched_end[]  输出：第 k 个时间片的结束时刻\n *   *slice_count 输出：时间片总数\n * 规则（务必按此规则模拟，保证结果唯一）：\n *   1) 就绪队列按到达时间先后排队；同一时刻到达的按下标从小到大排队。\n *   2) 队首进程运行 min(剩余服务时间, quantum) 个时间单位。\n *   3) 一个时间片结束后：先让在该时间片结束时刻之前（含）已经到达且尚未入队的进程入队，\n *      再把时间片用完但未结束的进程排到队尾。\n *   4) 就绪队列为空时，当前时间直接推进到下一个未完成进程的到达时刻。\n * 提示：remain[] 记录剩余服务时间，用数组加 head/tail 模拟队列。\n * 返回值：0\n */\nint rr(int n, const int arrive[], const int service[], int quantum,\n       int finish[], int turnaround[], double wturn[],\n       int sched_pid[], int sched_start[], int sched_end[], int *slice_count)\n{\n    /* ===== TODO BEGIN ===== */\n    /* TODO: 在这里实现时间片轮转调度算法 */\n    (void)n; (void)arrive; (void)service; (void)quantum;\n    (void)finish; (void)turnaround; (void)wturn;\n    (void)sched_pid; (void)sched_start; (void)sched_end; (void)slice_count;\n    return 0;\n    /* ===== TODO END ===== */\n}\n\nint main(void)\n{\n    const int arrive[N] = {0, 1, 3};\n    const int service[N] = {5, 4, 2};\n    int finish[N] = {0};\n    int turnaround[N] = {0};\n    double wturn[N] = {0.0};\n    int sched_pid[64] = {0};\n    int sched_start[64] = {0};\n    int sched_end[64] = {0};\n    int slices = 0;\n    double sum_t = 0.0, sum_w = 0.0;\n\n    rr(N, arrive, service, QUANTUM, finish, turnaround, wturn,\n       sched_pid, sched_start, sched_end, &slices);\n\n    printf(\"时间片大小：%d\\n\", QUANTUM);\n    printf(\"执行时间片：\\n\");\n    for (int k = 0; k < slices; k++) {\n        printf(\"P%d %d-%d\\n\", sched_pid[k] + 1, sched_start[k], sched_end[k]);\n    }\n    printf(\"进程\\t完成时间\\t周转时间\\t带权周转时间\\n\");\n    for (int i = 0; i < N; i++) {\n        printf(\"P%d\\t%d\\t%d\\t%.2f\\n\", i + 1, finish[i], turnaround[i], wturn[i]);\n        sum_t += turnaround[i];\n        sum_w += wturn[i];\n    }\n    printf(\"平均周转时间：%.2f\\n\", sum_t / N);\n    printf(\"平均带权周转时间：%.2f\\n\", sum_w / N);\n    return 0;\n}\n",
+    "sample_input": "（数据已写死在 main() 中，无需输入）\n等价输入格式：\n3 2\n0 5\n1 4\n3 2\n（第一行：进程数 时间片；其后每行：到达时间 服务时间）",
+    "sample_output": "时间片大小：2\n执行时间片：\nP1 0-2\nP2 2-4\nP1 4-6\nP3 6-8\nP2 8-10\nP1 10-11\n进程\t完成时间\t周转时间\t带权周转时间\nP1\t11\t11\t2.20\nP2\t10\t9\t2.25\nP3\t8\t5\t2.50\n平均周转时间：8.33\n平均带权周转时间：2.32",
+    "explanation": "时间片序列为 P1[0-2]、P2[2-4]、P1[4-6]、P3[6-8]、P2[8-10]、P1[10-11]。P2 在 1 时刻到达、P3 在 3 时刻到达，都先于被抢占的进程入队，因此 P1 在第 2 个时间片结束后排到队尾。完成时间 P1=11、P2=10、P3=8；周转时间 11、9、5，平均 25/3≈8.33；带权周转时间 11/5＝2.20、9/4＝2.25、5/2＝2.50，平均 6.95/3≈2.32。时间片过大会退化为 FCFS，过小则进程切换开销增大。",
+    "tags": [
+      "处理机调度",
+      "时间片轮转",
+      "RR",
+      "周转时间"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "OS_CODE_004",
+    "subject": "操作系统",
+    "knowledge_point": "处理机调度",
+    "title": "非抢占式优先级调度算法",
+    "description": "4 个进程给出到达时间、服务时间和优先数（数值越小优先级越高），按非抢占式优先级调度确定执行顺序，输出执行顺序与各进程的完成时间、周转时间、带权周转时间及平均值。优先数相同时选择下标较小的进程。",
+    "language": "c",
+    "difficulty": "提高",
+    "starter_code": "#include <stdio.h>\n\n#define N 4\n\n/* 非抢占式优先级调度（优先数越小优先级越高）\n * 参数：\n *   n            进程数\n *   arrive[]     各进程到达时间\n *   service[]    各进程服务时间\n *   prio[]       各进程优先数（数值越小优先级越高）\n *   finish[]     输出：完成时间\n *   turnaround[] 输出：周转时间 = 完成时间 - 到达时间\n *   wturn[]      输出：带权周转时间 = 周转时间 / 服务时间\n *   order[]      输出：实际执行顺序（存放进程下标 0..n-1）\n * 规则：\n *   1) 在已到达且未完成的进程中选优先数最小者（优先级最高）执行；\n *      优先数相同时选下标较小者。\n *   2) 当前无进程到达时，把当前时间推进到最近到达时刻。\n *   3) 非抢占：一旦开始执行就运行到结束。\n * 返回值：0\n */\nint priority_sched(int n, const int arrive[], const int service[], const int prio[],\n                   int finish[], int turnaround[], double wturn[], int order[])\n{\n    /* ===== TODO BEGIN ===== */\n    /* TODO: 在这里实现非抢占式优先级调度算法 */\n    (void)n; (void)arrive; (void)service; (void)prio;\n    (void)finish; (void)turnaround; (void)wturn; (void)order;\n    return 0;\n    /* ===== TODO END ===== */\n}\n\nint main(void)\n{\n    const int arrive[N] = {0, 1, 2, 5};\n    const int service[N] = {3, 6, 4, 2};\n    const int prio[N] = {3, 1, 4, 2};\n    int finish[N] = {0};\n    int turnaround[N] = {0};\n    double wturn[N] = {0.0};\n    int order[N] = {0};\n    double sum_t = 0.0, sum_w = 0.0;\n\n    priority_sched(N, arrive, service, prio, finish, turnaround, wturn, order);\n\n    printf(\"执行顺序：\");\n    for (int i = 0; i < N; i++) {\n        printf(\"%sP%d\", i ? \" -> \" : \"\", order[i] + 1);\n    }\n    printf(\"\\n\");\n    printf(\"进程\\t完成时间\\t周转时间\\t带权周转时间\\n\");\n    for (int i = 0; i < N; i++) {\n        printf(\"P%d\\t%d\\t%d\\t%.2f\\n\", i + 1, finish[i], turnaround[i], wturn[i]);\n        sum_t += turnaround[i];\n        sum_w += wturn[i];\n    }\n    printf(\"平均周转时间：%.2f\\n\", sum_t / N);\n    printf(\"平均带权周转时间：%.2f\\n\", sum_w / N);\n    return 0;\n}\n",
+    "sample_input": "（数据已写死在 main() 中，无需输入）\n等价输入格式：\n4\n0 3 3\n1 6 1\n2 4 4\n5 2 2\n（第一行进程数，其后每行：到达时间 服务时间 优先数）",
+    "sample_output": "执行顺序：P1 -> P2 -> P4 -> P3\n进程\t完成时间\t周转时间\t带权周转时间\nP1\t3\t3\t1.00\nP2\t9\t8\t1.33\nP3\t15\t13\t3.25\nP4\t11\t6\t3.00\n平均周转时间：7.50\n平均带权周转时间：2.15",
+    "explanation": "t=0 只有 P1 到达，执行 P1（0→3）；t=3 时 P2（优先数 1）优先级高于 P3（4），执行 P2（3→9）；t=9 时 P4（优先数 2）已到达且高于 P3（4），执行 P4（9→11）；最后执行 P3（11→15）。执行顺序 P1→P2→P4→P3。周转时间 3、8、13、6，平均 30/4＝7.50；带权周转时间 3/3＝1.00、8/6≈1.33、13/4＝3.25、6/2＝3.00，平均 8.5833/4≈2.15。若改为抢占式，P2 到达时会抢占 P1，结果将不同。",
+    "tags": [
+      "处理机调度",
+      "优先级调度",
+      "周转时间",
+      "非抢占"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "OS_CODE_005",
+    "subject": "操作系统",
+    "knowledge_point": "死锁",
+    "title": "银行家算法安全性检查",
+    "description": "经典 5 进程 3 类资源例题：给出 Available、Allocation 和 Max，先计算 Need＝Max−Allocation 矩阵，再用银行家算法做安全性检查，判断系统是否安全；安全时输出安全序列以及每执行完一个进程后的 Available 向量。查找规则：按下标 0→n-1 的顺序逐轮扫描，遇到满足 Need≤Work 的进程就立即执行它，并在本轮内继续往后扫（不回到下标 0 重扫），直到某一轮没有任何进程可执行为止。该实例本身存在多个安全序列，但按此规则得到的结果是唯一确定的。",
+    "language": "c",
+    "difficulty": "综合",
+    "starter_code": "#include <stdio.h>\n\n#define N 5   /* 进程数 */\n#define M 3   /* 资源种类数 */\n\n/* 银行家算法安全性检查\n * 参数：\n *   n       进程数\n *   m       资源种类数\n *   avail[] 当前可用资源向量 Available\n *   alloc[] 分配矩阵 Allocation\n *   maxm[]  最大需求矩阵 Max\n *   need[]  输出：需求矩阵 Need = Max - Allocation\n *   seq[]   输出：安全序列（进程下标），不安全时内容无意义\n *   wlog[]  输出：每执行完一个进程后的 Available（与 seq 对应）\n * 算法：\n *   1) Work = Available，Finish[i] = 0。\n *   2) 反复进行“一轮扫描”：按下标 0 → n-1 的顺序扫描，遇到 Finish[i]==0 且\n *      Need[i][j] <= Work[j]（对所有 j）的进程就立即执行它：\n *      Work[j] += Allocation[i][j]，Finish[i] = 1，把 i 追加到安全序列，\n *      把执行后的 Work 记入 wlog，然后继续本次扫描（不回到下标 0 重新开始）。\n *   3) 当某一轮扫描中没有任何进程可以执行时结束。\n *   4) 若所有进程都进入了安全序列，则系统安全，返回 1；否则返回 0。\n *      按此规则得到的安全序列是唯一确定的（本题应为 P1→P3→P4→P0→P2）；该实例本身有多个安全序列，这里说的是按本规则输出的结果唯一。\n * 返回值：1 = 安全，0 = 不安全\n */\nint bankers(int n, int m, const int avail[], const int alloc[][M], const int maxm[][M],\n            int need[][M], int seq[], int wlog[][M])\n{\n    /* ===== TODO BEGIN ===== */\n    /* TODO: 在这里实现银行家算法的安全性检查 */\n    (void)n; (void)m; (void)avail; (void)alloc; (void)maxm;\n    (void)need; (void)seq; (void)wlog;\n    return 0;\n    /* ===== TODO END ===== */\n}\n\nint main(void)\n{\n    const int avail[M] = {3, 3, 2};\n    const int alloc[N][M] = {{0, 1, 0}, {2, 0, 0}, {3, 0, 2}, {2, 1, 1}, {0, 0, 2}};\n    const int maxm[N][M] = {{7, 5, 3}, {3, 2, 2}, {9, 0, 2}, {2, 2, 2}, {4, 3, 3}};\n    int need[N][M] = {{0}};\n    int seq[N] = {0};\n    int wlog[N][M] = {{0}};\n    int safe;\n\n    safe = bankers(N, M, avail, alloc, maxm, need, seq, wlog);\n\n    printf(\"Need 矩阵（Max - Allocation）：\\n\");\n    printf(\"进程\\tA B C\\n\");\n    for (int i = 0; i < N; i++) {\n        printf(\"P%d\\t%d %d %d\\n\", i, need[i][0], need[i][1], need[i][2]);\n    }\n    if (safe) {\n        printf(\"安全检查过程：\\n\");\n        for (int k = 0; k < N; k++) {\n            printf(\"P%d 执行完毕，Available = (%d, %d, %d)\\n\",\n                   seq[k], wlog[k][0], wlog[k][1], wlog[k][2]);\n        }\n        printf(\"安全序列：\");\n        for (int k = 0; k < N; k++) {\n            printf(\"%sP%d\", k ? \" -> \" : \"\", seq[k]);\n        }\n        printf(\"\\n\");\n        printf(\"系统处于安全状态\\n\");\n    } else {\n        printf(\"系统处于不安全状态，不存在安全序列\\n\");\n    }\n    return 0;\n}\n",
+    "sample_input": "（数据已写死在 main() 中，无需输入）\n等价输入格式：\n5 3\n3 3 2\n0 1 0 | 7 5 3\n2 0 0 | 3 2 2\n3 0 2 | 9 0 2\n2 1 1 | 2 2 2\n0 0 2 | 4 3 3\n（第一行：进程数 资源类数；第二行 Available；其后每行：Allocation | Max）",
+    "sample_output": "Need 矩阵（Max - Allocation）：\n进程\tA B C\nP0\t7 4 3\nP1\t1 2 2\nP2\t6 0 0\nP3\t0 1 1\nP4\t4 3 1\n安全检查过程：\nP1 执行完毕，Available = (5, 3, 2)\nP3 执行完毕，Available = (7, 4, 3)\nP4 执行完毕，Available = (7, 4, 5)\nP0 执行完毕，Available = (7, 5, 5)\nP2 执行完毕，Available = (10, 5, 7)\n安全序列：P1 -> P3 -> P4 -> P0 -> P2\n系统处于安全状态",
+    "explanation": "Need＝Max−Allocation，例如 P0＝(7,4,3)、P1＝(1,2,2)、P2＝(6,0,0)。初始 Work＝Available＝(3,3,2)，能装下的只有 P1(1,2,2)→Work=(5,3,2)；同一轮扫描继续往后：P3(0,1,1) 可满足→Work=(7,4,3)；P4(4,3,1) 可满足→Work=(7,4,5)；本轮扫描结束（P0 在本轮开头检查时 Work 还是 (3,3,2)，不满足条件且本轮不再回头检查）。下一轮 P0(7,4,3) 可满足→Work=(7,5,5)；接着 P2(6,0,0) 可满足→Work=(10,5,7)。5 个进程全部可完成，因此系统处于安全状态，按题面规定的扫描规则得到的安全序列为 P1→P3→P4→P0→P2。若改用“每次都从下标 0 重新扫描”的写法会得到另一个同样合法的安全序列 P1→P3→P0→P2→P4，本题已明确规定扫描规则以保证答案唯一。银行家算法用“避免死锁”的策略代替“死锁检测”，要求进程提前声明最大需求。",
+    "tags": [
+      "死锁",
+      "银行家算法",
+      "安全序列",
+      "安全性检查"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "OS_CODE_006",
+    "subject": "操作系统",
+    "knowledge_point": "内存管理",
+    "title": "首次适应算法（First Fit）动态分区分配",
+    "description": "内存中有 5 个分区（大小 100、500、200、300、600KB，其中分区 2 已被占用），依次到来 3 个作业，请求 212、417、112KB 的连续内存。用首次适应算法（从低地址扫描，选择第一个装得下的空闲分区）完成分配，输出每次分配的落点与剩余空间，以及最终空闲分区表和总空闲空间。",
+    "language": "c",
+    "difficulty": "基础",
+    "starter_code": "#include <stdio.h>\n\n#define PN 5   /* 分区个数（按地址递增排列） */\n#define RN 3   /* 作业（请求）个数 */\n\n/* 首次适应算法（First Fit）动态分区分配\n * 参数：\n *   pn          分区个数\n *   size[]      各分区当前大小（分配后要被改小）\n *   free_flag[] 各分区是否空闲（1 空闲，0 已占用），分配后可能变为 0\n *   req[]       各作业请求的连续内存大小\n *   rn          请求个数\n *   part[]      输出：第 i 个作业分配到的分区号（1 起），失败为 -1\n *   remain[]    输出：第 i 个作业分配后该分区的剩余大小，失败为 0\n * 规则：从低地址开始扫描分区表，选择第一个大小满足要求且空闲的分区；\n *       若分区剩余为 0 则该分区标记为已占用（free_flag = 0），\n *       否则把分区大小改为剩余大小，仍然空闲；\n *       找不到满足要求的分区则分配失败。\n * 返回值：成功分配的作业个数\n */\nint first_fit(int pn, int size[], int free_flag[], const int req[], int rn,\n              int part[], int remain[])\n{\n    /* ===== TODO BEGIN ===== */\n    /* TODO: 在这里实现首次适应算法 */\n    (void)pn; (void)size; (void)free_flag; (void)req; (void)rn;\n    (void)part; (void)remain;\n    return 0;\n    /* ===== TODO END ===== */\n}\n\nint main(void)\n{\n    int size[PN] = {100, 500, 200, 300, 600};\n    int free_flag[PN] = {1, 0, 1, 1, 1};   /* 分区2 已被占用 */\n    const int req[RN] = {212, 417, 112};\n    int part[RN] = {0};\n    int remain[RN] = {0};\n    int total = 0;\n\n    first_fit(PN, size, free_flag, req, RN, part, remain);\n\n    for (int i = 0; i < RN; i++) {\n        if (part[i] > 0) {\n            printf(\"作业%d 请求 %dKB -> 分配在 分区%d，该分区剩余 %dKB\\n\",\n                   i + 1, req[i], part[i], remain[i]);\n        } else {\n            printf(\"作业%d 请求 %dKB -> 分配失败\\n\", i + 1, req[i]);\n        }\n    }\n    printf(\"最终空闲分区（按地址顺序）：\");\n    for (int i = 0; i < PN; i++) {\n        if (free_flag[i]) {\n            if (total > 0) printf(\" \");\n            printf(\"%d\", size[i]);\n            total += size[i];\n        }\n    }\n    printf(\"\\n总空闲空间：%dKB\\n\", total);\n    return 0;\n}\n",
+    "sample_input": "（数据已写死在 main() 中，无需输入）\n等价输入格式：\n5\n100 1\n500 0\n200 1\n300 1\n600 1\n3\n212\n417\n112\n（分区：大小 是否空闲；随后 3 个请求大小）",
+    "sample_output": "作业1 请求 212KB -> 分配在 分区4，该分区剩余 88KB\n作业2 请求 417KB -> 分配在 分区5，该分区剩余 183KB\n作业3 请求 112KB -> 分配在 分区3，该分区剩余 88KB\n最终空闲分区（按地址顺序）：100 88 88 183\n总空闲空间：459KB",
+    "explanation": "首次适应按地址递增扫描，命中第一个足够大的空闲分区即分配：212KB 时 100、200 都不够，落在 300KB 的分区 4，剩余 88KB；417KB 时只有 600KB 的分区 5 够，剩余 183KB；112KB 由 200KB 的分区 3 满足，剩余 88KB。最终空闲分区为 100、88、88、183KB，合计 459KB，等于初始空闲 1200KB 减去已分配 212+417+112＝741KB，数值校验一致。首次适应实现简单、倾向于保留高地址大分区，但低地址会积累大量小碎片。",
+    "tags": [
+      "内存管理",
+      "首次适应",
+      "动态分区分配",
+      "空闲分区表"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "OS_CODE_007",
+    "subject": "操作系统",
+    "knowledge_point": "内存管理",
+    "title": "最佳适应算法（Best Fit）动态分区分配",
+    "description": "5 个空闲分区大小分别为 100、500、200、300、600KB，依次到来 3 个作业，请求 212、417、112KB。用最佳适应算法（在所有装得下的空闲分区中选择最小的一个）完成分配，分区大小相同时选地址较小的，输出分配结果与最终空闲分区表。",
+    "language": "c",
+    "difficulty": "提高",
+    "starter_code": "#include <stdio.h>\n\n#define PN 5   /* 分区个数（按地址递增排列） */\n#define RN 3   /* 作业（请求）个数 */\n\n/* 最佳适应算法（Best Fit）动态分区分配\n * 参数：\n *   pn          分区个数\n *   size[]      各分区当前大小（分配后要被改小）\n *   free_flag[] 各分区是否空闲（1 空闲，0 已占用），分配后可能变为 0\n *   req[]       各作业请求的连续内存大小\n *   rn          请求个数\n *   part[]      输出：第 i 个作业分配到的分区号（1 起），失败为 -1\n *   remain[]    输出：第 i 个作业分配后该分区的剩余大小，失败为 0\n * 规则：在所有大小满足要求且空闲的分区中选择最小的一个（能装下即可，浪费最少）；\n *       分区大小相同时选择地址较小（下标较小）的分区；\n *       若分区剩余为 0 则标记该分区已占用（free_flag = 0），否则把分区大小改为剩余大小；\n *       找不到满足要求的分区则分配失败。\n * 返回值：成功分配的作业个数\n */\nint best_fit(int pn, int size[], int free_flag[], const int req[], int rn,\n             int part[], int remain[])\n{\n    /* ===== TODO BEGIN ===== */\n    /* TODO: 在这里实现最佳适应算法 */\n    (void)pn; (void)size; (void)free_flag; (void)req; (void)rn;\n    (void)part; (void)remain;\n    return 0;\n    /* ===== TODO END ===== */\n}\n\nint main(void)\n{\n    int size[PN] = {100, 500, 200, 300, 600};\n    int free_flag[PN] = {1, 1, 1, 1, 1};\n    const int req[RN] = {212, 417, 112};\n    int part[RN] = {0};\n    int remain[RN] = {0};\n    int total = 0;\n\n    best_fit(PN, size, free_flag, req, RN, part, remain);\n\n    for (int i = 0; i < RN; i++) {\n        if (part[i] > 0) {\n            printf(\"作业%d 请求 %dKB -> 分配在 分区%d，该分区剩余 %dKB\\n\",\n                   i + 1, req[i], part[i], remain[i]);\n        } else {\n            printf(\"作业%d 请求 %dKB -> 分配失败\\n\", i + 1, req[i]);\n        }\n    }\n    printf(\"最终空闲分区（按地址顺序）：\");\n    for (int i = 0; i < PN; i++) {\n        if (free_flag[i]) {\n            if (total > 0) printf(\" \");\n            printf(\"%d\", size[i]);\n            total += size[i];\n        }\n    }\n    printf(\"\\n总空闲空间：%dKB\\n\", total);\n    return 0;\n}\n",
+    "sample_input": "（数据已写死在 main() 中，无需输入）\n等价输入格式：\n5\n100 1\n500 1\n200 1\n300 1\n600 1\n3\n212\n417\n112\n（分区：大小 是否空闲；随后 3 个请求大小）",
+    "sample_output": "作业1 请求 212KB -> 分配在 分区4，该分区剩余 88KB\n作业2 请求 417KB -> 分配在 分区2，该分区剩余 83KB\n作业3 请求 112KB -> 分配在 分区3，该分区剩余 88KB\n最终空闲分区（按地址顺序）：100 83 88 88 600\n总空闲空间：959KB",
+    "explanation": "最佳适应每次选“能装下的最小分区”：212KB 的候选是 500、300、600，选最小的 300KB（分区 4），剩余 88KB；417KB 的候选是 500、600，选 500KB（分区 2），剩余 83KB；112KB 的候选是 200、600（100KB 和两个 88/83KB 的剩余都不够），选 200KB（分区 3），剩余 88KB。最终空闲分区为 100、83、88、88、600KB，合计 959KB＝1700−741，校验一致。与首次适应相比，最佳适应把 417KB 放进了 500KB 而不是 600KB，但会留下大量难以利用的小碎片。",
+    "tags": [
+      "内存管理",
+      "最佳适应",
+      "动态分区分配",
+      "外部碎片"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "OS_CODE_008",
+    "subject": "操作系统",
+    "knowledge_point": "虚拟内存与页面置换",
+    "title": "LRU 最近最久未使用页面置换算法",
+    "description": "进程有 3 个页框，页面访问序列为 1 2 3 4 1 2 5 1 2 3 4 5。用 LRU 算法模拟置换过程，逐次输出是否缺页、被淘汰的页面、置换后的页框状态（左端为最久未使用，命中时把该页面移到末尾），最后输出缺页次数和缺页率。",
+    "language": "c",
+    "difficulty": "提高",
+    "starter_code": "#include <stdio.h>\n\n#define FRAMES 3\n#define LEN 12\n\nstatic void print_frames(const int frame[], int frames)\n{\n    for (int i = 0; i < frames; i++) {\n        if (i) printf(\" \");\n        if (frame[i] >= 0) printf(\"%d\", frame[i]);\n        else printf(\"-\");\n    }\n}\n\n/* LRU（最近最久未使用）页面置换算法\n * 参数：\n *   frames       页框数\n *   ref[]        页面访问序列\n *   len          访问次数\n *   fault[]      输出：第 i 次访问是否缺页（1 缺页，0 命中）\n *   evict[]      输出：第 i 次访问淘汰的页面号，未淘汰为 -1\n *   state[][FRAMES] 输出：第 i 次访问后的页框内容，\n *                    下标 0 表示最久未使用（LRU），下标大的最近刚被使用，\n *                    未使用的页框记 -1；已装入页面必须紧凑地排在前面\n *   *fault_count 输出：缺页总次数\n * 规则：\n *   1) 命中：把该页面移到页框数组末尾（表示最近使用）。\n *   2) 缺页且有空闲页框：把页面放到末尾。\n *   3) 缺页且页框已满：淘汰下标 0 的页面（最久未使用），其余页框整体前移，\n *      再把新页面放到末尾。\n * 返回值：0\n */\nint lru(int frames, const int ref[], int len, int fault[], int evict[],\n        int state[][FRAMES], int *fault_count)\n{\n    /* ===== TODO BEGIN ===== */\n    /* TODO: 在这里实现 LRU 页面置换算法 */\n    (void)frames; (void)ref; (void)len;\n    (void)fault; (void)evict; (void)state; (void)fault_count;\n    return 0;\n    /* ===== TODO END ===== */\n}\n\nint main(void)\n{\n    const int ref[LEN] = {1, 2, 3, 4, 1, 2, 5, 1, 2, 3, 4, 5};\n    int fault[LEN] = {0};\n    int evict[LEN] = {0};\n    int state[LEN][FRAMES] = {{0}};\n    int fault_count = 0;\n\n    lru(FRAMES, ref, LEN, fault, evict, state, &fault_count);\n\n    printf(\"页框数：%d\\n\", FRAMES);\n    printf(\"访问序列：\");\n    for (int i = 0; i < LEN; i++) {\n        printf(\"%s%d\", i ? \" \" : \"\", ref[i]);\n    }\n    printf(\"\\n\");\n    printf(\"序号\\t页面\\t结果\\t淘汰页\\t页框状态（左端为最久未使用）\\n\");\n    for (int i = 0; i < LEN; i++) {\n        printf(\"%d\\t%d\\t%s\\t\", i + 1, ref[i], fault[i] ? \"缺页\" : \"命中\");\n        if (evict[i] >= 0) printf(\"%d\\t\", evict[i]);\n        else printf(\"-\\t\");\n        print_frames(state[i], FRAMES);\n        printf(\"\\n\");\n    }\n    printf(\"缺页次数：%d\\n\", fault_count);\n    printf(\"缺页率：%.2f%%\\n\", 100.0 * fault_count / LEN);\n    return 0;\n}\n",
+    "sample_input": "（数据已写死在 main() 中，无需输入）\n等价输入格式：\n3\n12\n1 2 3 4 1 2 5 1 2 3 4 5\n（页框数；访问次数；访问序列）",
+    "sample_output": "页框数：3\n访问序列：1 2 3 4 1 2 5 1 2 3 4 5\n序号\t页面\t结果\t淘汰页\t页框状态（左端为最久未使用）\n1\t1\t缺页\t-\t1 - -\n2\t2\t缺页\t-\t1 2 -\n3\t3\t缺页\t-\t1 2 3\n4\t4\t缺页\t1\t2 3 4\n5\t1\t缺页\t2\t3 4 1\n6\t2\t缺页\t3\t4 1 2\n7\t5\t缺页\t4\t1 2 5\n8\t1\t命中\t-\t2 5 1\n9\t2\t命中\t-\t5 1 2\n10\t3\t缺页\t5\t1 2 3\n11\t4\t缺页\t1\t2 3 4\n12\t5\t缺页\t2\t3 4 5\n缺页次数：10\n缺页率：83.33%",
+    "explanation": "前 3 次访问 1、2、3 缺页装入；第 4 次访问 4 淘汰最久未使用的 1，页框变 2 3 4；接着访问 1 淘汰 2、访问 2 淘汰 3、访问 5 淘汰 4，页框为 1 2 5；然后再访问 1、2 均命中，并把它们刷新为最近使用（页框 5 1 2，5 成为最久未使用）；访问 3 淘汰 5；访问 4 淘汰 1；最后访问 5 淘汰 2。12 次访问中缺页 10 次、命中 2 次，缺页率 10/12≈83.33%。LRU 需要硬件或计数支持记录访问时间，开销较大但命中率通常优于 FIFO。",
+    "tags": [
+      "虚拟内存与页面置换",
+      "LRU",
+      "缺页率",
+      "页框"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "OS_CODE_009",
+    "subject": "操作系统",
+    "knowledge_point": "虚拟内存与页面置换",
+    "title": "FIFO 先进先出页面置换算法",
+    "description": "进程有 3 个页框，页面访问序列为 7 0 1 2 0 3 0 4 2 3 0 3 2 1 2 0 1 7 0 1（共 20 次）。用 FIFO 算法模拟置换，逐次输出访问结果、被淘汰页和页框状态（左端为最早进入内存的页面），最后输出缺页次数和缺页率。",
+    "language": "c",
+    "difficulty": "基础",
+    "starter_code": "#include <stdio.h>\n\n#define FRAMES 3\n#define LEN 20\n\nstatic void print_frames(const int frame[], int frames)\n{\n    for (int i = 0; i < frames; i++) {\n        if (i) printf(\" \");\n        if (frame[i] >= 0) printf(\"%d\", frame[i]);\n        else printf(\"-\");\n    }\n}\n\n/* FIFO（先进先出）页面置换算法\n * 参数：\n *   frames       页框数\n *   ref[]        页面访问序列\n *   len          访问次数\n *   fault[]      输出：第 i 次访问是否缺页（1 缺页，0 命中）\n *   evict[]      输出：第 i 次访问淘汰的页面号，未淘汰为 -1\n *   state[][FRAMES] 输出：第 i 次访问后的页框内容，\n *                    下标 0 表示最早进入内存的页面，已装入页面紧凑排在前部，\n *                    未使用的页框记 -1\n *   *fault_count 输出：缺页总次数\n * 规则：\n *   1) 命中：页框内容不变（FIFO 命中不改变淘汰顺序）。\n *   2) 缺页且有空闲页框：新页面放到末尾。\n *   3) 缺页且页框已满：淘汰下标 0 的页面（最早进入内存），其余页框整体前移，\n *      再把新页面放到末尾。\n * 返回值：0\n */\nint fifo(int frames, const int ref[], int len, int fault[], int evict[],\n         int state[][FRAMES], int *fault_count)\n{\n    /* ===== TODO BEGIN ===== */\n    /* TODO: 在这里实现 FIFO 页面置换算法 */\n    (void)frames; (void)ref; (void)len;\n    (void)fault; (void)evict; (void)state; (void)fault_count;\n    return 0;\n    /* ===== TODO END ===== */\n}\n\nint main(void)\n{\n    const int ref[LEN] = {7, 0, 1, 2, 0, 3, 0, 4, 2, 3,\n                          0, 3, 2, 1, 2, 0, 1, 7, 0, 1};\n    int fault[LEN] = {0};\n    int evict[LEN] = {0};\n    int state[LEN][FRAMES] = {{0}};\n    int fault_count = 0;\n\n    fifo(FRAMES, ref, LEN, fault, evict, state, &fault_count);\n\n    printf(\"页框数：%d\\n\", FRAMES);\n    printf(\"访问序列：\");\n    for (int i = 0; i < LEN; i++) {\n        printf(\"%s%d\", i ? \" \" : \"\", ref[i]);\n    }\n    printf(\"\\n\");\n    printf(\"序号\\t页面\\t结果\\t淘汰页\\t页框状态（左端为最早进入）\\n\");\n    for (int i = 0; i < LEN; i++) {\n        printf(\"%d\\t%d\\t%s\\t\", i + 1, ref[i], fault[i] ? \"缺页\" : \"命中\");\n        if (evict[i] >= 0) printf(\"%d\\t\", evict[i]);\n        else printf(\"-\\t\");\n        print_frames(state[i], FRAMES);\n        printf(\"\\n\");\n    }\n    printf(\"缺页次数：%d\\n\", fault_count);\n    printf(\"缺页率：%.2f%%\\n\", 100.0 * fault_count / LEN);\n    return 0;\n}\n",
+    "sample_input": "（数据已写死在 main() 中，无需输入）\n等价输入格式：\n3\n20\n7 0 1 2 0 3 0 4 2 3 0 3 2 1 2 0 1 7 0 1\n（页框数；访问次数；访问序列）",
+    "sample_output": "页框数：3\n访问序列：7 0 1 2 0 3 0 4 2 3 0 3 2 1 2 0 1 7 0 1\n序号\t页面\t结果\t淘汰页\t页框状态（左端为最早进入）\n1\t7\t缺页\t-\t7 - -\n2\t0\t缺页\t-\t7 0 -\n3\t1\t缺页\t-\t7 0 1\n4\t2\t缺页\t7\t0 1 2\n5\t0\t命中\t-\t0 1 2\n6\t3\t缺页\t0\t1 2 3\n7\t0\t缺页\t1\t2 3 0\n8\t4\t缺页\t2\t3 0 4\n9\t2\t缺页\t3\t0 4 2\n10\t3\t缺页\t0\t4 2 3\n11\t0\t缺页\t4\t2 3 0\n12\t3\t命中\t-\t2 3 0\n13\t2\t命中\t-\t2 3 0\n14\t1\t缺页\t2\t3 0 1\n15\t2\t缺页\t3\t0 1 2\n16\t0\t命中\t-\t0 1 2\n17\t1\t命中\t-\t0 1 2\n18\t7\t缺页\t0\t1 2 7\n19\t0\t缺页\t1\t2 7 0\n20\t1\t缺页\t2\t7 0 1\n缺页次数：15\n缺页率：75.00%",
+    "explanation": "FIFO 淘汰最早进入内存的页面，命中时队列顺序不变。第 4 次访问 2 淘汰 7，之后依次淘汰 0、1、2、3、0、4、2、3、0、1、2，其中第 12、13、16、17 次访问（3、2、0、1）命中。20 次访问共缺页 15 次、命中 5 次，缺页率 15/20＝75.00%。FIFO 实现最简单，但可能出现 Belady 异常（增加页框反而缺页更多），需要说明的是，本题这个访问串并不构成 Belady 异常：把页框数改为 4 时缺页次数从 15 降到 10，仍是「页框越多缺页越少」的正常现象（可用同一程序改 FRAMES 验证）。真正的 Belady 异常需要特定访问串，例如 1 2 3 4 1 2 5 1 2 3 4 5 在 3 个页框下缺页 9 次、改成 4 个页框反而缺页 10 次。",
+    "tags": [
+      "虚拟内存与页面置换",
+      "FIFO",
+      "缺页率",
+      "Belady异常"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "OS_CODE_010",
+    "subject": "操作系统",
+    "knowledge_point": "虚拟内存与页面置换",
+    "title": "OPT 最佳置换算法",
+    "description": "进程有 3 个页框，访问序列同为 7 0 1 2 0 3 0 4 2 3 0 3 2 1 2 0 1 7 0 1（共 20 次）。用 OPT 算法（淘汰以后最长时间不会再被访问的页面，以后不再出现的页面优先淘汰）模拟置换，输出每次的淘汰页、页框状态、缺页次数与缺页率，并与 FIFO/LRU 比较。",
+    "language": "c",
+    "difficulty": "综合",
+    "starter_code": "#include <stdio.h>\n\n#define FRAMES 3\n#define LEN 20\n\nstatic void print_frames(const int frame[], int frames)\n{\n    for (int i = 0; i < frames; i++) {\n        if (i) printf(\" \");\n        if (frame[i] >= 0) printf(\"%d\", frame[i]);\n        else printf(\"-\");\n    }\n}\n\n/* OPT（最佳置换）页面置换算法\n * 参数：\n *   frames       页框数\n *   ref[]        页面访问序列\n *   len          访问次数\n *   fault[]      输出：第 i 次访问是否缺页（1 缺页，0 命中）\n *   evict[]      输出：第 i 次访问淘汰的页面号，未淘汰为 -1\n *   state[][FRAMES] 输出：第 i 次访问后的页框内容（按页框下标顺序，未使用记 -1）\n *   *fault_count 输出：缺页总次数\n * 规则：\n *   1) 命中：页框内容不变。\n *   2) 缺页且有空闲页框：把页面放到下标最小的空闲页框。\n *   3) 缺页且页框已满：淘汰\"以后最长时间不会再被访问\"的页面，\n *      即它在未来第一次出现的下标最大；若某页面以后不再出现，则优先淘汰它；\n *      若仍有多个页面并列，淘汰页框下标最小的。\n * 提示：对每个已在内存中的页面，从当前位置向后扫描 ref[] 求下一次出现的下标，\n *       找不到则记为 len（相当于无穷远）。\n * 返回值：0\n */\nint opt(int frames, const int ref[], int len, int fault[], int evict[],\n        int state[][FRAMES], int *fault_count)\n{\n    /* ===== TODO BEGIN ===== */\n    /* TODO: 在这里实现 OPT 页面置换算法 */\n    (void)frames; (void)ref; (void)len;\n    (void)fault; (void)evict; (void)state; (void)fault_count;\n    return 0;\n    /* ===== TODO END ===== */\n}\n\nint main(void)\n{\n    const int ref[LEN] = {7, 0, 1, 2, 0, 3, 0, 4, 2, 3,\n                          0, 3, 2, 1, 2, 0, 1, 7, 0, 1};\n    int fault[LEN] = {0};\n    int evict[LEN] = {0};\n    int state[LEN][FRAMES] = {{0}};\n    int fault_count = 0;\n\n    opt(FRAMES, ref, LEN, fault, evict, state, &fault_count);\n\n    printf(\"页框数：%d\\n\", FRAMES);\n    printf(\"访问序列：\");\n    for (int i = 0; i < LEN; i++) {\n        printf(\"%s%d\", i ? \" \" : \"\", ref[i]);\n    }\n    printf(\"\\n\");\n    printf(\"序号\\t页面\\t结果\\t淘汰页\\t页框状态\\n\");\n    for (int i = 0; i < LEN; i++) {\n        printf(\"%d\\t%d\\t%s\\t\", i + 1, ref[i], fault[i] ? \"缺页\" : \"命中\");\n        if (evict[i] >= 0) printf(\"%d\\t\", evict[i]);\n        else printf(\"-\\t\");\n        print_frames(state[i], FRAMES);\n        printf(\"\\n\");\n    }\n    printf(\"缺页次数：%d\\n\", fault_count);\n    printf(\"缺页率：%.2f%%\\n\", 100.0 * fault_count / LEN);\n    return 0;\n}\n",
+    "sample_input": "（数据已写死在 main() 中，无需输入）\n等价输入格式：\n3\n20\n7 0 1 2 0 3 0 4 2 3 0 3 2 1 2 0 1 7 0 1\n（页框数；访问次数；访问序列）",
+    "sample_output": "页框数：3\n访问序列：7 0 1 2 0 3 0 4 2 3 0 3 2 1 2 0 1 7 0 1\n序号\t页面\t结果\t淘汰页\t页框状态\n1\t7\t缺页\t-\t7 - -\n2\t0\t缺页\t-\t7 0 -\n3\t1\t缺页\t-\t7 0 1\n4\t2\t缺页\t7\t2 0 1\n5\t0\t命中\t-\t2 0 1\n6\t3\t缺页\t1\t2 0 3\n7\t0\t命中\t-\t2 0 3\n8\t4\t缺页\t0\t2 4 3\n9\t2\t命中\t-\t2 4 3\n10\t3\t命中\t-\t2 4 3\n11\t0\t缺页\t4\t2 0 3\n12\t3\t命中\t-\t2 0 3\n13\t2\t命中\t-\t2 0 3\n14\t1\t缺页\t3\t2 0 1\n15\t2\t命中\t-\t2 0 1\n16\t0\t命中\t-\t2 0 1\n17\t1\t命中\t-\t2 0 1\n18\t7\t缺页\t2\t7 0 1\n19\t0\t命中\t-\t7 0 1\n20\t1\t命中\t-\t7 0 1\n缺页次数：9\n缺页率：45.00%",
+    "explanation": "每次缺页时向后扫描，淘汰“下一次出现位置最靠后”的页面（不再出现视为无穷远）：第 4 次访问 2 时，7 下次在第 18 次、0 在第 5 次、1 在第 3 次，淘汰 7；第 6 次访问 3 时，1 最远（第 14 次），淘汰 1；第 8 次访问 4 时，0 最远（第 11 次），淘汰 0；第 11 次访问 0 时，4 以后不再出现，淘汰 4；第 14 次访问 1 淘汰不再出现的 3；第 18 次访问 7 淘汰不再出现的 2。20 次访问共缺页 9 次，缺页率 9/20＝45.00%，优于同一访问串的 FIFO（15 次、75.00%）和 LRU（12 次、60.00%）。OPT 需要预知未来访问序列，无法真正实现，只作为衡量其他算法优劣的下界。",
+    "tags": [
+      "虚拟内存与页面置换",
+      "OPT",
+      "缺页率",
+      "最优置换"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "OS_CODE_011",
+    "subject": "操作系统",
+    "knowledge_point": "磁盘与I/O管理",
+    "title": "磁盘调度 SSTF 最短寻道时间优先",
+    "description": "磁头初始位置为 100 号磁道，磁道请求序列为 55 58 39 18 90 160 150 38 184。用 SSTF 算法（每次选择离当前磁头最近的请求，等距时选磁道号小的）计算访问顺序、每次移动的磁道数、移动总磁道数和平均寻道长度。",
+    "language": "c",
+    "difficulty": "基础",
+    "starter_code": "#include <stdio.h>\n\n#define REQ 9   /* 磁盘请求个数 */\n\n/* SSTF（最短寻道时间优先）磁盘调度\n * 参数：\n *   start       初始磁头位置\n *   req[]       磁道请求序列（只读，算法内部用 served[] 标记已访问）\n *   n           请求个数\n *   order[]     输出：实际访问顺序（磁道号）\n *   move[]      输出：第 i 次移动的磁道数（order[i] 与上一次位置之差的绝对值）\n *   *total      输出：移动的总磁道数\n * 规则：每次在尚未访问的请求中选择离当前磁头位置最近的一个；\n *       距离相同时（即左右两个请求等距）选择磁道号较小的一个。\n * 返回值：0\n */\nint sstf(int start, const int req[], int n, int order[], int move[], int *total)\n{\n    /* ===== TODO BEGIN ===== */\n    /* TODO: 在这里实现 SSTF 磁盘调度算法 */\n    (void)start; (void)req; (void)n; (void)order; (void)move; (void)total;\n    return 0;\n    /* ===== TODO END ===== */\n}\n\nint main(void)\n{\n    const int start = 100;\n    const int req[REQ] = {55, 58, 39, 18, 90, 160, 150, 38, 184};\n    int order[REQ] = {0};\n    int move[REQ] = {0};\n    int total = 0;\n    int pos = start;\n\n    sstf(start, req, REQ, order, move, &total);\n\n    printf(\"初始磁头位置：%d\\n\", start);\n    printf(\"请求序列：\");\n    for (int i = 0; i < REQ; i++) {\n        printf(\"%s%d\", i ? \" \" : \"\", req[i]);\n    }\n    printf(\"\\n\");\n    printf(\"访问顺序：%d\", start);\n    for (int i = 0; i < REQ; i++) {\n        printf(\" -> %d\", order[i]);\n        pos = order[i];\n    }\n    printf(\"\\n\");\n    printf(\"每次移动磁道数：\");\n    for (int i = 0; i < REQ; i++) {\n        printf(\"%s%d\", i ? \" \" : \"\", move[i]);\n    }\n    printf(\"\\n\");\n    printf(\"移动总磁道数：%d\\n\", total);\n    printf(\"平均寻道长度：%.2f\\n\", (double)total / REQ);\n    (void)pos;\n    return 0;\n}\n",
+    "sample_input": "（数据已写死在 main() 中，无需输入）\n等价输入格式：\n100\n9\n55 58 39 18 90 160 150 38 184\n（初始磁头位置；请求个数；请求序列）",
+    "sample_output": "初始磁头位置：100\n请求序列：55 58 39 18 90 160 150 38 184\n访问顺序：100 -> 90 -> 58 -> 55 -> 39 -> 38 -> 18 -> 150 -> 160 -> 184\n每次移动磁道数：10 32 3 16 1 20 132 10 24\n移动总磁道数：248\n平均寻道长度：27.56",
+    "explanation": "从 100 出发每次选最近的：100→90（10）→58（32）→55（3）→39（16）→38（1）→18（20）→150（132）→160（10）→184（24）。总移动量 10+32+3+16+1+20+132+10+24＝248 个磁道，平均寻道长度 248/9≈27.56。注意从 18 折返到 150 的一跳占了 132 个磁道，说明 SSTF 虽然平均寻道短，但对远端请求可能造成饥饿。",
+    "tags": [
+      "磁盘与I/O管理",
+      "SSTF",
+      "磁盘调度",
+      "寻道长度"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "OS_CODE_012",
+    "subject": "操作系统",
+    "knowledge_point": "磁盘与I/O管理",
+    "title": "磁盘调度 SCAN 电梯算法",
+    "description": "磁头初始位置 100，请求序列同为 55 58 39 18 90 160 150 38 184，初始方向为磁道号增大方向。用 SCAN（电梯）算法：一直向该方向移动到该方向最远的请求，然后反向继续服务，输出访问顺序、每次移动磁道数、移动总磁道数和平均寻道长度。",
+    "language": "c",
+    "difficulty": "提高",
+    "starter_code": "#include <stdio.h>\n\n#define REQ 9   /* 磁盘请求个数 */\n\n/* SCAN（电梯）磁盘调度\n * 参数：\n *   start       初始磁头位置\n *   req[]       磁道请求序列（只读，算法内部用 served[] 标记已访问）\n *   n           请求个数\n *   direction   初始移动方向：1 = 向磁道号增大方向，0 = 向磁道号减小方向\n *   order[]     输出：实际访问顺序（磁道号）\n *   move[]      输出：第 i 次移动的磁道数\n *   *total      输出：移动的总磁道数\n * 规则：\n *   1) 沿初始方向一直移动，依次访问该方向上所有尚未访问的请求磁道（由近到远），\n *      直到该方向上没有请求为止（不移动到磁盘端点）。\n *   2) 然后反方向移动，再依次访问反方向上所有尚未访问的请求磁道（由近到远）。\n * 返回值：0\n */\nint scan_disk(int start, const int req[], int n, int direction,\n              int order[], int move[], int *total)\n{\n    /* ===== TODO BEGIN ===== */\n    /* TODO: 在这里实现 SCAN（电梯）磁盘调度算法 */\n    (void)start; (void)req; (void)n; (void)direction;\n    (void)order; (void)move; (void)total;\n    return 0;\n    /* ===== TODO END ===== */\n}\n\nint main(void)\n{\n    const int start = 100;\n    const int direction = 1;   /* 先向磁道号增大的方向移动 */\n    const int req[REQ] = {55, 58, 39, 18, 90, 160, 150, 38, 184};\n    int order[REQ] = {0};\n    int move[REQ] = {0};\n    int total = 0;\n\n    scan_disk(start, req, REQ, direction, order, move, &total);\n\n    printf(\"初始磁头位置：%d，初始方向：向磁道号%s方向\\n\", start,\n           direction ? \"增大\" : \"减小\");\n    printf(\"请求序列：\");\n    for (int i = 0; i < REQ; i++) {\n        printf(\"%s%d\", i ? \" \" : \"\", req[i]);\n    }\n    printf(\"\\n\");\n    printf(\"访问顺序：%d\", start);\n    for (int i = 0; i < REQ; i++) {\n        printf(\" -> %d\", order[i]);\n    }\n    printf(\"\\n\");\n    printf(\"每次移动磁道数：\");\n    for (int i = 0; i < REQ; i++) {\n        printf(\"%s%d\", i ? \" \" : \"\", move[i]);\n    }\n    printf(\"\\n\");\n    printf(\"移动总磁道数：%d\\n\", total);\n    printf(\"平均寻道长度：%.2f\\n\", (double)total / REQ);\n    return 0;\n}\n",
+    "sample_input": "（数据已写死在 main() 中，无需输入）\n等价输入格式：\n100 1\n9\n55 58 39 18 90 160 150 38 184\n（初始磁头位置 方向；请求个数；请求序列）",
+    "sample_output": "初始磁头位置：100，初始方向：向磁道号增大方向\n请求序列：55 58 39 18 90 160 150 38 184\n访问顺序：100 -> 150 -> 160 -> 184 -> 90 -> 58 -> 55 -> 39 -> 38 -> 18\n每次移动磁道数：50 10 24 94 32 3 16 1 20\n移动总磁道数：250\n平均寻道长度：27.78",
+    "explanation": "先沿增大方向依次服务 150、160、184（移动 50、10、24）；该方向已无请求，磁头反向，依次服务 90、58、55、39、38、18（移动 184−90＝94、32、3、16、1、20）。总移动量 50+10+24+94+32+3+16+1+20＝250 个磁道，平均 250/9≈27.78。与 SSTF 的 248 相比总量略大，但各请求的等待更均匀，不会出现饥饿；本题采用的是教材中常见的 LOOK 口径（走到该方向最远的请求即反向，不移动到磁盘端点）；若规定必须一直移动到磁盘端点才反向，总移动量会不同。C-SCAN 是单向服务后快速回到另一端、回程不服务，与本题的 SCAN 不是同一个算法。",
+    "tags": [
+      "磁盘与I/O管理",
+      "SCAN",
+      "电梯算法",
+      "寻道长度"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "OS_CODE_013",
+    "subject": "操作系统",
+    "knowledge_point": "信号量与PV操作",
+    "title": "生产者-消费者问题信号量 PV 模拟",
+    "description": "用信号量模拟单生产者-单消费者共享大小为 3 的环形缓冲区，信号量初值 empty=3、full=0、mutex=1。给定 10 步操作序列（1 表示生产者生产，0 表示消费者消费），输出每步结束后的 empty/full/mutex 值、缓冲区内容与缓冲区中数据个数，以及总生产数和总消费数。生产的数据依次编号 1、2、3…，消费按先进先出。",
+    "language": "c",
+    "difficulty": "提高",
+    "starter_code": "#include <stdio.h>\n\n#define BUFSIZE 3\n#define OPNUM 10\n\n/* 用信号量（PV 操作）模拟单生产者-单消费者共享有界缓冲区\n * 信号量初值：empty = 缓冲区大小，full = 0，mutex = 1\n * 参数：\n *   bufsize  缓冲区大小\n *   ops[]    操作序列：1 = 生产者生产一个数据，0 = 消费者消费一个数据\n *   n        操作个数\n *   steps[]  输出：每一步结束后的状态（见 main 中的打印格式）\n *   *produced 输出：总共生产的数据个数\n *   *consumed 输出：总共消费的数据个数\n * 要求：\n *   1) 缓冲区用环形数组模拟：in 指向下一个放入位置，out 指向下一个取出位置，count 为当前数据个数；\n *      空槽用 -1 表示。\n *   2) 生产者：P(empty) -> P(mutex) -> 放入数据 -> V(mutex) -> V(full)；\n *      消费者：P(full) -> P(mutex) -> 取出数据 -> V(mutex) -> V(empty)。\n *      本题操作序列不会出现缓冲区满时生产或空时消费，因此 P 操作不会阻塞，\n *      但必须正确维护 empty / full / mutex 的值。\n *   3) 生产的数据依次编号 1, 2, 3, ...；消费按先进先出取出。\n *   4) steps[i] 记录第 i 步结束后的状态：\n *        steps[i].op      本步操作（1 生产，0 消费）\n *        steps[i].item    本步生产或消费的数据编号\n *        steps[i].empty   empty 信号量的值\n *        steps[i].full    full 信号量的值\n *        steps[i].mutex   mutex 信号量的值（每步结束后应恢复为 1）\n *        steps[i].buf[]   缓冲区三个槽的内容（空槽 -1）\n *        steps[i].count   缓冲区中数据个数\n * 返回值：0\n */\ntypedef struct {\n    int op;\n    int item;\n    int empty;\n    int full;\n    int mutex;\n    int buf[BUFSIZE];\n    int count;\n} Step;\n\nint pc_simulate(int bufsize, const int ops[], int n, Step steps[],\n                int *produced, int *consumed)\n{\n    /* ===== TODO BEGIN ===== */\n    /* TODO: 用信号量 PV 操作模拟生产者-消费者过程，填写 steps 与统计数据 */\n    (void)bufsize; (void)ops; (void)n; (void)steps;\n    (void)produced; (void)consumed;\n    return 0;\n    /* ===== TODO END ===== */\n}\n\nstatic void print_buf(const int buf[], int size)\n{\n    printf(\"[\");\n    for (int i = 0; i < size; i++) {\n        if (i) printf(\" \");\n        if (buf[i] >= 0) printf(\"%d\", buf[i]);\n        else printf(\"-\");\n    }\n    printf(\"]\");\n}\n\nint main(void)\n{\n    const int ops[OPNUM] = {1, 1, 1, 0, 1, 0, 0, 1, 0, 0};   /* 1 生产，0 消费 */\n    Step steps[OPNUM] = {0};\n    int produced = 0, consumed = 0;\n\n    pc_simulate(BUFSIZE, ops, OPNUM, steps, &produced, &consumed);\n\n    printf(\"缓冲区大小：%d\\n\", BUFSIZE);\n    for (int i = 0; i < OPNUM; i++) {\n        if (steps[i].op == 1) {\n            printf(\"操作%d：生产者放入数据%d，\", i + 1, steps[i].item);\n        } else {\n            printf(\"操作%d：消费者取出数据%d，\", i + 1, steps[i].item);\n        }\n        printf(\"empty=%d full=%d mutex=%d count=%d 缓冲区\",\n               steps[i].empty, steps[i].full, steps[i].mutex, steps[i].count);\n        print_buf(steps[i].buf, BUFSIZE);\n        printf(\"\\n\");\n    }\n    printf(\"共生产 %d 个数据，共消费 %d 个数据\\n\", produced, consumed);\n    return 0;\n}\n",
+    "sample_input": "（数据已写死在 main() 中，无需输入）\n等价输入格式：\n3\n10\n1 1 1 0 1 0 0 1 0 0\n（缓冲区大小；操作个数；操作序列，1 生产 0 消费）",
+    "sample_output": "缓冲区大小：3\n操作1：生产者放入数据1，empty=2 full=1 mutex=1 count=1 缓冲区[1 - -]\n操作2：生产者放入数据2，empty=1 full=2 mutex=1 count=2 缓冲区[1 2 -]\n操作3：生产者放入数据3，empty=0 full=3 mutex=1 count=3 缓冲区[1 2 3]\n操作4：消费者取出数据1，empty=1 full=2 mutex=1 count=2 缓冲区[- 2 3]\n操作5：生产者放入数据4，empty=0 full=3 mutex=1 count=3 缓冲区[4 2 3]\n操作6：消费者取出数据2，empty=1 full=2 mutex=1 count=2 缓冲区[4 - 3]\n操作7：消费者取出数据3，empty=2 full=1 mutex=1 count=1 缓冲区[4 - -]\n操作8：生产者放入数据5，empty=1 full=2 mutex=1 count=2 缓冲区[4 5 -]\n操作9：消费者取出数据4，empty=2 full=1 mutex=1 count=1 缓冲区[- 5 -]\n操作10：消费者取出数据5，empty=3 full=0 mutex=1 count=0 缓冲区[- - -]\n共生产 5 个数据，共消费 5 个数据",
+    "explanation": "生产者执行 P(empty)、P(mutex)→放入数据→V(mutex)、V(full)；消费者执行 P(full)、P(mutex)→取出数据→V(mutex)、V(empty)。前 3 步生产把缓冲区填满（empty 3→0、full 0→3、count=3）；第 4 步消费者按 FIFO 取出数据 1，out 指针前移，缓冲区的 0 号槽变空；第 5 步生产数据 4 放入 0 号槽（环形复用），第 6、7 步取出数据 2、3，第 8 步生产数据 5 放入 1 号槽，第 9、10 步取出数据 4、5。共生产 5 个、消费 5 个，结束时 empty=3、full=0、mutex=1、count=0。每一步结束后 mutex 都回到 1，说明 P/V 成对使用、临界区互斥正确；empty+full 恒等于 3（缓冲区容量），可作为不变式自查。",
+    "tags": [
+      "信号量与PV操作",
+      "生产者消费者",
+      "有界缓冲区",
+      "临界区"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "OS_CODE_014",
+    "subject": "操作系统",
+    "knowledge_point": "进程同步与互斥",
+    "title": "哲学家进餐问题死锁判断",
+    "description": "5 位哲学家围坐一圈，Pi 需要左筷 Ci 和右筷 C((i+1)%5)。给定每位哲学家的状态（0=未拿筷子，1=已拿起左筷正在等右筷，2=已拿起左右两支筷子正在进餐），判断系统是否发生死锁：有人正在进餐或等待者的右筷空闲则不死锁；否则所有等待者互相等待形成环，输出循环等待链。",
+    "language": "c",
+    "difficulty": "提高",
+    "starter_code": "#include <stdio.h>\n\n#define PHILO 5   /* 哲学家（筷子）个数 */\n\n/* 哲学家进餐问题（简化版）：判断给定状态下是否发生死锁\n * 约定：哲学家 Pi 需要左筷 Ci 和右筷 C((i+1)%5)，围成一圈。\n *   state[i] 表示 Pi 的状态：\n *     0 = 还没有拿任何筷子（未参与本轮请求）\n *     1 = 已拿起左筷 Ci，正在等待右筷 C((i+1)%5)\n *     2 = 已拿起左右两支筷子，正在进餐（进餐结束后会放下筷子）\n * 参数：\n *   state[]    各哲学家状态\n *   chain[]    输出：死锁时的循环等待链（哲学家编号），从编号最小的哲学家开始\n *   *chain_len 输出：循环等待链的长度（不死锁时为 0）\n * 判断规则：\n *   1) 只要存在 state[i]==2 的哲学家，他最终会放下筷子，系统不会死锁，返回 0。\n *   2) 否则构造等待关系：等待中的哲学家 Pi（state[i]==1）等待右筷 C((i+1)%5)；\n *      若该筷子空闲（没有被任何 state==1 的哲学家持有），Pi 可以拿到筷子进餐，\n *      系统不会死锁，返回 0。\n *   3) 若所有等待中的哲学家都持有左筷，且等待的右筷都被别人持有，\n *      则形成环 P0 -> P1 -> P2 -> P3 -> P4 -> P0，返回 1，并把环写入 chain。\n * 返回值：1 = 死锁，0 = 不死锁\n */\nint check_deadlock(const int state[], int chain[], int *chain_len)\n{\n    /* ===== TODO BEGIN ===== */\n    /* TODO: 在这里实现死锁判断 */\n    (void)state; (void)chain; (void)chain_len;\n    return 0;\n    /* ===== TODO END ===== */\n}\n\nstatic void print_state(const int state[], int n)\n{\n    for (int i = 0; i < n; i++) {\n        printf(\"%s%d\", i ? \" \" : \"\", state[i]);\n    }\n}\n\nint main(void)\n{\n    const int case1[PHILO] = {1, 1, 1, 1, 1};\n    const int case2[PHILO] = {0, 1, 1, 1, 2};\n    int chain[PHILO + 1] = {0};\n    int chain_len = 0;\n\n    printf(\"场景1：state = \");\n    print_state(case1, PHILO);\n    printf(\"\\n\");\n    if (check_deadlock(case1, chain, &chain_len)) {\n        printf(\"存在死锁，循环等待链：\");\n        for (int i = 0; i < chain_len; i++) {\n            printf(\"%sP%d\", i ? \" -> \" : \"\", chain[i]);\n        }\n        printf(\" -> P%d\\n\", chain[0]);\n    } else {\n        printf(\"不存在死锁\\n\");\n    }\n\n    printf(\"场景2：state = \");\n    print_state(case2, PHILO);\n    printf(\"\\n\");\n    chain_len = 0;\n    if (check_deadlock(case2, chain, &chain_len)) {\n        printf(\"存在死锁，循环等待链：\");\n        for (int i = 0; i < chain_len; i++) {\n            printf(\"%sP%d\", i ? \" -> \" : \"\", chain[i]);\n        }\n        printf(\" -> P%d\\n\", chain[0]);\n    } else {\n        printf(\"不存在死锁（P4 正在进餐，最终会释放筷子）\\n\");\n    }\n    return 0;\n}\n",
+    "sample_input": "（数据已写死在 main() 中，无需输入）\n等价输入格式：\n5\n1 1 1 1 1\n5\n1 1 1 1 2\n（哲学家数；场景1 状态；哲学家数；场景2 状态）",
+    "sample_output": "场景1：state = 1 1 1 1 1\n存在死锁，循环等待链：P0 -> P1 -> P2 -> P3 -> P4 -> P0\n场景2：state = 0 1 1 1 2\n不存在死锁（P4 正在进餐，最终会释放筷子）",
+    "explanation": "场景 1（1 1 1 1 1）：P0~P4 都拿起了自己的左筷并等待右筷，而每支右筷恰好被下一位哲学家持有，等待关系构成环 P0→P1→P2→P3→P4→P0，满足死锁四个必要条件中的“循环等待”，因此发生死锁。场景 2（0 1 1 1 2，P0 未参与）：P4 已同时持有 C4 和 C0 正在进餐，吃完会放下筷子，P3 随即可以拿到 C4 进餐，等待环被打破，系统不会死锁。常用避免死锁的方法：最多允许 4 人同时拿筷、奇数号先拿左筷偶数号先拿右筷、或用互斥信号量保证“拿两支筷子”这一动作的原子性。",
+    "tags": [
+      "进程同步与互斥",
+      "哲学家进餐",
+      "死锁",
+      "循环等待"
+    ],
+    "source": "system_seed"
+  }
+]

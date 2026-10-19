@@ -1,0 +1,18 @@
+{
+  "points": [
+    ["c-basics","数据类型与变量","C 语言的基本数据类型、变量、常量与存储。","基础语法","foundation",["数据类型","变量","int","char","float","double","常量","进制","补码","标识符"]],
+    ["c-operators","运算符与表达式","算术、关系、逻辑、赋值、自增自减等运算符及优先级。","基础语法","foundation",["运算符","表达式","优先级","自增自减","类型转换","逗号运算符","赋值","短路"]],
+    ["c-control","流程控制","if、switch、for、while、do-while 等控制结构。","控制结构","foundation",["if","else","switch","for","while","do-while","break","continue","循环","分支"]],
+    ["c-functions","函数","函数定义、声明、调用、参数传递与递归。","函数","foundation",["函数","定义","声明","调用","参数传递","返回值","递归","实参","形参"]],
+    ["c-arrays","数组","一维与二维数组的定义、初始化与访问。","数组与字符串","foundation",["数组","一维数组","二维数组","下标","越界","初始化","首地址"]],
+    ["c-pointers","指针","指针变量、取地址、解引用、指针运算与指针数组。","指针","intermediate",["指针","地址","&","*","指针运算","指针与数组","二级指针","空指针","野指针"]],
+    ["c-strings","字符串与字符数组","字符数组、字符串处理函数与输入输出。","数组与字符串","intermediate",["字符串","字符数组","strlen","strcpy","strcmp","strcat","puts","gets","空字符"]],
+    ["c-structs","结构体与共用体","结构体、共用体、typedef 与成员访问。","结构体","intermediate",["结构体","struct","共用体","union","typedef","成员访问","箭头运算符","点运算符"]],
+    ["c-preprocessor","预处理与头文件","宏定义、文件包含与条件编译。","预处理","intermediate",["预处理","#include","#define","宏","条件编译","头文件","宏函数","宏替换"]],
+    ["c-memory","动态内存管理","malloc、free、calloc、realloc 与内存泄漏。","指针","intermediate",["malloc","free","calloc","realloc","动态内存","内存泄漏","堆","悬空指针"]],
+    ["c-files","文件操作","文件指针、打开、读写与关闭。","文件","intermediate",["文件","FILE","fopen","fclose","fscanf","fprintf","fgets","fputs","EOF"]]
+  ],
+  "relations": [
+    ["c-operators","c-basics"],["c-control","c-basics"],["c-functions","c-basics"],["c-arrays","c-basics"],["c-pointers","c-arrays"],["c-strings","c-arrays"],["c-structs","c-pointers"],["c-preprocessor","c-basics"],["c-memory","c-pointers"],["c-files","c-pointers"]
+  ,["c-arrays","c-control"],["c-functions","c-control"],["c-strings","c-pointers"],["c-structs","c-arrays"],["c-memory","c-structs"],["c-files","c-structs"]]
+}

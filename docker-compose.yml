@@ -1,0 +1,170 @@
+name: learnmate
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "5"
+
+services:
+  mysql:
+    image: mysql:8.4.10
+    restart: unless-stopped
+    logging: *default-logging
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
+      MYSQL_DATABASE: ${DB_NAME:-learnmate}
+      MYSQL_USER: ${DB_USER:-learnmate}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+      TZ: ${TZ:-Asia/Shanghai}
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - mysql_data:/var/lib/mysql
+    expose:
+      - "3306"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'MYSQL_PWD="$${MYSQL_PASSWORD}" mysqladmin ping -h 127.0.0.1 -u"$${MYSQL_USER}" --silent',
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+    networks:
+      - database
+
+  backend:
+    image: learnmate-backend:${LEARNMATE_IMAGE_TAG:-local}
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    logging: *default-logging
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      HOST: 0.0.0.0
+      PORT: "5800"
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_USER: ${DB_USER:-learnmate}
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+      DB_NAME: ${DB_NAME:-learnmate}
+      DB_CONNECT_TIMEOUT_MS: ${DB_CONNECT_TIMEOUT_MS:-5000}
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-8h}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:8080,http://127.0.0.1:8080,http://localhost:8081,http://127.0.0.1:8081}
+      RESOURCE_STORAGE_DIR: /app/storage/resources
+      REPORT_STORAGE_DIR: /app/storage/reports
+      REPORT_BROWSER_PATH: ${REPORT_BROWSER_PATH:-/usr/bin/chromium}
+      REPORT_FONT_PATH: ${REPORT_FONT_PATH:-/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc}
+      DB_INIT_MAX_ATTEMPTS: ${DB_INIT_MAX_ATTEMPTS:-30}
+      DB_INIT_RETRY_MS: ${DB_INIT_RETRY_MS:-2000}
+      KNOWLEDGE_IMPORT_ON_START: ${KNOWLEDGE_IMPORT_ON_START:-false}
+      SEED_DEMO_DATA: ${SEED_DEMO_DATA:-false}
+      DEMO_PASSWORD: ${DEMO_PASSWORD:-}
+      # 课堂演示通道：打开后指定学生（逗号分隔的 ID 或用户名）点击生成即返回预置样例资源，
+      # 课件与思维导图用第 6 章树和二叉树样例、讲义复用学生已有的一份；其它学生仍走真实生成。
+      INSTANT_SAMPLE_RESOURCES: ${INSTANT_SAMPLE_RESOURCES:-false}
+      INSTANT_SAMPLE_STUDENTS: ${INSTANT_SAMPLE_STUDENTS:-}
+      TEACHER_REGISTRATION_MODE: ${TEACHER_REGISTRATION_MODE:-open}
+      AI_ENABLED: ${AI_ENABLED:-false}
+      PATH_PLANNER_AI_ENABLED: ${PATH_PLANNER_AI_ENABLED:-false}
+      MULTIMODAL_RESOURCE_AI_ENABLED: ${MULTIMODAL_RESOURCE_AI_ENABLED:-false}
+      MULTIMODAL_REVIEW_AI_ENABLED: ${MULTIMODAL_REVIEW_AI_ENABLED:-false}
+      SPARK_API_URL: ${SPARK_API_URL:-https://spark-api-open.xf-yun.com/v1/chat/completions}
+      SPARK_MODEL: ${SPARK_MODEL:-lite}
+      SPARK_API_KEY: ${SPARK_API_KEY:-}
+      SPARK_APP_ID: ${SPARK_APP_ID:-}
+      SPARK_API_SECRET: ${SPARK_API_SECRET:-}
+      SPARK_TIMEOUT_MS: ${SPARK_TIMEOUT_MS:-30000}
+      TZ: ${TZ:-Asia/Shanghai}
+    volumes:
+      - backend_resources:/app/storage/resources
+      - backend_reports:/app/storage/reports
+    ports:
+      - "${BIND_ADDRESS:-127.0.0.1}:${BACKEND_PORT:-5800}:5800"
+    expose:
+      - "5800"
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - fetch('http://127.0.0.1:5800/api/health').then((response)=>{if(!response.ok)process.exit(1)}).catch(()=>process.exit(1))
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 45s
+    stop_grace_period: 20s
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - database
+      - web
+
+  student-web:
+    image: learnmate-student-web:${LEARNMATE_IMAGE_TAG:-local}
+    build:
+      context: ./frontend-new
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    logging: *default-logging
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "${BIND_ADDRESS:-127.0.0.1}:${STUDENT_PORT:-8080}:8080"
+    expose:
+      - "8080"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8080/healthz || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - web
+
+  teacher-web:
+    image: learnmate-teacher-web:${LEARNMATE_IMAGE_TAG:-local}
+    build:
+      context: ./frontend-teacher
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    logging: *default-logging
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "${BIND_ADDRESS:-127.0.0.1}:${TEACHER_PORT:-8081}:8080"
+    expose:
+      - "8080"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8080/healthz || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - web
+
+volumes:
+  mysql_data:
+  backend_resources:
+  backend_reports:
+
+networks:
+  database:
+    internal: true
+  web:

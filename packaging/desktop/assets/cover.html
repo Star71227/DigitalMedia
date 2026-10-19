@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<!-- 桌面端应用封面：品牌 logo 圆角块 + 名称，配色取自应用浅色主题（纸张 #F0F1EB / 圆角块 #D6DFE3）。
+     由 packaging\desktop\tools\make-cover-assets.ps1 用无头 Edge 渲染成 cover.jpg / cover.png -->
+<style>
+  html, body { margin: 0; width: 1120px; height: 737px; overflow: hidden; }
+  body {
+    background: radial-gradient(130% 100% at 50% 0%, #fbfcfa 0%, #f2f4ef 45%, #e7ede8 100%);
+    font-family: "Microsoft YaHei UI", "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+    color: #26332c;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding-bottom: 46px;
+  }
+  .tile {
+    width: 232px; height: 232px; border-radius: 60px;
+    background: linear-gradient(158deg, #dde6ec 0%, #d2dde3 100%);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 22px 46px rgba(40, 78, 60, .16), inset 0 1px 0 rgba(255, 255, 255, .7);
+  }
+  .tile img { width: 63%; height: 63%; object-fit: contain; display: block; }
+  h1 { margin: 40px 0 12px; font-size: 42px; font-weight: 600; letter-spacing: 4px; color: #23302a; }
+  p { margin: 0; font-size: 16.5px; letter-spacing: 1.6px; color: #7f8f85; }
+</style>
+</head>
+<body>
+  <div class="tile"><img src="logo.png" alt="" /></div>
+  <h1>智课研伴</h1>
+  <p>LearnMate · AI 驱动的 CS 专业课学习平台</p>
+</body>
+</html>

@@ -1,0 +1,284 @@
+[
+  {
+    "exercise_id": "NET_CODE_001",
+    "subject": "计算机网络",
+    "knowledge_point": "数据链路层",
+    "title": "CRC 循环冗余校验求 FCS",
+    "description": "给定数据 M 与生成多项式 G，用模 2 除法计算余数 FCS，并输出实际发送的比特序列。",
+    "language": "c",
+    "difficulty": "提高",
+    "starter_code": "#include <stdio.h>\n#include <string.h>\n\n/* 模 2 除法求余数：\n * 在数据 M 之后补上 strlen(G)-1 个 '0'，再与生成多项式 G 做模 2 除法（按位异或，不借位），\n * 得到的余数（长度 = strlen(G)-1）就是帧检验序列 FCS，把余数字符串写入 fcs。\n */\nvoid crc_fcs(const char *m, const char *g, char *fcs)\n{\n    /* TODO: 实现模 2 除法，把 M 对 G 的余数字符串写入 fcs */\n    strcpy(fcs, \"\");          /* 占位实现：保证空实现也能编译运行 */\n}\n\n/* 把数据 M 与 FCS 顺序拼接成实际发送的比特序列，写入 frame */\nvoid build_frame(const char *m, const char *fcs, char *frame)\n{\n    /* TODO: 把 m 与 fcs 拼接后写入 frame */\n    strcpy(frame, \"\");        /* 占位实现 */\n}\n\nint main(void)\n{\n    const char *M = \"101001\";   /* 待发送数据 */\n    const char *G = \"1101\";     /* 生成多项式，最高次 r = 3 */\n    char fcs[32] = {0};\n    char frame[64] = {0};\n\n    crc_fcs(M, G, fcs);\n    build_frame(M, fcs, frame);\n\n    printf(\"FCS=%s 发送序列=%s\\n\", fcs, frame);\n    return 0;\n}\n",
+    "sample_input": "M=101001 G=1101",
+    "sample_output": "FCS=001 发送序列=101001001",
+    "explanation": "在 M 后面补上 G 的位数减 1 个 0（这里补 3 个 0，得 101001000），再与 G 做模 2 除法（逐位异或、不借位），余数 001 就是 FCS。把 FCS 附加在数据之后得到发送序列 101001001；接收端用同一个 G 去除该序列，余数为 0 即认为无差错。",
+    "tags": [
+      "CRC",
+      "差错检测",
+      "模2除法",
+      "帧检验序列"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "NET_CODE_002",
+    "subject": "计算机网络",
+    "knowledge_point": "数据链路层",
+    "title": "CRC 校验接收序列是否出错",
+    "description": "把收到的完整序列除以生成多项式 G，余数为 0 判定无差错，否则判定有差错。",
+    "language": "c",
+    "difficulty": "提高",
+    "starter_code": "#include <stdio.h>\n#include <string.h>\n\n/* 用模 2 除法求接收序列 seq 对生成多项式 g 的余数，余数字符串写入 rem，\n * 余数长度 = strlen(g)-1。接收序列已经包含发送端附加的 FCS。\n */\nvoid crc_remainder(const char *seq, const char *g, char *rem)\n{\n    /* TODO: 实现模 2 除法，把余数字符串写入 rem */\n    strcpy(rem, \"\");          /* 占位实现 */\n}\n\n/* 判断接收序列是否正确：余数全为 '0' 返回 1（无差错），否则返回 0（有差错） */\nint crc_check(const char *recv, const char *g)\n{\n    char rem[32] = {0};\n\n    /* TODO: 调用 crc_remainder 求余数，再判断余数是否全为 '0' */\n    crc_remainder(recv, g, rem);\n    return 0;                 /* 占位实现 */\n}\n\nint main(void)\n{\n    const char *G = \"1101\";\n    const char *R1 = \"101001001\";   /* 正确到达的接收序列 */\n    const char *R2 = \"101001101\";   /* 传输中第 7 位出错 */\n    char rem1[32] = {0};\n    char rem2[32] = {0};\n\n    crc_remainder(R1, G, rem1);\n    crc_remainder(R2, G, rem2);\n\n    printf(\"R1=%s 余数=%s 判定=%s\\n\", R1, rem1, crc_check(R1, G) ? \"无差错\" : \"有差错\");\n    printf(\"R2=%s 余数=%s 判定=%s\\n\", R2, rem2, crc_check(R2, G) ? \"无差错\" : \"有差错\");\n    return 0;\n}\n",
+    "sample_input": "G=1101 R1=101001001 R2=101001101",
+    "sample_output": "R1=101001001 余数=000 判定=无差错\nR2=101001101 余数=100 判定=有差错",
+    "explanation": "接收序列已经包含发送端附加的 FCS，所以直接对整个序列做模 2 除法，不需要再补 0。R1 是正确到达的序列，余数为 000，判定无差错；R2 传输中第 7 位由 0 变成 1，余数为 100，判定有差错。CRC 只能检错，不能纠错。",
+    "tags": [
+      "CRC",
+      "差错检测",
+      "接收校验",
+      "模2除法"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "NET_CODE_003",
+    "subject": "计算机网络",
+    "knowledge_point": "数据链路层",
+    "title": "零比特填充与还原",
+    "description": "发送端在数据中每出现连续 5 个 1 后就插入一个 0，接收端再把插入的 0 删除，实现透明传输。",
+    "language": "c",
+    "difficulty": "基础",
+    "starter_code": "#include <stdio.h>\n#include <string.h>\n\n/* 零比特填充（发送端）：\n * 顺序扫描数据，每出现连续 5 个 '1'，就在其后插入一个 '0'，\n * 结果写入 out（以 '\\0' 结尾）。\n */\nvoid bit_stuff(const char *data, char *out)\n{\n    /* TODO: 实现零比特填充，结果写入 out */\n    strcpy(out, \"\");          /* 占位实现 */\n}\n\n/* 零比特去填充（接收端）：\n * 每收到连续 5 个 '1' 之后，删除紧随其后的那 1 个 '0'，还原出原始数据。\n */\nvoid bit_destuff(const char *stuffed, char *out)\n{\n    /* TODO: 实现去填充，结果写入 out */\n    strcpy(out, \"\");          /* 占位实现 */\n}\n\nint main(void)\n{\n    const char *data = \"1111101111101111110\";   /* 帧内原始数据 */\n    char stuffed[128] = {0};\n    char restored[128] = {0};\n\n    bit_stuff(data, stuffed);\n    bit_destuff(stuffed, restored);\n\n    printf(\"原始数据=%s\\n\", data);\n    printf(\"填充后=%s\\n\", stuffed);\n    printf(\"还原后=%s\\n\", restored);\n    return 0;\n}\n",
+    "sample_input": "data=1111101111101111110",
+    "sample_output": "原始数据=1111101111101111110\n填充后=1111100111110011111010\n还原后=1111101111101111110",
+    "explanation": "扫描数据并统计连续 1 的个数，满 5 个就插入一个 0 并把计数器清零；接收端反过来，每数到连续 5 个 1 就丢弃紧随其后的那一位。这样发送出去的比特流中永远不会出现 6 个连续 1（原始数据本身可能含 6 个连续 1，填充是针对发送序列的），也就不会与帧定界符 01111110 混淆，从而实现透明传输。",
+    "tags": [
+      "零比特填充",
+      "透明传输",
+      "HDLC",
+      "PPP"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "NET_CODE_004",
+    "subject": "计算机网络",
+    "knowledge_point": "数据链路层",
+    "title": "二维奇偶校验矩阵与一位错定位",
+    "description": "对 4 行 8 列的数据块计算行、列偶校验位，组成 5 行 9 列的校验矩阵，再根据接收矩阵校验失败的行列定位 1 位错。",
+    "language": "c",
+    "difficulty": "提高",
+    "starter_code": "#include <stdio.h>\n#include <string.h>\n\n#define ROWS 4\n#define COLS 8\n\n/* 求偶校验位：若 bits 中 '1' 的个数为奇数返回 '1'，否则返回 '0' */\nchar even_parity(const char *bits, int len)\n{\n    /* TODO: 统计 '1' 的个数并返回偶校验位字符 */\n    return '0';               /* 占位实现 */\n}\n\n/* 构造 (ROWS+1) 行 x (COLS+1) 列的二维偶校验矩阵\n * src  : ROWS 行，每行是 COLS 个 '0'/'1' 字符（字符串）\n * dst  : 每行可存放 COLS+1 个字符（外加 '\\0'），共 ROWS+1 行\n * 要求: dst[i][j] = src[i][j]                (i<ROWS, j<COLS)\n *       dst[i][COLS]      = 第 i 行的偶校验位 (i<ROWS)\n *       dst[ROWS][j]      = 第 j 列的偶校验位 (j<COLS)\n *       dst[ROWS][COLS]   = 第 ROWS 行前 COLS 个位的偶校验位（也等于第 COLS 列前 ROWS 个位的偶校验位）\n */\nvoid build_2d(const char src[ROWS][COLS + 1], char dst[ROWS + 1][COLS + 2])\n{\n    /* TODO: 按上述规则填充 dst 的每一行，并补上每行结尾的 '\\0' */\n}\n\n/* 根据接收矩阵定位 1 位错：\n * 逐行逐列统计 '1' 的个数（含校验位），个数为奇数的行和列即为出错位置。\n * 出错位置（行列均从 1 开始编号）写入 *row、*col；检测到 1 位错返回 1，无差错返回 0。\n */\nint locate_error(const char recv[ROWS + 1][COLS + 2], int *row, int *col)\n{\n    /* TODO: 找出行校验失败的行号与列校验失败的列号 */\n    return 0;                 /* 占位实现 */\n}\n\nint main(void)\n{\n    const char src[ROWS][COLS + 1] = {\n        \"10110010\",\n        \"01101101\",\n        \"11010000\",\n        \"00111100\"\n    };\n    char matrix[ROWS + 1][COLS + 2];\n    char recv[ROWS + 1][COLS + 2];\n    int i;\n    int row = 0;\n    int col = 0;\n\n    memset(matrix, 0, sizeof(matrix));\n    build_2d(src, matrix);\n\n    memcpy(recv, matrix, sizeof(matrix));\n    recv[2][4] = (recv[2][4] == '0') ? '1' : '0';   /* 制造 1 位错：第 3 行第 5 列 */\n\n    printf(\"发送矩阵:\\n\");\n    for (i = 0; i <= ROWS; i++)\n        printf(\"%s\\n\", matrix[i]);\n\n    printf(\"接收矩阵(第3行第5位出错):\\n\");\n    for (i = 0; i <= ROWS; i++)\n        printf(\"%s\\n\", recv[i]);\n\n    if (locate_error(recv, &row, &col))\n        printf(\"定位结果: 第%d行 第%d列\\n\", row, col);\n    else\n        printf(\"定位结果: 未检测到差错\\n\");\n    return 0;\n}\n",
+    "sample_input": "数据块 = 10110010 / 01101101 / 11010000 / 00111100（4 行 8 列）",
+    "sample_output": "发送矩阵:\n101100100\n011011011\n110100001\n001111000\n001100110\n接收矩阵(第3行第5位出错):\n101100100\n011011011\n110110001\n001111000\n001100110\n定位结果: 第3行 第5列",
+    "explanation": "偶校验要求每行每列中 1 的个数都是偶数：先给每行补 1 个行校验位，再给每列补 1 个列校验位，右下角是校验行的行校验位。接收端若某一行与某一列的 1 的个数同时变成奇数，其交点就是出错位。二维奇偶校验不仅能检错，还能纠正任意 1 位错。",
+    "tags": [
+      "奇偶校验",
+      "二维校验",
+      "差错控制",
+      "一位错定位"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "NET_CODE_005",
+    "subject": "计算机网络",
+    "knowledge_point": "网际协议与子网",
+    "title": "IPv4 子网划分：网络地址、广播地址与可用主机数",
+    "description": "给定 IP 地址与前缀长度，计算子网掩码、网络地址、广播地址和可用主机数。",
+    "language": "c",
+    "difficulty": "基础",
+    "starter_code": "#include <stdio.h>\n#include <string.h>\n\n/* 把点分十进制 IPv4 字符串（如 \"172.16.35.200\"）转成 32 位无符号整数，\n * 最高位字节对应第一段。 */\nunsigned int ip_to_int(const char *ip)\n{\n    /* TODO: 解析 a.b.c.d 四个十进制数并拼成 32 位整数 */\n    return 0;                 /* 占位实现 */\n}\n\n/* 把 32 位无符号整数还原成点分十进制字符串，写入 out */\nvoid int_to_ip(unsigned int v, char *out)\n{\n    /* TODO: 按 \"%u.%u.%u.%u\" 格式写入 out */\n    strcpy(out, \"\");          /* 占位实现 */\n}\n\n/* 由 IP 地址与前缀长度计算子网信息：\n * mask   : 子网掩码的点分十进制字符串\n * net    : 网络地址的点分十进制字符串\n * bcast  : 广播地址的点分十进制字符串\n * hosts  : 可用主机数（= 2^(32-prefix) - 2；prefix >= 31 时为 0；另注意 prefix=0 时移位位数会达到 32，在 C 中属未定义行为，需单独处理）\n */\nvoid subnet_info(const char *ip, int prefix, char *mask, char *net,\n                 char *bcast, unsigned int *hosts)\n{\n    /* TODO: 生成掩码 -> 与运算求网络地址 -> 主机位全 1 求广播地址 -> 算可用主机数 */\n}\n\nint main(void)\n{\n    const char *ip = \"172.16.35.200\";\n    int prefix = 20;\n    char mask[16] = {0};\n    char net[16] = {0};\n    char bcast[16] = {0};\n    unsigned int hosts = 0;\n\n    subnet_info(ip, prefix, mask, net, bcast, &hosts);\n\n    printf(\"IP地址=%s/%d\\n\", ip, prefix);\n    printf(\"子网掩码=%s\\n\", mask);\n    printf(\"网络地址=%s\\n\", net);\n    printf(\"广播地址=%s\\n\", bcast);\n    printf(\"可用主机数=%u\\n\", hosts);\n    return 0;\n}\n",
+    "sample_input": "ip=172.16.35.200 prefix=20",
+    "sample_output": "IP地址=172.16.35.200/20\n子网掩码=255.255.240.0\n网络地址=172.16.32.0\n广播地址=172.16.47.255\n可用主机数=4094",
+    "explanation": "前缀长度 20 对应的子网掩码是 255.255.240.0（前 20 位为 1）。IP 与掩码按位与得网络地址 172.16.32.0；把网络地址的主机位全置 1 得广播地址 172.16.47.255；主机位共 32-20=12 位，去掉网络地址与广播地址，可用主机数为 2^12-2=4094。",
+    "tags": [
+      "子网掩码",
+      "网络地址",
+      "广播地址",
+      "可用主机数"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "NET_CODE_006",
+    "subject": "计算机网络",
+    "knowledge_point": "网际协议与子网",
+    "title": "CIDR 地址块聚合与前缀长度计算",
+    "description": "把 4 个连续的 /24 网段聚合成一个 CIDR 地址块，输出聚合前缀长度、地址块、地址总数与起止地址。",
+    "language": "c",
+    "difficulty": "提高",
+    "starter_code": "#include <stdio.h>\n#include <string.h>\n\n#define N 4\n\n/* 把点分十进制 IPv4 字符串转成 32 位无符号整数 */\nunsigned int ip_to_int(const char *ip)\n{\n    /* TODO: 解析 a.b.c.d 并拼成 32 位整数 */\n    return 0;                 /* 占位实现 */\n}\n\n/* 把 32 位无符号整数还原成点分十进制字符串，写入 out */\nvoid int_to_ip(unsigned int v, char *out)\n{\n    /* TODO: 按 \"%u.%u.%u.%u\" 格式写入 out */\n    strcpy(out, \"\");          /* 占位实现 */\n}\n\n/* 计算若干地址的最长公共前缀长度（0~32）：\n * 只需比较最小地址与最大地址，二者异或结果中最高的 1 所在的位号 h 满足\n * 公共前缀长度 = 31 - h；全部相同则返回 32。\n */\nint common_prefix_len(const unsigned int addrs[], int n)\n{\n    /* TODO: 求最小、最大地址，异或后定位最高的 1 */\n    return 0;                 /* 占位实现 */\n}\n\nint main(void)\n{\n    const char *ips[N] = {\"172.16.32.0\", \"172.16.33.0\", \"172.16.34.0\", \"172.16.35.0\"};\n    unsigned int addrs[N] = {0};\n    char buf[16] = {0};\n    unsigned int mask;\n    unsigned int netv;\n    unsigned int bcastv;\n    unsigned int total;\n    int i;\n    int plen;\n\n    for (i = 0; i < N; i++)\n        addrs[i] = ip_to_int(ips[i]);\n\n    plen = common_prefix_len(addrs, N);\n    mask = (plen == 0) ? 0u : (0xFFFFFFFFu << (32 - plen));\n    netv = addrs[0] & mask;\n    bcastv = netv | ~mask;\n    total = (plen == 0) ? 0u : (1u << (32 - plen));\n\n    printf(\"待聚合地址块: %s/24 %s/24 %s/24 %s/24\\n\", ips[0], ips[1], ips[2], ips[3]);\n\n    int_to_ip(netv, buf);\n    printf(\"聚合地址块=%s/%d\\n\", buf, plen);\n    printf(\"地址总数=%u\\n\", total);\n\n    int_to_ip(netv, buf);\n    printf(\"起始地址=%s\\n\", buf);\n\n    int_to_ip(bcastv, buf);\n    printf(\"结束地址=%s\\n\", buf);\n    return 0;\n}\n",
+    "sample_input": "172.16.32.0/24 172.16.33.0/24 172.16.34.0/24 172.16.35.0/24",
+    "sample_output": "待聚合地址块: 172.16.32.0/24 172.16.33.0/24 172.16.34.0/24 172.16.35.0/24\n聚合地址块=172.16.32.0/22\n地址总数=1024\n起始地址=172.16.32.0\n结束地址=172.16.35.255",
+    "explanation": "聚合就是求最长公共前缀：只需比较最小地址与最大地址，两者异或后找到最高的 1 所在位号 h，公共前缀长度 = 31-h。172.16.32.0 与 172.16.35.0 异或得 0x300，最高的 1 在第 9 位，故公共前缀为 31-9=22 位，聚合结果 172.16.32.0/22，含 2^10=1024 个地址，范围 172.16.32.0 ~ 172.16.35.255。",
+    "tags": [
+      "CIDR",
+      "路由聚合",
+      "最长公共前缀",
+      "地址块"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "NET_CODE_007",
+    "subject": "计算机网络",
+    "knowledge_point": "网际协议与子网",
+    "title": "IPv4 首部校验和计算",
+    "description": "对 20 字节 IPv4 首部做 16 位反码求和再取反，得到首部校验和，并验证填入后重新计算的结果为 0。",
+    "language": "c",
+    "difficulty": "提高",
+    "starter_code": "#include <stdio.h>\n#include <stdint.h>\n\n#define HDR_LEN 20\n\n/* 计算 IPv4 首部校验和：\n * 把首部按 16 位字（大端）做反码求和，累加产生的进位回卷加到低位，\n * 最后对结果按位取反，即得 16 位校验和。\n * 注意：首部中\"校验和\"字段（第 11、12 字节）按其当前值参与累加，\n *       所以第一次计算前必须先把该字段写成 0x0000；\n *       把算出的校验和填回该字段后再算一次，结果应为 0x0000。\n */\nuint16_t ip_checksum(const uint8_t *hdr, int len)\n{\n    /* TODO: 16 位反码求和 + 进位回卷 + 取反 */\n    return 0;                 /* 占位实现 */\n}\n\nint main(void)\n{\n    /* 20 字节 IPv4 首部，校验和字段先置 0x0000 占位 */\n    uint8_t hdr[HDR_LEN] = {\n        0x45, 0x00, 0x00, 0x3C, 0x1C, 0x46, 0x40, 0x00,\n        0x40, 0x06, 0x00, 0x00, 0xAC, 0x10, 0x0A, 0x63,\n        0xAC, 0x10, 0x0A, 0x0C\n    };\n    uint16_t sum;\n    uint16_t verify;\n\n    sum = ip_checksum(hdr, HDR_LEN);\n\n    hdr[10] = (uint8_t)(sum >> 8);\n    hdr[11] = (uint8_t)(sum & 0xFF);\n    verify = ip_checksum(hdr, HDR_LEN);\n\n    printf(\"首部校验和=0x%04X\\n\", (unsigned)sum);\n    printf(\"填入后重新校验=0x%04X\\n\", (unsigned)verify);\n    return 0;\n}\n",
+    "sample_input": "45 00 00 3C 1C 46 40 00 40 06 00 00 AC 10 0A 63 AC 10 0A 0C",
+    "sample_output": "首部校验和=0xB1E6\n填入后重新校验=0x0000",
+    "explanation": "先把校验和字段置 0，把首部按 16 位字（大端）累加得 0x24E17，进位回卷 0x4E17+0x0002=0x4E19，按位取反得 0xB1E6。把 0xB1E6 写回校验和字段后再算一次，反码和为 0xFFFF，取反得 0x0000，说明首部在传输中没有出错。",
+    "tags": [
+      "IPv4",
+      "首部校验和",
+      "反码求和",
+      "进位回卷"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "NET_CODE_008",
+    "subject": "计算机网络",
+    "knowledge_point": "网际协议与子网",
+    "title": "IP 分片：各片长度与片偏移计算",
+    "description": "总长 4000 字节的 IP 数据报经过 MTU=1500 的链路，计算各分片的总长度、数据长度、片偏移与 MF 标志。",
+    "language": "c",
+    "difficulty": "综合",
+    "starter_code": "#include <stdio.h>\n\n#define MAX_FRAG 8\n#define IP_HDR  20\n\n/* IP 分片计算：\n * total_len : 原 IP 数据报总长度（含 20 字节首部）\n * mtu       : 链路 MTU\n * flen[i]   : 第 i 片的总长度（含 20 字节首部）\n * foff[i]   : 第 i 片的片偏移（以 8 字节为单位）\n * fmf[i]    : 第 i 片的 MF 标志，后面还有分片为 1，最后一片为 0\n * 返回分片数。注意除最后一片外，每片的数据部分必须是 8 字节的整数倍，\n * 因此每片最多携带 ((mtu - 20) / 8) * 8 字节数据。\n */\nint ip_fragment(int total_len, int mtu, int flen[], int foff[], int fmf[])\n{\n    /* TODO: 按 8 字节对齐切分数据部分，逐片填写长度、片偏移和 MF */\n    return 0;                 /* 占位实现 */\n}\n\nint main(void)\n{\n    int total_len = 4000;\n    int mtu = 1500;\n    int flen[MAX_FRAG] = {0};\n    int foff[MAX_FRAG] = {0};\n    int fmf[MAX_FRAG] = {0};\n    int i;\n    int n;\n\n    n = ip_fragment(total_len, mtu, flen, foff, fmf);\n\n    printf(\"原数据报总长度=%d MTU=%d 首部=%d\\n\", total_len, mtu, IP_HDR);\n    printf(\"分片数=%d\\n\", n);\n    for (i = 0; i < n; i++)\n        printf(\"片%d: 总长度=%d 数据长度=%d 片偏移=%d MF=%d\\n\",\n               i + 1, flen[i], flen[i] - IP_HDR, foff[i], fmf[i]);\n    return 0;\n}\n",
+    "sample_input": "total_len=4000 mtu=1500 首部=20",
+    "sample_output": "原数据报总长度=4000 MTU=1500 首部=20\n分片数=3\n片1: 总长度=1500 数据长度=1480 片偏移=0 MF=1\n片2: 总长度=1500 数据长度=1480 片偏移=185 MF=1\n片3: 总长度=1040 数据长度=1020 片偏移=370 MF=0",
+    "explanation": "数据部分共 4000-20=3980 字节。除最后一片外，每片携带的数据必须是 8 字节的整数倍，故每片最多 floor((1500-20)/8)*8=1480 字节。前两片各 1480 字节，总长度 1500，片偏移分别为 0/8=0 与 1480/8=185，MF=1；第三片剩 1020 字节，总长度 1040，片偏移 2960/8=370，MF=0 表示这是最后一片。",
+    "tags": [
+      "IP分片",
+      "MTU",
+      "片偏移",
+      "MF标志"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "NET_CODE_009",
+    "subject": "计算机网络",
+    "knowledge_point": "路由选择",
+    "title": "最长前缀匹配选路",
+    "description": "给定路由表和若干目的地址，按最长前缀匹配原则为每个目的地址选出出接口。",
+    "language": "c",
+    "difficulty": "综合",
+    "starter_code": "#include <stdio.h>\n#include <string.h>\n\n#define ROUTES 5\n\n/* 把点分十进制 IPv4 字符串转成 32 位无符号整数 */\nunsigned int ip_to_int(const char *ip)\n{\n    /* TODO: 解析 a.b.c.d 并拼成 32 位整数 */\n    return 0;                 /* 占位实现 */\n}\n\n/* 最长前缀匹配：\n * dest  : 目的 IP 地址（32 位整数）\n * net[] : 路由表中的网络地址字符串\n * plen[]: 各表项的前缀长度\n * n     : 表项个数\n * 返回匹配到的最长前缀表项下标；若没有任何表项匹配返回 -1。\n * 提示：前缀长度为 0 的表项（默认路由）可以匹配任意目的地址。\n */\nint longest_prefix_match(unsigned int dest, const char *net[], const int plen[], int n)\n{\n    /* TODO: 逐项求掩码、比较网络地址，保留前缀最长的那一项 */\n    return -1;                /* 占位实现 */\n}\n\nint main(void)\n{\n    const char *nets[ROUTES]  = {\"10.0.0.0\", \"10.1.0.0\", \"10.1.2.0\", \"192.168.0.0\", \"0.0.0.0\"};\n    const int   plens[ROUTES] = {8, 16, 24, 16, 0};\n    const char *ifs[ROUTES]   = {\"接口1\", \"接口2\", \"接口3\", \"接口4\", \"接口5\"};\n    const char *dests[ROUTES] = {\"10.1.2.5\", \"10.1.5.7\", \"10.2.3.4\", \"192.168.5.9\", \"8.8.8.8\"};\n    int i;\n\n    for (i = 0; i < ROUTES; i++) {\n        unsigned int d = ip_to_int(dests[i]);\n        int idx = longest_prefix_match(d, nets, plens, ROUTES);\n\n        if (idx >= 0)\n            printf(\"目的地址=%s 出接口=%s (%s/%d)\\n\", dests[i], ifs[idx], nets[idx], plens[idx]);\n        else\n            printf(\"目的地址=%s 无匹配路由\\n\", dests[i]);\n    }\n    return 0;\n}\n",
+    "sample_input": "路由表 10.0.0.0/8, 10.1.0.0/16, 10.1.2.0/24, 192.168.0.0/16, 0.0.0.0/0；目的地址 10.1.2.5 10.1.5.7 10.2.3.4 192.168.5.9 8.8.8.8",
+    "sample_output": "目的地址=10.1.2.5 出接口=接口3 (10.1.2.0/24)\n目的地址=10.1.5.7 出接口=接口2 (10.1.0.0/16)\n目的地址=10.2.3.4 出接口=接口1 (10.0.0.0/8)\n目的地址=192.168.5.9 出接口=接口4 (192.168.0.0/16)\n目的地址=8.8.8.8 出接口=接口5 (0.0.0.0/0)",
+    "explanation": "对每个目的地址，用各表项的前缀长度生成掩码，与目的地址按位与后同网络地址比较，在全部匹配项中取前缀最长者。10.1.2.5 同时匹配 /8、/16、/24，故选 /24 走接口3；10.1.5.7 匹配 /8 与 /16，选 /16 走接口2；10.2.3.4 只匹配 /8，走接口1；192.168.5.9 匹配 /16，走接口4；8.8.8.8 只匹配默认路由 0.0.0.0/0，走接口5。",
+    "tags": [
+      "最长前缀匹配",
+      "路由表",
+      "CIDR",
+      "默认路由"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "NET_CODE_010",
+    "subject": "计算机网络",
+    "knowledge_point": "TCP可靠传输",
+    "title": "TCP 首部校验和计算（含伪首部）",
+    "description": "拼出 12 字节伪首部，连同整个 TCP 报文段一起做 16 位反码求和再取反，得到 TCP 校验和。",
+    "language": "c",
+    "difficulty": "提高",
+    "starter_code": "#include <stdio.h>\n#include <stdint.h>\n\n#define TCP_HDR 20\n\n/* 16 位反码求和：\n * 把 data 按 16 位字（大端）累加，进位回卷加到低位，返回累加结果（未取反）。\n * len 为字节数，要求为偶数。\n */\nuint16_t ones_complement_sum(const uint8_t *data, int len)\n{\n    /* TODO: 按 16 位字累加 + 进位回卷 */\n    return 0;                 /* 占位实现 */\n}\n\n/* 计算 TCP 校验和（含 12 字节伪首部）：\n * 伪首部 = 源 IP(4) + 目的 IP(4) + 全 0(1) + 协议号 6(1) + TCP 长度(2)\n * 把伪首部与整个 TCP 报文段（首部 + 数据）一起做 16 位反码求和，再取反。\n * 注意：TCP 首部的校验和字段按其当前值参与累加，第一次计算前置 0x0000。\n */\nuint16_t tcp_checksum(const uint8_t *src_ip, const uint8_t *dst_ip,\n                      const uint8_t *tcp, int tcp_len)\n{\n    /* TODO: 拼出伪首部 -> 与 TCP 报文段一起反码求和 -> 取反 */\n    return 0;                 /* 占位实现 */\n}\n\nint main(void)\n{\n    uint8_t src_ip[4] = {192, 168, 1, 100};\n    uint8_t dst_ip[4] = {192, 168, 1, 200};\n    int tcp_len = 20;\n    uint8_t tcp[20] = {\n        0x12, 0x34,             /* 源端口 4660 */\n        0x00, 0x50,             /* 目的端口 80 */\n        0x00, 0x00, 0x00, 0x01, /* 序号 1 */\n        0x00, 0x00, 0x00, 0x00, /* 确认号 0 */\n        0x50, 0x02,             /* 数据偏移 5，标志位 SYN */\n        0x20, 0x00,             /* 窗口 8192 */\n        0x00, 0x00,             /* 校验和，先置 0 */\n        0x00, 0x00              /* 紧急指针 */\n    };\n    uint16_t sum;\n    uint16_t verify;\n\n    sum = tcp_checksum(src_ip, dst_ip, tcp, tcp_len);\n\n    tcp[16] = (uint8_t)(sum >> 8);\n    tcp[17] = (uint8_t)(sum & 0xFF);\n    verify = tcp_checksum(src_ip, dst_ip, tcp, tcp_len);\n\n    printf(\"TCP报文段长度=%d 伪首部长度=12\\n\", tcp_len);\n    printf(\"TCP校验和=0x%04X\\n\", (unsigned)sum);\n    printf(\"填入后重新校验=0x%04X\\n\", (unsigned)verify);\n    return 0;\n}\n",
+    "sample_input": "src=192.168.1.100 dst=192.168.1.200 源端口4660 目的端口80 seq=1 SYN 窗口8192",
+    "sample_output": "TCP报文段长度=20 伪首部长度=12\nTCP校验和=0xF8E0\n填入后重新校验=0x0000",
+    "explanation": "伪首部 = 源 IP(4 字节) + 目的 IP(4 字节) + 全 0(1 字节) + 协议号 6(1 字节) + TCP 长度(2 字节)，共 12 字节。伪首部反码和为 0x8497，TCP 首部（校验和字段置 0）反码和为 0x8287，相加折叠得 0x071F，取反得 0xF8E0。把 0xF8E0 填回校验和字段后再算，结果为 0x0000。",
+    "tags": [
+      "TCP校验和",
+      "伪首部",
+      "反码求和",
+      "传输层"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "NET_CODE_011",
+    "subject": "计算机网络",
+    "knowledge_point": "TCP可靠传输",
+    "title": "TCP 字节序号与确认号推进",
+    "description": "由初始序号 ISN 出发，按各报文段消耗的序号长度依次推进，输出每段的起始序号、对端确认号与最终的下一个序号。",
+    "language": "c",
+    "difficulty": "基础",
+    "starter_code": "#include <stdio.h>\n\n#define SEG 4\n\n/* TCP 字节序号推进：\n * isn      : 初始序号\n * lens[]   : 各报文段消耗的序号长度（SYN、FIN 各占 1 个序号，纯数据段为数据字节数）\n * n        : 报文段个数\n * seqs[]   : 输出各报文段的起始序号\n * next_seq : 输出全部发送完毕后的下一个待用序号\n */\nvoid seq_advance(unsigned int isn, const int lens[], int n,\n                 unsigned int seqs[], unsigned int *next_seq)\n{\n    /* TODO: 依次累加，填写每个报文段的起始序号与最终的下一个序号 */\n}\n\nint main(void)\n{\n    unsigned int isn = 1000;\n    int lens[SEG] = {1, 500, 800, 1};   /* SYN、数据 500 字节、数据 800 字节、FIN */\n    const char *names[SEG] = {\"报文段1(SYN)\", \"报文段2(数据)\", \"报文段3(数据)\", \"报文段4(FIN)\"};\n    unsigned int seqs[SEG] = {0};\n    unsigned int next_seq = 0;\n    int i;\n\n    seq_advance(isn, lens, SEG, seqs, &next_seq);\n\n    for (i = 0; i < SEG; i++)\n        printf(\"%s: seq=%u 长度=%d 下一序号=%u\\n\",\n               names[i], seqs[i], lens[i], seqs[i] + (unsigned int)lens[i]);\n\n    printf(\"对端依次确认号: \");\n    for (i = 0; i < SEG; i++)\n        printf(\"%u%s\", seqs[i] + (unsigned int)lens[i], (i < SEG - 1) ? \", \" : \"\\n\");\n\n    printf(\"若报文段3丢失, 接收方重复确认号=%u\\n\", seqs[1] + (unsigned int)lens[1]);\n    printf(\"最终下一序号=%u\\n\", next_seq);\n    return 0;\n}\n",
+    "sample_input": "ISN=1000 报文段: SYN(长度1), 数据500字节, 数据800字节, FIN(长度1)",
+    "sample_output": "报文段1(SYN): seq=1000 长度=1 下一序号=1001\n报文段2(数据): seq=1001 长度=500 下一序号=1501\n报文段3(数据): seq=1501 长度=800 下一序号=2301\n报文段4(FIN): seq=2301 长度=1 下一序号=2302\n对端依次确认号: 1001, 1501, 2301, 2302\n若报文段3丢失, 接收方重复确认号=1501\n最终下一序号=2302",
+    "explanation": "TCP 面向字节流：SYN 与 FIN 各消耗 1 个序号，数据段消耗的序号数等于字节数。从 1000 开始：SYN 占 1000，下一序号 1001；500 字节数据占 1001~1500，下一序号 1501；800 字节数据占 1501~2300，下一序号 2301；FIN 占 2301，下一序号 2302。接收方按累计确认依次回 1001、1501、2301、2302；若第 3 个报文段丢失，收到乱序的第 4 段时仍重复确认 1501。",
+    "tags": [
+      "TCP序号",
+      "确认号",
+      "累计确认",
+      "SYN",
+      "FIN"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "NET_CODE_012",
+    "subject": "计算机网络",
+    "knowledge_point": "拥塞控制",
+    "title": "慢开始与拥塞避免的拥塞窗口推演",
+    "description": "从 cwnd=1、ssthresh=16 出发推演 12 轮拥塞窗口变化，并在第 8 轮结束后模拟一次超时。",
+    "language": "c",
+    "difficulty": "提高",
+    "starter_code": "#include <stdio.h>\n\n#define MAX_ROUND 12\n\n/* 拥塞窗口推演：\n * init_cwnd     : 初始 cwnd（单位 MSS）\n * init_ssthresh : 初始慢开始门限 ssthresh\n * rounds        : 模拟的总轮数（每个轮次 = 1 个 RTT）\n * timeout_after : 第几轮结束后发生超时（0 表示不超时）\n * start[]       : 输出每轮开始时的 cwnd\n * end[]         : 输出每轮结束时的 cwnd\n * phase[]       : 输出每轮使用的阶段，0 = 慢开始，1 = 拥塞避免\n * ssth[]        : 输出每轮开始时的 ssthresh\n * 返回记录的轮数。\n *\n * 规则：cwnd < ssthresh 时使用慢开始（每轮 cwnd 加倍）；\n *       cwnd >= ssthresh 时使用拥塞避免（每轮 cwnd 加 1）；\n *       超时发生后 ssthresh = 超时那一刻 cwnd / 2，cwnd 重置为 1，下一轮重新慢开始。\n */\nint cwnd_trace(int init_cwnd, int init_ssthresh, int rounds, int timeout_after,\n               int start[], int end[], int phase[], int ssth[])\n{\n    /* TODO: 逐轮推演并根据 timeout_after 处理超时 */\n    return 0;                 /* 占位实现 */\n}\n\nint main(void)\n{\n    int start[MAX_ROUND] = {0};\n    int end[MAX_ROUND] = {0};\n    int phase[MAX_ROUND] = {0};\n    int ssth[MAX_ROUND] = {0};\n    int init_cwnd = 1;\n    int init_ssthresh = 16;\n    int timeout_after = 8;\n    int prev = 16;\n    int n;\n    int i;\n\n    n = cwnd_trace(init_cwnd, init_ssthresh, MAX_ROUND, timeout_after, start, end, phase, ssth);\n\n    printf(\"初始 cwnd=%d MSS, ssthresh=%d MSS, 第 %d 轮结束后发生超时\\n\",\n           init_cwnd, init_ssthresh, timeout_after);\n\n    for (i = 0; i < n; i++) {\n        if (ssth[i] != prev) {\n            printf(\"-- 第%d轮后超时: ssthresh %d -> %d, cwnd 重置为 1 --\\n\", i, prev, ssth[i]);\n            prev = ssth[i];\n        }\n        printf(\"轮次%d: cwnd %d -> %d 阶段=%s\\n\",\n               i + 1, start[i], end[i], (phase[i] == 0) ? \"慢开始\" : \"拥塞避免\");\n    }\n\n    printf(\"cwnd 序列:\");\n    for (i = 0; i < n; i++)\n        printf(\" %d\", start[i]);\n    printf(\"\\n\");\n\n    if (n > 0)\n        printf(\"第%d轮结束 cwnd=%d\\n\", n, end[n - 1]);\n    return 0;\n}\n",
+    "sample_input": "init_cwnd=1 init_ssthresh=16 rounds=12 timeout_after=8",
+    "sample_output": "初始 cwnd=1 MSS, ssthresh=16 MSS, 第 8 轮结束后发生超时\n轮次1: cwnd 1 -> 2 阶段=慢开始\n轮次2: cwnd 2 -> 4 阶段=慢开始\n轮次3: cwnd 4 -> 8 阶段=慢开始\n轮次4: cwnd 8 -> 16 阶段=慢开始\n轮次5: cwnd 16 -> 17 阶段=拥塞避免\n轮次6: cwnd 17 -> 18 阶段=拥塞避免\n轮次7: cwnd 18 -> 19 阶段=拥塞避免\n轮次8: cwnd 19 -> 20 阶段=拥塞避免\n-- 第8轮后超时: ssthresh 16 -> 10, cwnd 重置为 1 --\n轮次9: cwnd 1 -> 2 阶段=慢开始\n轮次10: cwnd 2 -> 4 阶段=慢开始\n轮次11: cwnd 4 -> 8 阶段=慢开始\n轮次12: cwnd 8 -> 16 阶段=慢开始\ncwnd 序列: 1 2 4 8 16 17 18 19 1 2 4 8\n第12轮结束 cwnd=16",
+    "explanation": "cwnd 小于 ssthresh 时用慢开始（每轮加倍），cwnd 大于等于 ssthresh 时改用拥塞避免（每轮加 1）。前 4 轮 1→2→4→8→16，第 5 轮起 16→17→18→19→20。第 8 轮结束发生超时，ssthresh 减半为 10，cwnd 回到 1，于是第 9~12 轮又按慢开始 1→2→4→8→16，cwnd 序列为 1 2 4 8 16 17 18 19 1 2 4 8。",
+    "tags": [
+      "拥塞控制",
+      "慢开始",
+      "拥塞避免",
+      "ssthresh",
+      "cwnd"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "NET_CODE_013",
+    "subject": "计算机网络",
+    "knowledge_point": "应用层协议",
+    "title": "URL 解析：拆出协议、主机、端口和路径",
+    "description": "把 scheme://host[:port][/path] 形式的 URL 拆成协议、主机、端口、路径四部分，缺少端口时补上默认端口。",
+    "language": "c",
+    "difficulty": "基础",
+    "starter_code": "#include <stdio.h>\n#include <string.h>\n#include <stdlib.h>\n\n/* 解析 URL，拆出协议、主机、端口、路径：\n * url    : 待解析的 URL，形如 scheme://host[:port][/path]\n * scheme : 输出协议名（http / https / ftp ...）\n * host   : 输出主机名\n * port   : 输出端口号；URL 中没有显式端口时填默认端口\n *          （http -> 80，https -> 443，其它协议 -> 0）\n * path   : 输出路径（以 '/' 开头）；URL 中没有路径时输出 \"/\"\n */\nvoid parse_url(const char *url, char *scheme, char *host, int *port, char *path)\n{\n    /* TODO: 定位 \"://\"、':'、'/'，分别取出协议、主机、端口、路径 */\n}\n\nint main(void)\n{\n    const char *urls[3] = {\n        \"https://www.example.com:8443/a/b/index.html?x=1\",\n        \"http://mail.qq.com/inbox\",\n        \"ftp://files.hust.edu.cn:2121/pub/data.txt\"\n    };\n    int i;\n\n    for (i = 0; i < 3; i++) {\n        char scheme[16] = {0};\n        char host[128] = {0};\n        char path[256] = {0};\n        int port = -1;\n\n        parse_url(urls[i], scheme, host, &port, path);\n        printf(\"URL%d: 协议=%s 主机=%s 端口=%d 路径=%s\\n\", i + 1, scheme, host, port, path);\n    }\n    return 0;\n}\n",
+    "sample_input": "https://www.example.com:8443/a/b/index.html?x=1 ; http://mail.qq.com/inbox ; ftp://files.hust.edu.cn:2121/pub/data.txt",
+    "sample_output": "URL1: 协议=https 主机=www.example.com 端口=8443 路径=/a/b/index.html?x=1\nURL2: 协议=http 主机=mail.qq.com 端口=80 路径=/inbox\nURL3: 协议=ftp 主机=files.hust.edu.cn 端口=2121 路径=/pub/data.txt",
+    "explanation": "先找到 :// 分隔符，它前面是协议名；它后面到第一个 / 之前是主机名，若其中出现 : 则冒号后面是端口，否则使用默认端口（http 为 80，https 为 443）；第一个 / 及其之后的内容都属于路径。三个例子分别解析为 https / www.example.com / 8443 / /a/b/index.html?x=1，http / mail.qq.com / 80 / /inbox，ftp / files.hust.edu.cn / 2121 / /pub/data.txt。",
+    "tags": [
+      "URL解析",
+      "应用层协议",
+      "默认端口",
+      "字符串处理"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "NET_CODE_014",
+    "subject": "计算机网络",
+    "knowledge_point": "数据链路层",
+    "title": "二进制指数退避的重传时刻计算",
+    "description": "计算 CSMA/CD 中第 i 次冲突后的退避窗口指数 k、最大随机数 r_max 与最大退避时间。",
+    "language": "c",
+    "difficulty": "基础",
+    "starter_code": "#include <stdio.h>\n\n/* 二进制指数退避（CSMA/CD）：\n * 第 i 次冲突后，从 {0, 1, ..., 2^k - 1} 中随机取整数 r，退避时间 = r * 争用期 2τ，\n * 其中 k = min(i, 10)。\n */\n\n/* 返回第 i 次冲突时的退避窗口指数 k = min(i, 10) */\nint backoff_k(int i)\n{\n    /* TODO: 取 i 与 10 的较小值 */\n    return 0;                 /* 占位实现 */\n}\n\n/* 返回第 i 次冲突时可取的最大随机数 r_max = 2^k - 1 */\nlong backoff_rmax(int i)\n{\n    /* TODO: 由 backoff_k(i) 算出 2^k - 1 */\n    return 0;                 /* 占位实现 */\n}\n\n/* 返回第 i 次冲突时的最大退避时间（微秒）= r_max * 争用期 */\ndouble backoff_max_us(int i, double slot_time)\n{\n    /* TODO: 用 backoff_rmax(i) 乘以争用期 */\n    return 0.0;               /* 占位实现 */\n}\n\nint main(void)\n{\n    const double slot_time = 51.2;   /* 10 Mb/s 以太网的争用期 2τ = 51.2 微秒 */\n    int i;\n\n    printf(\"争用期=%.1f us\\n\", slot_time);\n    for (i = 1; i <= 10; i++)\n        printf(\"第%d次冲突: k=%d r_max=%ld 最大退避时间=%.1f us\\n\",\n               i, backoff_k(i), backoff_rmax(i), backoff_max_us(i, slot_time));\n    return 0;\n}\n",
+    "sample_input": "争用期 2τ=51.2us, 冲突次数 i=1..10",
+    "sample_output": "争用期=51.2 us\n第1次冲突: k=1 r_max=1 最大退避时间=51.2 us\n第2次冲突: k=2 r_max=3 最大退避时间=153.6 us\n第3次冲突: k=3 r_max=7 最大退避时间=358.4 us\n第4次冲突: k=4 r_max=15 最大退避时间=768.0 us\n第5次冲突: k=5 r_max=31 最大退避时间=1587.2 us\n第6次冲突: k=6 r_max=63 最大退避时间=3225.6 us\n第7次冲突: k=7 r_max=127 最大退避时间=6502.4 us\n第8次冲突: k=8 r_max=255 最大退避时间=13056.0 us\n第9次冲突: k=9 r_max=511 最大退避时间=26163.2 us\n第10次冲突: k=10 r_max=1023 最大退避时间=52377.6 us",
+    "explanation": "第 i 次冲突后取 k=min(i,10)，从 {0,1,...,2^k-1} 中等概率随机取 r，退避时间 = r × 2τ。最大退避时间取 r=2^k-1：第 1 次冲突 1×51.2=51.2us，第 2 次 3×51.2=153.6us，此后依次翻倍；第 10 次 k 仍为 10，r_max=1023，最大退避时间 1023×51.2=52377.6us。以太网连续冲突 16 次后即丢弃该帧。",
+    "tags": [
+      "CSMA/CD",
+      "二进制指数退避",
+      "争用期",
+      "冲突"
+    ],
+    "source": "system_seed"
+  }
+]

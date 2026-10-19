@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<!-- 只渲染品牌 logo 圆角块（用于安装向导小图 / 图标），由 make-cover-assets.ps1 渲染 -->
+<style>
+  html, body { margin: 0; width: 440px; height: 440px; overflow: hidden; }
+  body { background: #ffffff; display: flex; align-items: center; justify-content: center; }
+  .tile {
+    width: 424px; height: 424px; border-radius: 110px;
+    background: linear-gradient(158deg, #dde6ec 0%, #d2dde3 100%);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .tile img { width: 63%; height: 63%; object-fit: contain; display: block; }
+</style>
+</head>
+<body>
+  <div class="tile"><img src="logo.png" alt="" /></div>
+</body>
+</html>

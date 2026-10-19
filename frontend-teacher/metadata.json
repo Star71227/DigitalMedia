@@ -1,0 +1,6 @@
+{
+  "name": "智课研伴",
+  "description": "多智能体协同的计算机科学教师工作台，支持学情诊断、智能教学资源生成、在线测验监控、题库AI导入、协同日志流和学习评估。",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,30 @@
+<!-- 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 -->
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#F7F6F3" />
+    <script>
+      // 防闪烁：在 CSS 渲染前按时间/记忆确定主题（与 src/theme.ts 同约定）
+      (function () {
+        var mode = null;
+        try {
+          mode = localStorage.getItem("learnmate_theme");
+        } catch (e) {}
+        var hour = new Date().getHours();
+        var dark = mode ? mode === "dark" : hour >= 18 || hour < 8;
+        document.documentElement.dataset.theme = dark ? "dark" : "light";
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.content = dark ? "#171613" : "#F7F6F3";
+      })();
+    </script>
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <title>智课研伴 (ZhiKe YanBan) - AI 驱动的 CS 专业课个性化学习平台</title>
+  </head>
+  <body class="antialiased">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

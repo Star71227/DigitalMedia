@@ -1,0 +1,16 @@
+node_modules
+dist
+.npm-cache
+.npmrc
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+*.log
+**/*.pdf
+**/*.pptx
+coverage
+server.ts
+Dockerfile*
+README.md

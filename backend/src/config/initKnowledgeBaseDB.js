@@ -1,0 +1,41 @@
+/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+const TABLES = [
+  `CREATE TABLE IF NOT EXISTS knowledge_sources (id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,source_key VARCHAR(180) NOT NULL,title VARCHAR(255) NOT NULL,author VARCHAR(255) NOT NULL,publisher VARCHAR(255) NOT NULL,license_name VARCHAR(100) NOT NULL,source_type VARCHAR(40) NOT NULL,source_url VARCHAR(500) NULL,subject VARCHAR(120) NOT NULL,language VARCHAR(30) NOT NULL DEFAULT 'zh-CN',version VARCHAR(40) NOT NULL,status VARCHAR(20) NOT NULL DEFAULT 'draft',quality_grade VARCHAR(20) NOT NULL DEFAULT 'C',checksum_sha256 CHAR(64) NOT NULL,metadata_json LONGTEXT NULL,imported_at TIMESTAMP NULL,created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,PRIMARY KEY(id),UNIQUE KEY uq_knowledge_source_version(source_key,version),KEY idx_knowledge_sources_active(subject,status),KEY idx_knowledge_sources_checksum(checksum_sha256)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+  `CREATE TABLE IF NOT EXISTS knowledge_documents (id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,source_id BIGINT UNSIGNED NOT NULL,document_key VARCHAR(220) NOT NULL,title VARCHAR(255) NOT NULL,chapter VARCHAR(255) NULL,section_name VARCHAR(255) NULL,content_text LONGTEXT NOT NULL,content_checksum CHAR(64) NOT NULL,status VARCHAR(20) NOT NULL DEFAULT 'active',created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,PRIMARY KEY(id),UNIQUE KEY uq_knowledge_document(source_id,document_key),KEY idx_knowledge_document_checksum(content_checksum)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+  `CREATE TABLE IF NOT EXISTS knowledge_chunks (id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,source_id BIGINT UNSIGNED NOT NULL,document_id BIGINT UNSIGNED NOT NULL,chunk_key VARCHAR(255) NOT NULL,subject VARCHAR(120) NOT NULL,chapter VARCHAR(255) NULL,section_name VARCHAR(255) NULL,heading_path_json LONGTEXT NULL,content_text TEXT NOT NULL,normalized_text TEXT NOT NULL,token_estimate INT NOT NULL DEFAULT 0,char_count INT NOT NULL DEFAULT 0,chunk_index INT NOT NULL,checksum_sha256 CHAR(64) NOT NULL,status VARCHAR(20) NOT NULL DEFAULT 'active',safety_status VARCHAR(30) NOT NULL DEFAULT 'safe',created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,PRIMARY KEY(id),UNIQUE KEY uq_knowledge_chunk_key(chunk_key),KEY idx_knowledge_chunk_checksum(checksum_sha256),KEY idx_knowledge_chunk_lookup(subject,status,safety_status),KEY idx_knowledge_chunk_document(document_id,chunk_index)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+  `CREATE TABLE IF NOT EXISTS knowledge_points (id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,subject VARCHAR(120) NOT NULL,point_key VARCHAR(180) NOT NULL,name VARCHAR(180) NOT NULL,description TEXT NOT NULL,difficulty VARCHAR(30) NOT NULL,chapter VARCHAR(255) NULL,status VARCHAR(20) NOT NULL DEFAULT 'active',created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,PRIMARY KEY(id),UNIQUE KEY uq_knowledge_point(subject,point_key),KEY idx_knowledge_point_name(subject,name,status)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+  `CREATE TABLE IF NOT EXISTS knowledge_point_aliases (id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,knowledge_point_id BIGINT UNSIGNED NOT NULL,alias VARCHAR(180) NOT NULL,normalized_alias VARCHAR(180) NOT NULL,created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,PRIMARY KEY(id),UNIQUE KEY uq_knowledge_alias(knowledge_point_id,normalized_alias),KEY idx_knowledge_alias_lookup(normalized_alias)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+  `CREATE TABLE IF NOT EXISTS knowledge_point_prerequisites (id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,knowledge_point_id BIGINT UNSIGNED NOT NULL,prerequisite_knowledge_point_id BIGINT UNSIGNED NOT NULL,relation_type VARCHAR(30) NOT NULL,confidence DECIMAL(5,4) NOT NULL DEFAULT 1,created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,PRIMARY KEY(id),UNIQUE KEY uq_knowledge_relation(knowledge_point_id,prerequisite_knowledge_point_id,relation_type),KEY idx_knowledge_relation_source(knowledge_point_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+  `CREATE TABLE IF NOT EXISTS knowledge_chunk_links (id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,chunk_id BIGINT UNSIGNED NOT NULL,knowledge_point_id BIGINT UNSIGNED NOT NULL,relevance_score DECIMAL(5,4) NOT NULL,annotation_source VARCHAR(30) NOT NULL,created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,PRIMARY KEY(id),UNIQUE KEY uq_knowledge_chunk_link(chunk_id,knowledge_point_id),KEY idx_chunk_link_point(knowledge_point_id,relevance_score)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+  `CREATE TABLE IF NOT EXISTS knowledge_retrieval_runs (id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,student_id INT NOT NULL,request_type VARCHAR(30) NOT NULL,subject VARCHAR(120) NOT NULL,knowledge_point VARCHAR(180) NULL,query_text VARCHAR(1000) NOT NULL,normalized_query VARCHAR(1000) NOT NULL,filters_json LONGTEXT NULL,retrieval_strategy VARCHAR(60) NOT NULL,top_k INT NOT NULL,minimum_score DECIMAL(6,5) NOT NULL,result_count INT NOT NULL DEFAULT 0,confidence VARCHAR(20) NOT NULL DEFAULT 'insufficient',created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,PRIMARY KEY(id),KEY idx_retrieval_student(student_id,created_at),KEY idx_retrieval_subject(subject,created_at)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+  `CREATE TABLE IF NOT EXISTS knowledge_retrieval_results (id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,retrieval_run_id BIGINT UNSIGNED NOT NULL,chunk_id BIGINT UNSIGNED NOT NULL,rank_position INT NOT NULL,lexical_score DECIMAL(7,6) NOT NULL DEFAULT 0,semantic_score DECIMAL(7,6) NOT NULL DEFAULT 0,relation_score DECIMAL(7,6) NOT NULL DEFAULT 0,final_score DECIMAL(7,6) NOT NULL,selected TINYINT(1) NOT NULL DEFAULT 0,rejection_reason VARCHAR(255) NULL,created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,PRIMARY KEY(id),UNIQUE KEY uq_retrieval_chunk(retrieval_run_id,chunk_id),KEY idx_retrieval_results_run(retrieval_run_id,rank_position)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+  `CREATE TABLE IF NOT EXISTS generation_citations (id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,student_id INT NOT NULL,generation_type VARCHAR(30) NOT NULL,generation_id VARCHAR(180) NOT NULL,generation_version INT NOT NULL DEFAULT 1,location_key VARCHAR(255) NOT NULL,claim_text TEXT NOT NULL,chunk_id BIGINT UNSIGNED NOT NULL,citation_label VARCHAR(30) NOT NULL,support_score DECIMAL(7,6) NOT NULL,validation_status VARCHAR(30) NOT NULL,source_snapshot_json LONGTEXT NOT NULL,created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,PRIMARY KEY(id),UNIQUE KEY uq_generation_citation(generation_type,generation_id,generation_version,location_key,chunk_id),KEY idx_generation_citations_lookup(student_id,generation_type,generation_id,generation_version),KEY idx_generation_citations_chunk(chunk_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
+];
+
+async function initKnowledgeBaseDB(db) {
+  for (const sql of TABLES) await db.query(sql);
+  await ensureKnowledgePointCompatibility(db);
+}
+
+async function ensureKnowledgePointCompatibility(db) {
+  const [columns] = await db.query("SHOW COLUMNS FROM knowledge_points");
+  const names = new Set(columns.map((column) => column.Field));
+  const additions = {
+    point_key: "VARCHAR(180) NULL",
+    difficulty: "VARCHAR(30) NOT NULL DEFAULT 'foundation'",
+    chapter: "VARCHAR(255) NULL",
+    status: "VARCHAR(20) NOT NULL DEFAULT 'active'",
+    updated_at: "TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+  };
+  for (const [name, definition] of Object.entries(additions)) {
+    if (!names.has(name)) await db.query(`ALTER TABLE knowledge_points ADD COLUMN \`${name}\` ${definition}`);
+  }
+  await db.query(
+    "UPDATE knowledge_points SET point_key=CONCAT('legacy-',id) WHERE point_key IS NULL OR point_key=''",
+  );
+  const [indexes] = await db.query("SHOW INDEX FROM knowledge_points");
+  if (!indexes.some((index) => index.Key_name === "uq_knowledge_point")) {
+    await db.query("ALTER TABLE knowledge_points ADD UNIQUE KEY uq_knowledge_point(subject,point_key)");
+  }
+}
+module.exports = { initKnowledgeBaseDB, KNOWLEDGE_TABLES: TABLES };

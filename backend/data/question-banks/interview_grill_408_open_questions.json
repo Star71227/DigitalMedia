@@ -1,0 +1,1142 @@
+[
+  {
+    "question_id": "IG_OPEN_DS_001",
+    "subject": "数据结构",
+    "chapter": "算法分析",
+    "knowledge_point": "时间复杂度",
+    "difficulty": "基础",
+    "prompt": "请解释时间复杂度的含义，并说明为什么通常关注输入规模趋大时的增长趋势。",
+    "followups": [
+      "O(1)、O(log n)、O(n) 和 O(n^2) 的增长差异如何直观比较？",
+      "为什么常数项和低阶项通常会被忽略？",
+      "最坏时间复杂度和平均时间复杂度分别适合什么分析场景？"
+    ],
+    "checkpoints": [
+      "能说明时间复杂度描述算法运行时间随输入规模增长的趋势",
+      "能区分常数项、低阶项和主导项",
+      "能结合循环、递归或查找过程估算基本操作次数"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_DS_002",
+    "subject": "数据结构",
+    "chapter": "线性表",
+    "knowledge_point": "顺序表与链表",
+    "difficulty": "基础",
+    "prompt": "请比较顺序表和链表在存储方式、随机访问、插入删除方面的差异。",
+    "followups": [
+      "为什么顺序表支持按下标随机访问，而单链表通常不支持？",
+      "在表头频繁插入元素时，链表和顺序表哪个更合适？",
+      "顺序表扩容可能带来什么额外成本？"
+    ],
+    "checkpoints": [
+      "能说出顺序表连续存储、链表离散存储的特点",
+      "能解释随机访问和按指针遍历的复杂度差异",
+      "能结合插入删除位置分析移动元素或修改指针的成本"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_DS_003",
+    "subject": "数据结构",
+    "chapter": "栈与队列",
+    "knowledge_point": "栈与队列",
+    "difficulty": "基础",
+    "prompt": "请说明栈和队列的基本操作规则，并举例说明它们各自适合解决的问题。",
+    "followups": [
+      "函数调用栈为什么体现后进先出的思想？",
+      "循环队列如何判断队空和队满？",
+      "用两个栈模拟队列时，入队和出队的关键思路是什么？"
+    ],
+    "checkpoints": [
+      "能区分栈的 LIFO 和队列的 FIFO",
+      "能描述入栈、出栈、入队、出队的边界条件",
+      "能把括号匹配、层次遍历等场景映射到对应结构"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_DS_004",
+    "subject": "数据结构",
+    "chapter": "树与二叉树",
+    "knowledge_point": "树与二叉树",
+    "difficulty": "基础",
+    "prompt": "请解释树、二叉树、满二叉树和完全二叉树之间的区别。",
+    "followups": [
+      "完全二叉树为什么适合用数组顺序存储？",
+      "二叉树的高度和结点数之间有哪些常见关系？",
+      "为什么普通树可以转换为二叉树表示？"
+    ],
+    "checkpoints": [
+      "能说明树的层次、度、叶子结点等基本概念",
+      "能区分满二叉树和完全二叉树的结构条件",
+      "能利用完全二叉树的下标关系定位父子结点"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_DS_005",
+    "subject": "数据结构",
+    "chapter": "树与二叉树",
+    "knowledge_point": "二叉树遍历",
+    "difficulty": "提高",
+    "prompt": "请解释二叉树前序、中序、后序和层序遍历的访问顺序，并说明它们的典型用途。",
+    "followups": [
+      "已知前序和中序序列时，如何重建一棵二叉树？",
+      "为什么二叉搜索树的中序遍历会得到有序序列？",
+      "层序遍历为什么通常需要队列辅助？"
+    ],
+    "checkpoints": [
+      "能准确说出四种遍历的访问顺序",
+      "能解释递归遍历的终止条件和调用关系",
+      "能区分普通二叉树和二叉搜索树遍历结果的性质"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_DS_006",
+    "subject": "数据结构",
+    "chapter": "图",
+    "knowledge_point": "图结构",
+    "difficulty": "基础",
+    "prompt": "请说明图的基本概念，并比较邻接矩阵和邻接表两种存储方式。",
+    "followups": [
+      "稠密图和稀疏图分别更适合哪种存储方式？",
+      "邻接矩阵判断两点是否相邻为什么更快？",
+      "邻接表遍历某个顶点的所有邻接点有什么优势？"
+    ],
+    "checkpoints": [
+      "能说明顶点、边、度、有向图和无向图的含义",
+      "能比较邻接矩阵和邻接表的空间复杂度",
+      "能结合图的稠密程度选择存储结构"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_DS_007",
+    "subject": "数据结构",
+    "chapter": "图",
+    "knowledge_point": "图遍历",
+    "difficulty": "提高",
+    "prompt": "请比较深度优先搜索和广度优先搜索的遍历思想，并说明它们各自依赖的数据结构。",
+    "followups": [
+      "DFS 为什么常用递归或栈实现？",
+      "BFS 为什么能求无权图中的最短路径层数？",
+      "图遍历中为什么需要 visited 标记？"
+    ],
+    "checkpoints": [
+      "能区分 DFS 向深处扩展和 BFS 按层扩展",
+      "能说明栈、递归栈和队列在遍历中的作用",
+      "能解释 visited 标记对避免重复访问和死循环的意义"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_DS_008",
+    "subject": "数据结构",
+    "chapter": "查找",
+    "knowledge_point": "二分查找",
+    "difficulty": "基础",
+    "prompt": "请解释二分查找的前提条件、基本过程和时间复杂度。",
+    "followups": [
+      "为什么二分查找要求线性表有序且支持随机访问？",
+      "查找区间更新时如何避免死循环？",
+      "查找第一个大于等于目标值的位置时，边界如何处理？"
+    ],
+    "checkpoints": [
+      "能说明二分查找每次缩小一半搜索区间",
+      "能指出有序和随机访问两个关键前提",
+      "能分析循环终止条件和左右边界更新"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_DS_009",
+    "subject": "数据结构",
+    "chapter": "查找",
+    "knowledge_point": "哈希表",
+    "difficulty": "提高",
+    "prompt": "请解释哈希表的查找思想，并说明冲突产生的原因和常见处理方法。",
+    "followups": [
+      "装填因子过高会对查找性能产生什么影响？",
+      "开放定址法和链地址法处理冲突的差异是什么？",
+      "为什么哈希表的平均查找复杂度可接近 O(1)？"
+    ],
+    "checkpoints": [
+      "能说明哈希函数把关键字映射到表地址",
+      "能解释冲突不可完全避免的原因",
+      "能比较链地址法和开放定址法的基本特点"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_DS_010",
+    "subject": "数据结构",
+    "chapter": "堆",
+    "knowledge_point": "堆与优先队列",
+    "difficulty": "提高",
+    "prompt": "请解释堆的结构性质和有序性质，并说明堆如何支持优先队列操作。",
+    "followups": [
+      "大根堆和小根堆的堆顶分别代表什么？",
+      "插入元素后为什么需要向上调整？",
+      "删除堆顶后为什么通常把最后一个元素移到堆顶再向下调整？"
+    ],
+    "checkpoints": [
+      "能说明堆通常是一棵完全二叉树",
+      "能解释父子结点之间的大小关系约束",
+      "能分析插入和删除堆顶的 O(log n) 调整过程"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_DS_011",
+    "subject": "数据结构",
+    "chapter": "排序",
+    "knowledge_point": "插入排序与选择排序",
+    "difficulty": "基础",
+    "prompt": "请比较直接插入排序和简单选择排序的基本思想、稳定性和时间复杂度。",
+    "followups": [
+      "为什么直接插入排序在基本有序时效率较高？",
+      "简单选择排序为什么通常不稳定？",
+      "两种算法的数据移动次数有什么差异？"
+    ],
+    "checkpoints": [
+      "能描述插入排序逐步构造有序前缀的过程",
+      "能描述选择排序每轮选出最小或最大元素的过程",
+      "能区分稳定性、比较次数和移动次数"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_DS_012",
+    "subject": "数据结构",
+    "chapter": "排序",
+    "knowledge_point": "快速排序",
+    "difficulty": "综合",
+    "prompt": "请解释快速排序的划分思想，并分析它在最好、平均和最坏情况下的时间复杂度。",
+    "followups": [
+      "枢轴选择不当为什么可能导致退化？",
+      "快速排序为什么通常不稳定？",
+      "如何通过随机选枢轴降低最坏情况出现的概率？"
+    ],
+    "checkpoints": [
+      "能说明一趟划分把元素按枢轴分成两侧",
+      "能分析递归深度对时间复杂度的影响",
+      "能指出最坏情况下可能退化为 O(n^2)"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_DS_013",
+    "subject": "数据结构",
+    "chapter": "排序",
+    "knowledge_point": "归并排序",
+    "difficulty": "综合",
+    "prompt": "请说明归并排序的分治过程，并解释它为什么通常需要额外空间。",
+    "followups": [
+      "归并排序为什么是稳定排序？",
+      "自顶向下和自底向上的归并排序有什么差异？",
+      "链表排序为什么常用归并排序？"
+    ],
+    "checkpoints": [
+      "能描述分解、递归排序和合并三个步骤",
+      "能解释合并有序子序列时需要辅助空间",
+      "能分析 O(n log n) 时间复杂度和 O(n) 辅助空间"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_DS_014",
+    "subject": "数据结构",
+    "chapter": "树与查找",
+    "knowledge_point": "二叉搜索树",
+    "difficulty": "提高",
+    "prompt": "请解释二叉搜索树的查找性质，并说明它在退化情况下会出现什么问题。",
+    "followups": [
+      "为什么中序遍历二叉搜索树可以得到递增序列？",
+      "插入有序数据时，普通二叉搜索树可能退化成什么形态？",
+      "平衡二叉树主要想解决什么问题？"
+    ],
+    "checkpoints": [
+      "能说明左子树小于根、右子树大于根的搜索性质",
+      "能分析查找复杂度与树高之间的关系",
+      "能指出退化链表会导致 O(n) 查找"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_DS_015",
+    "subject": "数据结构",
+    "chapter": "综合应用",
+    "knowledge_point": "数据结构选择",
+    "difficulty": "冲刺",
+    "prompt": "面对一个需要频繁插入、查找和按优先级取出元素的问题，你会如何选择数据结构并说明取舍？",
+    "followups": [
+      "哈希表和堆分别擅长解决哪一类操作？",
+      "如果还要求按区间范围查询，原有方案需要怎样调整？",
+      "如何从操作频率推导整体时间复杂度？"
+    ],
+    "checkpoints": [
+      "能根据操作类型匹配线性表、树、堆或哈希表",
+      "能说明单一结构无法同时优化所有操作时的取舍",
+      "能用操作频率和复杂度估算综合成本"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_CO_001",
+    "subject": "计算机组成原理",
+    "chapter": "数据表示",
+    "knowledge_point": "补码表示",
+    "difficulty": "基础",
+    "prompt": "请解释补码表示整数的基本思想，并说明为什么计算机常用补码进行有符号整数运算。",
+    "followups": [
+      "补码如何统一加法和减法运算？",
+      "n 位补码整数的表示范围是多少？",
+      "为什么补码中 0 只有一种表示？"
+    ],
+    "checkpoints": [
+      "能说明正数补码等于原码、负数补码由反码加一得到",
+      "能写出 n 位补码的取值范围",
+      "能解释补码便于硬件统一加减法"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_CO_002",
+    "subject": "计算机组成原理",
+    "chapter": "数据表示",
+    "knowledge_point": "浮点数表示",
+    "difficulty": "提高",
+    "prompt": "请说明浮点数由哪些部分组成，并解释阶码和尾数分别影响什么。",
+    "followups": [
+      "浮点数规格化的目的是什么？",
+      "阶码位数和尾数位数分别影响表示范围和精度的哪一部分？",
+      "为什么浮点运算可能出现舍入误差？"
+    ],
+    "checkpoints": [
+      "能说明浮点数通常包含符号位、阶码和尾数",
+      "能区分表示范围和有效精度的来源",
+      "能解释规格化和舍入对结果的影响"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_CO_003",
+    "subject": "计算机组成原理",
+    "chapter": "运算器",
+    "knowledge_point": "算术逻辑单元",
+    "difficulty": "基础",
+    "prompt": "请解释运算器的主要组成和 ALU 的作用。",
+    "followups": [
+      "ALU 通常能完成哪些算术和逻辑操作？",
+      "状态标志位如何反映运算结果？",
+      "移位操作在乘除法或地址计算中有什么作用？"
+    ],
+    "checkpoints": [
+      "能说明运算器负责算术、逻辑和移位等操作",
+      "能指出寄存器、ALU、状态标志之间的关系",
+      "能解释溢出、进位、零标志等状态信息"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_CO_004",
+    "subject": "计算机组成原理",
+    "chapter": "存储系统",
+    "knowledge_point": "存储层次结构",
+    "difficulty": "基础",
+    "prompt": "请说明寄存器、Cache、主存和外存组成存储层次结构的原因。",
+    "followups": [
+      "为什么不能只使用速度最快的存储器？",
+      "局部性原理如何支撑存储层次设计？",
+      "容量、速度和成本之间存在怎样的取舍？"
+    ],
+    "checkpoints": [
+      "能按速度、容量和成本比较不同存储层次",
+      "能解释时间局部性和空间局部性",
+      "能说明层次结构改善平均访问时间的思路"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_CO_005",
+    "subject": "计算机组成原理",
+    "chapter": "Cache",
+    "knowledge_point": "Cache 映射方式",
+    "difficulty": "提高",
+    "prompt": "请比较直接映射、全相联映射和组相联映射 Cache 的特点。",
+    "followups": [
+      "直接映射为什么硬件简单但冲突较多？",
+      "全相联映射为什么命中判断成本较高？",
+      "组相联映射如何在复杂度和冲突率之间折中？"
+    ],
+    "checkpoints": [
+      "能说明三种映射方式的主存块放置规则",
+      "能比较冲突失效概率和硬件比较成本",
+      "能理解组号、标记和块内地址的作用"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_CO_006",
+    "subject": "计算机组成原理",
+    "chapter": "Cache",
+    "knowledge_point": "Cache 写策略",
+    "difficulty": "综合",
+    "prompt": "请解释写直达、写回、写分配和非写分配策略的含义及其适用场景。",
+    "followups": [
+      "写回策略为什么需要脏位？",
+      "写直达会对主存带宽产生什么压力？",
+      "写缺失时是否装入 Cache 会影响哪些后续访问？"
+    ],
+    "checkpoints": [
+      "能区分写命中和写缺失时的处理策略",
+      "能说明写回、写直达对一致性和带宽的影响",
+      "能解释脏位和替换写回的必要性"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_CO_007",
+    "subject": "计算机组成原理",
+    "chapter": "虚拟存储",
+    "knowledge_point": "虚拟存储",
+    "difficulty": "提高",
+    "prompt": "请解释虚拟存储器的基本思想，并说明页表在地址转换中的作用。",
+    "followups": [
+      "虚拟地址如何转换为物理地址？",
+      "TLB 为什么能加速地址转换？",
+      "缺页异常发生后系统需要做哪些处理？"
+    ],
+    "checkpoints": [
+      "能说明虚拟存储扩展逻辑地址空间并按需调入页面",
+      "能描述页号、页内偏移和页框号的关系",
+      "能解释页表、TLB 和缺页处理的协作"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_CO_008",
+    "subject": "计算机组成原理",
+    "chapter": "指令系统",
+    "knowledge_point": "指令格式",
+    "difficulty": "基础",
+    "prompt": "请说明一条机器指令通常包含哪些字段，以及操作码和地址码分别表示什么。",
+    "followups": [
+      "指令字长固定和可变分别有什么影响？",
+      "地址码个数如何影响指令表达能力？",
+      "立即寻址和直接寻址的差异是什么？"
+    ],
+    "checkpoints": [
+      "能说明操作码用于指出操作类型",
+      "能说明地址码用于给出操作数或地址信息",
+      "能比较不同寻址方式的取数过程"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_CO_009",
+    "subject": "计算机组成原理",
+    "chapter": "CPU",
+    "knowledge_point": "控制器",
+    "difficulty": "提高",
+    "prompt": "请解释 CPU 控制器的作用，并说明取指、译码、执行三个阶段的基本流程。",
+    "followups": [
+      "程序计数器 PC 在取指阶段如何变化？",
+      "控制信号如何协调寄存器、ALU 和存储器？",
+      "硬布线控制器和微程序控制器有什么差异？"
+    ],
+    "checkpoints": [
+      "能描述指令周期的基本阶段",
+      "能说明 PC、IR、MAR、MDR 等寄存器的作用",
+      "能理解控制信号驱动数据通路工作的过程"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_CO_010",
+    "subject": "计算机组成原理",
+    "chapter": "流水线",
+    "knowledge_point": "指令流水线",
+    "difficulty": "综合",
+    "prompt": "请解释指令流水线如何提高吞吐率，并说明流水线冲突的主要类型。",
+    "followups": [
+      "为什么流水线不能无限提高单条指令的执行速度？",
+      "结构冲突、数据冲突和控制冲突分别如何产生？",
+      "分支预测和转发技术分别缓解哪类问题？"
+    ],
+    "checkpoints": [
+      "能说明流水线通过阶段重叠提高吞吐率",
+      "能区分结构、数据、控制三类冲突",
+      "能解释停顿、转发、预测等基本处理方法"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_CO_011",
+    "subject": "计算机组成原理",
+    "chapter": "总线",
+    "knowledge_point": "总线结构",
+    "difficulty": "基础",
+    "prompt": "请说明总线的作用，并比较数据总线、地址总线和控制总线的功能。",
+    "followups": [
+      "总线带宽受哪些因素影响？",
+      "为什么多个设备共享总线时需要仲裁？",
+      "同步总线和异步总线在时序控制上有什么差异？"
+    ],
+    "checkpoints": [
+      "能说明总线用于连接 CPU、存储器和 I/O 设备",
+      "能区分数据、地址和控制信号的传输内容",
+      "能解释总线仲裁对共享访问的意义"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_CO_012",
+    "subject": "计算机组成原理",
+    "chapter": "输入输出系统",
+    "knowledge_point": "I/O 控制方式",
+    "difficulty": "提高",
+    "prompt": "请比较程序查询、中断和 DMA 三种 I/O 控制方式。",
+    "followups": [
+      "程序查询方式为什么会浪费 CPU 时间？",
+      "中断方式如何提高 CPU 和外设并行工作的能力？",
+      "DMA 为什么适合大批量数据传输？"
+    ],
+    "checkpoints": [
+      "能说明三种 I/O 方式中 CPU 参与程度的差异",
+      "能描述中断请求、响应和返回的基本过程",
+      "能解释 DMA 控制器直接访问主存的作用"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_CO_013",
+    "subject": "计算机组成原理",
+    "chapter": "存储系统",
+    "knowledge_point": "主存编址",
+    "difficulty": "提高",
+    "prompt": "请解释按字节编址和按字编址的区别，并说明地址线位数如何决定可寻址空间。",
+    "followups": [
+      "若有 n 根地址线，最多能表示多少个地址单元？",
+      "存储字长和机器字长是否一定相同？",
+      "大端和小端字节序影响什么问题？"
+    ],
+    "checkpoints": [
+      "能说明地址单元大小对容量计算的影响",
+      "能用地址线数量计算可寻址单元数",
+      "能区分字节序、字长和存储容量概念"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_CO_014",
+    "subject": "计算机组成原理",
+    "chapter": "CPU",
+    "knowledge_point": "中断机制",
+    "difficulty": "综合",
+    "prompt": "请说明中断机制的基本流程，以及中断向量在定位服务程序中的作用。",
+    "followups": [
+      "中断响应前为什么需要保存现场？",
+      "可屏蔽中断和不可屏蔽中断有什么区别？",
+      "中断优先级如何影响多个中断请求的处理顺序？"
+    ],
+    "checkpoints": [
+      "能描述中断请求、判优、响应、服务和返回流程",
+      "能解释保存现场和恢复现场的必要性",
+      "能说明中断向量用于找到对应服务程序入口"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_CO_015",
+    "subject": "计算机组成原理",
+    "chapter": "综合应用",
+    "knowledge_point": "性能评价",
+    "difficulty": "冲刺",
+    "prompt": "请从 CPI、主频、指令条数和存储访问开销角度分析程序运行时间。",
+    "followups": [
+      "只提高主频为什么不一定等比例提高性能？",
+      "Cache 未命中会如何影响平均 CPI？",
+      "编译优化减少指令条数可能带来哪些副作用？"
+    ],
+    "checkpoints": [
+      "能写出 CPU 时间与指令条数、CPI、时钟周期的关系",
+      "能说明存储层次对有效 CPI 的影响",
+      "能从多因素而非单一指标评价性能"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_OS_001",
+    "subject": "操作系统",
+    "chapter": "处理机调度",
+    "knowledge_point": "时间片轮转调度",
+    "difficulty": "基础",
+    "prompt": "请解释时间片轮转调度的基本思想，并说明它适合解决什么问题。",
+    "followups": [
+      "时间片太大会退化成什么调度方式？",
+      "时间片太小会带来什么系统开销？",
+      "如何结合平均周转时间和响应时间评价 RR 调度？"
+    ],
+    "checkpoints": [
+      "能说出 RR 的轮流分配 CPU 思想",
+      "能解释时间片大小对响应时间和上下文切换的影响",
+      "能区分响应时间、周转时间和吞吐量"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_OS_002",
+    "subject": "操作系统",
+    "chapter": "进程与线程",
+    "knowledge_point": "进程与线程",
+    "difficulty": "基础",
+    "prompt": "请比较进程和线程在资源拥有、调度单位和通信开销上的区别。",
+    "followups": [
+      "为什么说进程是资源分配的基本单位？",
+      "同一进程内线程共享哪些资源？",
+      "线程切换通常为什么比进程切换开销小？"
+    ],
+    "checkpoints": [
+      "能区分进程和线程的基本定位",
+      "能说明地址空间、打开文件和寄存器上下文的差异",
+      "能解释并发执行和资源隔离之间的关系"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_OS_003",
+    "subject": "操作系统",
+    "chapter": "处理机调度",
+    "knowledge_point": "调度算法评价",
+    "difficulty": "提高",
+    "prompt": "请比较先来先服务、短作业优先和优先级调度的优缺点。",
+    "followups": [
+      "FCFS 为什么可能出现护航效应？",
+      "SJF 为什么平均等待时间较短但实现困难？",
+      "优先级调度如何缓解低优先级进程长期等待？"
+    ],
+    "checkpoints": [
+      "能说明不同调度算法优化的指标不同",
+      "能解释饥饿、护航效应和响应时间问题",
+      "能使用等待时间、周转时间等指标评价调度效果"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_OS_004",
+    "subject": "操作系统",
+    "chapter": "进程同步与互斥",
+    "knowledge_point": "临界区与互斥",
+    "difficulty": "基础",
+    "prompt": "请解释临界资源、临界区和互斥的含义，并说明为什么并发程序需要同步控制。",
+    "followups": [
+      "进入临界区需要满足哪些基本准则？",
+      "忙等待和阻塞等待有什么区别？",
+      "如果多个线程同时修改共享变量，可能出现什么结果？"
+    ],
+    "checkpoints": [
+      "能说明临界区是访问共享资源的代码段",
+      "能解释互斥、空闲让进、有限等待等要求",
+      "能结合共享变量例子说明竞态条件"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_OS_005",
+    "subject": "操作系统",
+    "chapter": "进程同步与互斥",
+    "knowledge_point": "信号量",
+    "difficulty": "提高",
+    "prompt": "请说明信号量和 PV 操作的含义，并举例说明它们如何解决同步或互斥问题。",
+    "followups": [
+      "P 操作和 V 操作分别如何改变信号量值？",
+      "二元信号量和计数信号量适合哪些场景？",
+      "生产者消费者问题中 empty、full、mutex 各代表什么？"
+    ],
+    "checkpoints": [
+      "能说明 P 操作申请资源、V 操作释放资源",
+      "能区分互斥信号量和同步信号量",
+      "能用信号量表达典型并发约束"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_OS_006",
+    "subject": "操作系统",
+    "chapter": "死锁",
+    "knowledge_point": "死锁条件",
+    "difficulty": "提高",
+    "prompt": "请解释死锁产生的四个必要条件，并说明预防死锁的基本思路。",
+    "followups": [
+      "互斥、请求保持、不可剥夺和循环等待分别是什么意思？",
+      "破坏循环等待条件可以采用什么资源编号策略？",
+      "死锁预防、避免、检测和解除有什么区别？"
+    ],
+    "checkpoints": [
+      "能准确列出死锁四个必要条件",
+      "能说明破坏任一必要条件即可预防死锁",
+      "能区分死锁预防、避免和检测的处理时机"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_OS_007",
+    "subject": "操作系统",
+    "chapter": "死锁",
+    "knowledge_point": "银行家算法",
+    "difficulty": "综合",
+    "prompt": "请说明银行家算法判断系统安全状态的核心思想。",
+    "followups": [
+      "安全状态和不安全状态是否等价于无死锁和有死锁？",
+      "Need、Allocation、Available 三类数据分别表示什么？",
+      "为什么试探性分配后还要进行安全性检查？"
+    ],
+    "checkpoints": [
+      "能说明银行家算法通过安全序列判断是否允许分配",
+      "能区分安全状态、不安全状态和死锁状态",
+      "能根据资源矩阵推导可完成进程序列"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_OS_008",
+    "subject": "操作系统",
+    "chapter": "内存管理",
+    "knowledge_point": "连续分配管理",
+    "difficulty": "基础",
+    "prompt": "请解释连续内存分配的基本思想，并比较首次适应、最佳适应和最坏适应算法。",
+    "followups": [
+      "外部碎片为什么会出现在连续分配中？",
+      "最佳适应算法为什么可能产生很多小碎片？",
+      "紧凑技术能解决什么问题，又有什么代价？"
+    ],
+    "checkpoints": [
+      "能说明连续分配要求进程占用一段连续物理内存",
+      "能比较三种空闲区分配策略",
+      "能区分内部碎片和外部碎片"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_OS_009",
+    "subject": "操作系统",
+    "chapter": "内存管理",
+    "knowledge_point": "分页管理",
+    "difficulty": "提高",
+    "prompt": "请解释分页存储管理的地址转换过程，并说明页表的作用。",
+    "followups": [
+      "逻辑地址中的页号和页内偏移如何使用？",
+      "页表项中通常包含哪些信息？",
+      "分页管理为什么能够消除外部碎片？"
+    ],
+    "checkpoints": [
+      "能说明页面和页框大小相同",
+      "能描述页号查页表得到页框号的过程",
+      "能区分分页带来的内部碎片和连续分配的外部碎片"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_OS_010",
+    "subject": "操作系统",
+    "chapter": "虚拟内存",
+    "knowledge_point": "请求分页",
+    "difficulty": "提高",
+    "prompt": "请说明请求分页虚拟内存的工作机制，以及缺页中断发生后的处理流程。",
+    "followups": [
+      "为什么虚拟内存能让程序逻辑空间大于物理内存？",
+      "缺页时如果没有空闲页框，应如何处理？",
+      "局部性原理如何支持按需调页？"
+    ],
+    "checkpoints": [
+      "能说明页面按需调入而不是一次全部装入",
+      "能描述缺页中断、页面调入和页表更新过程",
+      "能解释虚拟内存依赖局部性原理"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_OS_011",
+    "subject": "操作系统",
+    "chapter": "页面置换算法",
+    "knowledge_point": "页面置换算法",
+    "difficulty": "综合",
+    "prompt": "请比较 FIFO、LRU 和 OPT 页面置换算法的思想与优缺点。",
+    "followups": [
+      "OPT 为什么通常只能作为理论最优标准？",
+      "LRU 如何利用最近访问历史？",
+      "FIFO 为什么可能出现 Belady 异常？"
+    ],
+    "checkpoints": [
+      "能说明三种算法选择淘汰页面的依据",
+      "能手动计算给定访问序列的缺页次数",
+      "能解释 Belady 异常和算法局限"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_OS_012",
+    "subject": "操作系统",
+    "chapter": "文件系统",
+    "knowledge_point": "文件目录与索引",
+    "difficulty": "提高",
+    "prompt": "请解释文件系统中目录、FCB 或 inode 的作用，并说明文件如何从名字映射到磁盘块。",
+    "followups": [
+      "目录项为什么不能只保存文件名？",
+      "连续分配、链接分配和索引分配各有什么优缺点？",
+      "多级目录如何提高文件组织效率？"
+    ],
+    "checkpoints": [
+      "能说明目录用于文件名到文件控制信息的映射",
+      "能比较常见文件物理结构",
+      "能解释索引结构对随机访问的支持"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_OS_013",
+    "subject": "操作系统",
+    "chapter": "设备管理",
+    "knowledge_point": "设备管理",
+    "difficulty": "基础",
+    "prompt": "请说明操作系统设备管理的目标，以及设备独立性带来的好处。",
+    "followups": [
+      "为什么应用程序通常不直接操作具体硬件寄存器？",
+      "设备驱动程序在 I/O 系统中承担什么角色？",
+      "缓冲技术如何改善 CPU 与外设速度不匹配的问题？"
+    ],
+    "checkpoints": [
+      "能说明设备管理负责分配、控制和回收 I/O 设备",
+      "能解释设备独立性屏蔽硬件差异",
+      "能说明驱动程序和缓冲区的作用"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_OS_014",
+    "subject": "操作系统",
+    "chapter": "设备管理",
+    "knowledge_point": "磁盘调度",
+    "difficulty": "综合",
+    "prompt": "请比较 FCFS、SSTF、SCAN 和 C-SCAN 磁盘调度算法的基本思想。",
+    "followups": [
+      "SSTF 为什么可能导致某些请求长期等待？",
+      "SCAN 算法为什么类似电梯运行？",
+      "评价磁盘调度时为什么关注平均寻道长度？"
+    ],
+    "checkpoints": [
+      "能说明不同算法选择下一个磁道请求的策略",
+      "能手动计算简单请求序列的磁头移动距离",
+      "能解释公平性和寻道效率之间的取舍"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_OS_015",
+    "subject": "操作系统",
+    "chapter": "综合应用",
+    "knowledge_point": "系统调用与中断",
+    "difficulty": "冲刺",
+    "prompt": "请解释系统调用、异常和中断的区别，并说明用户态到内核态切换的意义。",
+    "followups": [
+      "系统调用为什么需要通过受控入口进入内核？",
+      "异常和外部中断在触发来源上有什么区别？",
+      "模式切换为什么会带来性能开销？"
+    ],
+    "checkpoints": [
+      "能区分主动请求服务、同步异常和异步中断",
+      "能说明用户态和内核态的权限隔离",
+      "能描述陷入内核、处理和返回用户态的流程"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_CN_001",
+    "subject": "计算机网络",
+    "chapter": "网络体系结构",
+    "knowledge_point": "网络分层模型",
+    "difficulty": "基础",
+    "prompt": "请解释网络分层的目的，并比较 OSI 七层模型和 TCP/IP 模型的层次划分。",
+    "followups": [
+      "分层模型为什么能降低协议设计复杂度？",
+      "封装和解封装在发送与接收过程中如何发生？",
+      "应用层、传输层和网络层分别解决什么问题？"
+    ],
+    "checkpoints": [
+      "能说明分层提供抽象和接口隔离",
+      "能描述数据从高层到低层逐层封装的过程",
+      "能对应常见协议所在层次"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_CN_002",
+    "subject": "计算机网络",
+    "chapter": "网络层",
+    "knowledge_point": "IP 地址与子网划分",
+    "difficulty": "提高",
+    "prompt": "请解释 IP 地址、子网掩码和网络号的关系，并说明如何进行子网划分。",
+    "followups": [
+      "给定 IP 和掩码时，如何计算网络地址？",
+      "为什么划分子网会减少每个子网可用主机数？",
+      "CIDR 表示法中的斜线数字代表什么？"
+    ],
+    "checkpoints": [
+      "能用按位与计算网络地址",
+      "能根据前缀长度判断主机位数量",
+      "能计算简单子网的地址范围和可用主机数"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_CN_003",
+    "subject": "计算机网络",
+    "chapter": "网络层",
+    "knowledge_point": "路由协议",
+    "difficulty": "提高",
+    "prompt": "请比较距离向量路由和链路状态路由的基本思想。",
+    "followups": [
+      "距离向量协议为什么可能出现慢收敛问题？",
+      "链路状态协议为什么需要构建网络拓扑图？",
+      "RIP 和 OSPF 分别更接近哪种思想？"
+    ],
+    "checkpoints": [
+      "能说明距离向量依赖邻居交换距离信息",
+      "能说明链路状态依赖全网拓扑和最短路径计算",
+      "能比较收敛速度、开销和适用规模"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_CN_004",
+    "subject": "计算机网络",
+    "chapter": "传输层",
+    "knowledge_point": "TCP 可靠传输",
+    "difficulty": "基础",
+    "prompt": "请解释 TCP 如何通过序号、确认、重传和滑动窗口实现可靠传输。",
+    "followups": [
+      "累计确认和选择确认的差异是什么？",
+      "超时重传和快速重传分别在什么情况下触发？",
+      "滑动窗口如何兼顾可靠性和传输效率？"
+    ],
+    "checkpoints": [
+      "能说明序号用于排序和检测丢失",
+      "能解释 ACK、超时和重传的配合",
+      "能理解窗口机制允许多个报文段在途"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_CN_005",
+    "subject": "计算机网络",
+    "chapter": "传输层",
+    "knowledge_point": "TCP 连接管理",
+    "difficulty": "提高",
+    "prompt": "请说明 TCP 三次握手和四次挥手的过程，以及每一步的目的。",
+    "followups": [
+      "三次握手为什么不是两次？",
+      "TIME_WAIT 状态有什么意义？",
+      "主动关闭方和被动关闭方在挥手过程中承担什么角色？"
+    ],
+    "checkpoints": [
+      "能描述 SYN、ACK、FIN 的基本交互",
+      "能说明三次握手用于同步序号并确认双方收发能力",
+      "能解释 TIME_WAIT 对迟到报文和可靠关闭的作用"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_CN_006",
+    "subject": "计算机网络",
+    "chapter": "传输层",
+    "knowledge_point": "UDP",
+    "difficulty": "基础",
+    "prompt": "请解释 UDP 的特点，并说明它适合哪些应用场景。",
+    "followups": [
+      "UDP 为什么被称为无连接协议？",
+      "UDP 不保证可靠性，应用层可以如何补充机制？",
+      "实时音视频为什么常选择 UDP 或基于 UDP 的协议？"
+    ],
+    "checkpoints": [
+      "能说明 UDP 首部简单、无连接、开销小",
+      "能区分 UDP 和 TCP 在可靠性、顺序性和拥塞控制上的差异",
+      "能结合实时性或简单查询场景说明适用性"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_CN_007",
+    "subject": "计算机网络",
+    "chapter": "传输层",
+    "knowledge_point": "拥塞控制",
+    "difficulty": "综合",
+    "prompt": "请解释 TCP 拥塞控制的目标，并说明慢开始、拥塞避免、快重传和快恢复的作用。",
+    "followups": [
+      "拥塞窗口和接收窗口分别受什么因素限制？",
+      "慢开始阶段为什么指数增长？",
+      "丢包被认为是拥塞信号时，窗口如何调整？"
+    ],
+    "checkpoints": [
+      "能区分流量控制和拥塞控制",
+      "能说明拥塞窗口随网络状况动态变化",
+      "能描述慢开始和拥塞避免的窗口增长方式"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_CN_008",
+    "subject": "计算机网络",
+    "chapter": "应用层",
+    "knowledge_point": "HTTP",
+    "difficulty": "基础",
+    "prompt": "请说明 HTTP 请求和响应的基本结构，并解释常见状态码的含义。",
+    "followups": [
+      "GET 和 POST 在语义和使用场景上有什么区别？",
+      "2xx、3xx、4xx、5xx 状态码大类分别表示什么？",
+      "HTTP 无状态是什么意思，Cookie 如何补充会话能力？"
+    ],
+    "checkpoints": [
+      "能说明请求行、请求头、请求体和响应状态行的作用",
+      "能解释常见状态码如 200、301、404、500",
+      "能区分协议无状态和应用会话维护"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_CN_009",
+    "subject": "计算机网络",
+    "chapter": "应用层",
+    "knowledge_point": "DNS",
+    "difficulty": "提高",
+    "prompt": "请解释 DNS 的层次结构和域名解析过程。",
+    "followups": [
+      "递归查询和迭代查询有什么差异？",
+      "本地 DNS 缓存如何影响解析速度和结果新鲜度？",
+      "A 记录和 CNAME 记录分别表示什么？"
+    ],
+    "checkpoints": [
+      "能说明根域、顶级域和权威域名服务器的层次关系",
+      "能描述从域名到 IP 地址的解析链路",
+      "能解释缓存和 TTL 的作用"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_CN_010",
+    "subject": "计算机网络",
+    "chapter": "数据链路层",
+    "knowledge_point": "差错检测",
+    "difficulty": "基础",
+    "prompt": "请说明数据链路层差错检测的目的，并解释 CRC 的基本思想。",
+    "followups": [
+      "CRC 校验码如何附加到数据帧中？",
+      "差错检测和差错纠正有什么区别？",
+      "为什么数据链路层还需要帧定界？"
+    ],
+    "checkpoints": [
+      "能说明差错检测用于发现传输中的比特错误",
+      "能理解 CRC 基于多项式除法生成冗余码",
+      "能区分成帧、差错检测和可靠传输机制"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_CN_011",
+    "subject": "计算机网络",
+    "chapter": "数据链路层",
+    "knowledge_point": "以太网与 MAC",
+    "difficulty": "提高",
+    "prompt": "请解释 MAC 地址、以太网帧和交换机转发的基本关系。",
+    "followups": [
+      "交换机如何学习 MAC 地址表？",
+      "未知目的 MAC 地址时交换机会怎样处理？",
+      "广播帧在局域网中会产生什么影响？"
+    ],
+    "checkpoints": [
+      "能说明 MAC 地址用于链路层局域网内寻址",
+      "能描述交换机根据 MAC 地址表转发帧",
+      "能解释广播、泛洪和地址学习过程"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_CN_012",
+    "subject": "计算机网络",
+    "chapter": "网络层",
+    "knowledge_point": "ARP 与 ICMP",
+    "difficulty": "提高",
+    "prompt": "请解释 ARP 和 ICMP 的作用，并说明它们分别服务于哪些网络层问题。",
+    "followups": [
+      "ARP 如何把 IP 地址解析为 MAC 地址？",
+      "ping 命令通常依赖 ICMP 的哪类报文？",
+      "跨网段通信时，主机为什么解析的是网关的 MAC 地址？"
+    ],
+    "checkpoints": [
+      "能说明 ARP 用于局域网内地址解析",
+      "能说明 ICMP 用于差错报告和网络诊断",
+      "能区分 IP 层转发和链路层下一跳交付"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_CN_013",
+    "subject": "计算机网络",
+    "chapter": "网络层",
+    "knowledge_point": "网络层转发",
+    "difficulty": "综合",
+    "prompt": "请说明路由器根据路由表转发 IP 数据报的过程。",
+    "followups": [
+      "最长前缀匹配为什么用于选择路由表项？",
+      "TTL 字段在转发过程中如何变化？",
+      "如果没有匹配路由，路由器可能如何处理数据报？"
+    ],
+    "checkpoints": [
+      "能描述目的 IP、路由表和下一跳之间的关系",
+      "能解释最长前缀匹配原则",
+      "能说明 TTL 防止数据报无限循环"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_CN_014",
+    "subject": "计算机网络",
+    "chapter": "网络层",
+    "knowledge_point": "NAT",
+    "difficulty": "提高",
+    "prompt": "请解释 NAT 的基本思想，以及它如何让多个内网主机共享公网地址访问外网。",
+    "followups": [
+      "端口映射在 NAPT 中起什么作用？",
+      "NAT 对端到端连接模型有什么影响？",
+      "为什么 NAT 不能从根本上替代 IPv6？"
+    ],
+    "checkpoints": [
+      "能说明 NAT 修改 IP 地址和端口映射关系",
+      "能描述内外网地址转换表的作用",
+      "能分析 NAT 的优点和协议层面的限制"
+    ],
+    "source": "interview_grill_adapted"
+  },
+  {
+    "question_id": "IG_OPEN_CN_015",
+    "subject": "计算机网络",
+    "chapter": "综合应用",
+    "knowledge_point": "Web 访问流程",
+    "difficulty": "冲刺",
+    "prompt": "请从浏览器输入 URL 到页面返回的全过程，串联 DNS、TCP、HTTP、IP 和链路层的协作。",
+    "followups": [
+      "DNS 解析、TCP 建连和 HTTP 请求的先后关系是什么？",
+      "数据在不同层封装时分别添加哪些关键信息？",
+      "如果访问变慢，可能从哪些层面定位原因？"
+    ],
+    "checkpoints": [
+      "能按时间顺序串起域名解析、建连、请求和响应",
+      "能说明传输层端口、网络层 IP 和链路层 MAC 的分工",
+      "能从分层角度定位 DNS、连接、拥塞或应用响应问题"
+    ],
+    "source": "interview_grill_adapted"
+  }
+]

@@ -1,0 +1,447 @@
+[
+  {
+    "exercise_id": "DS_CODE_011",
+    "subject": "数据结构",
+    "knowledge_point": "链表",
+    "title": "单链表反转",
+    "description": "给定若干整数，用尾插法建立单链表，然后原地反转链表并输出。程序使用固定示例数据，直接在 main() 中建表并打印结果，无需从标准输入读数据。",
+    "language": "c",
+    "difficulty": "提高",
+    "starter_code": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int data;\n    struct Node *next;\n} Node;\n\n/* 尾插法建立单链表：已给出，无需修改 */\nNode *buildList(const int *a, int n) {\n    Node *head = NULL;\n    Node *tail = NULL;\n    for (int i = 0; i < n; i++) {\n        Node *p = (Node *)malloc(sizeof(Node));\n        p->data = a[i];\n        p->next = NULL;\n        if (head == NULL) {\n            head = tail = p;\n        } else {\n            tail->next = p;\n            tail = p;\n        }\n    }\n    return head;\n}\n\nvoid printList(Node *head) {\n    for (Node *p = head; p != NULL; p = p->next) {\n        printf(\"%d\", p->data);\n        if (p->next != NULL) {\n            printf(\" \");\n        }\n    }\n    printf(\"\\n\");\n}\n\nvoid freeList(Node *head) {\n    while (head != NULL) {\n        Node *t = head;\n        head = head->next;\n        free(t);\n    }\n}\n\n/* 原地反转单链表，反转后 *head 指向新的头结点 */\nvoid reverseList(Node **head) {\n    /* TODO: 用三个指针 prev / cur / next 遍历链表：\n       先保存 cur 的后继，再把 cur->next 指向前驱 prev，\n       然后 prev 与 cur 同步后移；循环结束后令 *head = prev; */\n}\n\nint main(void) {\n    int a[] = {3, 5, 7, 9};\n    Node *head = buildList(a, 4);\n\n    reverseList(&head);\n    printList(head);\n\n    freeList(head);\n    return 0;\n}\n",
+    "sample_input": "3 5 7 9",
+    "sample_output": "9 7 5 3",
+    "explanation": "反转的关键是保存当前结点的后继指针，再让当前结点的 next 指向前驱，prev / cur / next 三个指针同步后移；循环结束时原尾结点就是新头结点，需要回头修改头指针。",
+    "tags": [
+      "链表",
+      "单链表",
+      "指针",
+      "反转"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "DS_CODE_012",
+    "subject": "数据结构",
+    "knowledge_point": "数组",
+    "title": "顺序表的插入与删除",
+    "description": "用数组实现顺序表，完成「在第 pos 个位置插入元素」和「删除第 pos 个元素」两个基本操作（位置从 1 开始计数），注意元素的整体后移/前移以及表长的维护。",
+    "language": "c",
+    "difficulty": "基础",
+    "starter_code": "#include <stdio.h>\n\n#define MAXN 100\n\ntypedef struct {\n    int data[MAXN];\n    int length;\n} SeqList;\n\nvoid printList(const SeqList *L) {\n    for (int i = 0; i < L->length; i++) {\n        printf(\"%d\", L->data[i]);\n        if (i + 1 < L->length) {\n            printf(\" \");\n        }\n    }\n    printf(\"\\n\");\n}\n\n/* 在第 pos 个位置插入 value（pos 从 1 开始，1 <= pos <= length + 1） */\nvoid listInsert(SeqList *L, int pos, int value) {\n    /* TODO: 先判断 pos 的合法性；把下标 pos-1 .. length-1 的元素整体后移一位，\n       在 data[pos-1] 处写入 value，最后 L->length++ */\n}\n\n/* 删除第 pos 个元素（pos 从 1 开始，1 <= pos <= length） */\nvoid listDelete(SeqList *L, int pos) {\n    /* TODO: 先判断 pos 的合法性；把下标 pos .. length-1 的元素整体前移一位，\n       最后 L->length-- */\n}\n\nint main(void) {\n    SeqList L;\n    int a[] = {10, 20, 30, 40, 50};\n    L.length = 5;\n    for (int i = 0; i < 5; i++) {\n        L.data[i] = a[i];\n    }\n\n    listInsert(&L, 3, 25);   /* 在第 3 个位置插入 25 */\n    listDelete(&L, 1);       /* 删除第 1 个元素 */\n\n    printList(&L);\n    return 0;\n}\n",
+    "sample_input": "初始 10 20 30 40 50 | 第 3 个位置插入 25 | 删除第 1 个元素",
+    "sample_output": "20 25 30 40 50",
+    "explanation": "插入时先把下标 pos-1 及其后的元素从后向前整体后移一位，再写入新值；删除时把 pos 之后的元素从前向后整体前移一位。两步都要先做位置合法性检查，并正确维护 length。",
+    "tags": [
+      "顺序表",
+      "数组",
+      "插入",
+      "删除",
+      "元素移动"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "DS_CODE_013",
+    "subject": "数据结构",
+    "knowledge_point": "链表",
+    "title": "合并两个有序单链表",
+    "description": "把两个递增有序的单链表合并成一个仍然递增的单链表并输出。为不破坏原链表，合并时用 malloc 新建结点尾插到结果链表，结果头结点通过二级指针返回。",
+    "language": "c",
+    "difficulty": "提高",
+    "starter_code": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int data;\n    struct Node *next;\n} Node;\n\n/* 尾插法建立单链表：已给出，无需修改 */\nNode *buildList(const int *a, int n) {\n    Node *head = NULL;\n    Node *tail = NULL;\n    for (int i = 0; i < n; i++) {\n        Node *p = (Node *)malloc(sizeof(Node));\n        p->data = a[i];\n        p->next = NULL;\n        if (head == NULL) {\n            head = tail = p;\n        } else {\n            tail->next = p;\n            tail = p;\n        }\n    }\n    return head;\n}\n\nvoid printList(Node *head) {\n    for (Node *p = head; p != NULL; p = p->next) {\n        printf(\"%d\", p->data);\n        if (p->next != NULL) {\n            printf(\" \");\n        }\n    }\n    printf(\"\\n\");\n}\n\nvoid freeList(Node *head) {\n    while (head != NULL) {\n        Node *t = head;\n        head = head->next;\n        free(t);\n    }\n}\n\n/* 合并两个递增有序的单链表 a 和 b，结果仍然递增；\n   新链表用 malloc 新建结点，参数 a、b 指向的链表保持不变；\n   结果链表的头结点通过 *outHead 返回 */\nvoid mergeTwoLists(Node *a, Node *b, Node **outHead) {\n    /* TODO: 双指针 p、q 分别指向 a、b：\n       每次比较 p->data 与 q->data，把较小者新建结点后尾插到结果链表，并让该指针后移；\n       当某个链表走完后，把另一个链表剩余结点依次新建并尾插；\n       最后让 *outHead 指向结果链表的头结点（结果为空时应为 NULL） */\n}\n\nint main(void) {\n    int x[] = {1, 3, 5};\n    int y[] = {2, 4, 6};\n    Node *a = buildList(x, 3);\n    Node *b = buildList(y, 3);\n    Node *merged = NULL;\n\n    mergeTwoLists(a, b, &merged);\n    printList(merged);\n\n    freeList(a);\n    freeList(b);\n    freeList(merged);\n    return 0;\n}\n",
+    "sample_input": "1 3 5 | 2 4 6",
+    "sample_output": "1 2 3 4 5 6",
+    "explanation": "用两个工作指针分别扫描两个链表，每次比较当前结点的值并把较小者接到结果链表尾部；当某一条链表走完后，把另一条链表剩余的结点依次接上即可，时间复杂度 O(n+m)。",
+    "tags": [
+      "链表",
+      "有序表合并",
+      "双指针",
+      "尾插法"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "DS_CODE_014",
+    "subject": "数据结构",
+    "knowledge_point": "链表",
+    "title": "判断单链表中是否有环",
+    "description": "判断一个单链表中是否存在环：有环输出 YES，无环输出 NO。示例中把第 6 个结点的 next 指回第 3 个结点，人为制造了一个环。",
+    "language": "c",
+    "difficulty": "提高",
+    "starter_code": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct Node {\n    int data;\n    struct Node *next;\n} Node;\n\n/* 尾插法建立单链表：已给出，无需修改 */\nNode *buildList(const int *a, int n) {\n    Node *head = NULL;\n    Node *tail = NULL;\n    for (int i = 0; i < n; i++) {\n        Node *p = (Node *)malloc(sizeof(Node));\n        p->data = a[i];\n        p->next = NULL;\n        if (head == NULL) {\n            head = tail = p;\n        } else {\n            tail->next = p;\n            tail = p;\n        }\n    }\n    return head;\n}\n\n/* 返回链表中第 k 个结点（k 从 1 开始），不存在时返回 NULL：已给出，无需修改 */\nNode *getNode(Node *head, int k) {\n    while (head != NULL && k > 1) {\n        head = head->next;\n        k--;\n    }\n    return head;\n}\n\n/* 判断单链表中是否存在环：有环返回 1，无环返回 0 */\nint hasCycle(Node *head) {\n    /* TODO: 快慢指针（Floyd 判圈）：slow 每次走一步，fast 每次走两步；\n       只要 fast 或 fast->next 为空就说明无环返回 0；\n       若某一时刻 slow == fast，说明有环返回 1 */\n    return 0;\n}\n\nint main(void) {\n    int a[] = {1, 2, 3, 4, 5, 6};\n    Node *head = buildList(a, 6);\n    Node *tail = getNode(head, 6);\n\n    tail->next = getNode(head, 3);   /* 人为制造环：第 6 个结点指回第 3 个结点 */\n\n    printf(\"%s\\n\", hasCycle(head) ? \"YES\" : \"NO\");\n    return 0;\n}\n",
+    "sample_input": "1 2 3 4 5 6，且尾结点指回第 3 个结点",
+    "sample_output": "YES",
+    "explanation": "Floyd 判圈算法（快慢指针）：慢指针每次走一步，快指针每次走两步。若链表有环，两指针一定会在环内相遇；若快指针或它的后继为空，则说明链表无环，时间复杂度 O(n)、空间 O(1)。",
+    "tags": [
+      "链表",
+      "快慢指针",
+      "Floyd 判圈",
+      "环"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "DS_CODE_015",
+    "subject": "数据结构",
+    "knowledge_point": "栈",
+    "title": "括号匹配",
+    "description": "判断只含小括号、中括号、大括号的字符串中的括号是否配对。示例分别给出一个匹配串和一个不匹配串，按行输出 YES / NO。",
+    "language": "c",
+    "difficulty": "基础",
+    "starter_code": "#include <stdio.h>\n\n/* 判断只含 () [] {} 的字符串 s 是否括号匹配：匹配返回 1，否则返回 0 */\nint isBalanced(const char *s) {\n    /* TODO: 用一个字符数组当栈（栈顶下标 top 从 -1 开始）：\n       遇到 '(' '[' '{' 就压入栈；\n       遇到 ')' ']' '}' 时，若栈空或栈顶不是与之配对的左括号就返回 0，否则弹出栈顶；\n       扫描结束后栈空返回 1，否则返回 0 */\n    return 0;\n}\n\nint main(void) {\n    const char *tests[] = {\"([{}])\", \"([)]\"};\n\n    for (int i = 0; i < 2; i++) {\n        printf(\"%s\\n\", isBalanced(tests[i]) ? \"YES\" : \"NO\");\n    }\n    return 0;\n}\n",
+    "sample_input": "([{}]) 与 ([)]",
+    "sample_output": "YES\nNO",
+    "explanation": "遇到左括号就入栈；遇到右括号时检查栈顶是否为与之配对的左括号——栈空或括号种类不对应即匹配失败；整个串扫描完后栈必须为空才算匹配。",
+    "tags": [
+      "栈",
+      "括号匹配",
+      "顺序栈"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "DS_CODE_016",
+    "subject": "数据结构",
+    "knowledge_point": "循环队列",
+    "title": "循环队列的入队与出队",
+    "description": "用数组实现循环队列（牺牲一个存储单元区分队空与队满），依次入队若干元素、出队两个元素、再入队两个元素，最后按队头到队尾的顺序打印队列内容。",
+    "language": "c",
+    "difficulty": "基础",
+    "starter_code": "#include <stdio.h>\n\n#define MAXQ 8\n\ntypedef struct {\n    int data[MAXQ];\n    int front;\n    int rear;\n} CirQueue;\n\n/* 初始化队列：已给出，无需修改 */\nvoid queueInit(CirQueue *q) {\n    q->front = 0;\n    q->rear = 0;\n}\n\n/* 按队头到队尾的顺序打印队列元素：已给出，无需修改 */\nvoid printQueue(const CirQueue *q) {\n    int i = q->front;\n    int first = 1;\n    while (i != q->rear) {\n        if (!first) {\n            printf(\" \");\n        }\n        printf(\"%d\", q->data[i]);\n        first = 0;\n        i = (i + 1) % MAXQ;\n    }\n    printf(\"\\n\");\n}\n\n/* 入队：队列满返回 0，成功返回 1 */\nint enQueue(CirQueue *q, int x) {\n    /* TODO: 队满条件是 (q->rear + 1) % MAXQ == q->front；\n       不满时把 x 存入 q->data[q->rear]，再令 q->rear = (q->rear + 1) % MAXQ，返回 1 */\n    return 0;\n}\n\n/* 出队：队列空返回 0，成功时把队头元素写入 *x 并返回 1 */\nint deQueue(CirQueue *q, int *x) {\n    /* TODO: q->front == q->rear 表示队空，返回 0；\n       否则 *x = q->data[q->front]，再令 q->front = (q->front + 1) % MAXQ，返回 1 */\n    return 0;\n}\n\nint main(void) {\n    CirQueue q;\n    int x = 0;\n    int a[] = {3, 6, 9, 12};\n\n    queueInit(&q);\n    for (int i = 0; i < 4; i++) {\n        enQueue(&q, a[i]);\n    }\n\n    deQueue(&q, &x);   /* 出队一个元素：3 */\n    deQueue(&q, &x);   /* 出队一个元素：6 */\n\n    enQueue(&q, 15);\n    enQueue(&q, 18);\n\n    printQueue(&q);\n    return 0;\n}\n",
+    "sample_input": "入队 3 6 9 12，出队 3、6，再入队 15 18",
+    "sample_output": "9 12 15 18",
+    "explanation": "队空条件是 front == rear；队满条件是 (rear + 1) % MAXQ == front。入队写 data[rear] 后 rear 后移一位并取模，出队取 data[front] 后 front 后移一位并取模，所有下标移动都必须对 MAXQ 取模。",
+    "tags": [
+      "队列",
+      "循环队列",
+      "队空队满",
+      "取模"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "DS_CODE_017",
+    "subject": "数据结构",
+    "knowledge_point": "队列",
+    "title": "用两个栈模拟队列",
+    "description": "用两个顺序栈（入队栈 in 与出队栈 out）模拟一个队列，实现入队与出队操作，示例中交替执行入队、出队以验证先进先出顺序。",
+    "language": "c",
+    "difficulty": "提高",
+    "starter_code": "#include <stdio.h>\n\n#define MAXS 100\n\ntypedef struct {\n    int data[MAXS];\n    int top;   /* 栈顶下标，空栈时为 -1 */\n} Stack;\n\n/* 顺序栈的基本操作：已给出，无需修改 */\nvoid sInit(Stack *s) {\n    s->top = -1;\n}\n\nvoid sPush(Stack *s, int x) {\n    s->top++;\n    s->data[s->top] = x;\n}\n\nint sTop(const Stack *s) {\n    return s->data[s->top];\n}\n\nvoid sPop(Stack *s) {\n    s->top--;\n}\n\nint sEmpty(const Stack *s) {\n    return s->top == -1;\n}\n\ntypedef struct {\n    Stack in;    /* 入队用的栈 */\n    Stack out;   /* 出队用的栈 */\n} MyQueue;\n\n/* 初始化：已给出，无需修改 */\nvoid myQueueInit(MyQueue *q) {\n    sInit(&q->in);\n    sInit(&q->out);\n}\n\n/* 入队 */\nvoid myQueuePush(MyQueue *q, int x) {\n    /* TODO: 把 x 直接压入入队栈 q->in 即可 */\n}\n\n/* 出队，返回队头元素（调用前保证队列非空） */\nint myQueuePop(MyQueue *q) {\n    /* TODO: 若出队栈 q->out 为空，就把入队栈 q->in 中的元素全部弹出并依次压入 q->out\n       （这样 q->out 的栈顶就是最早入队的元素）；然后弹出并返回 q->out 的栈顶元素 */\n    return 0;\n}\n\nint main(void) {\n    MyQueue q;\n    myQueueInit(&q);\n\n    myQueuePush(&q, 1);\n    myQueuePush(&q, 2);\n    myQueuePush(&q, 3);\n\n    printf(\"%d \", myQueuePop(&q));   /* 期望 1 */\n\n    myQueuePush(&q, 4);\n    myQueuePush(&q, 5);\n\n    printf(\"%d \", myQueuePop(&q));   /* 期望 2 */\n    printf(\"%d \", myQueuePop(&q));   /* 期望 3 */\n    printf(\"%d \", myQueuePop(&q));   /* 期望 4 */\n    printf(\"%d\\n\", myQueuePop(&q));  /* 期望 5 */\n    return 0;\n}\n",
+    "sample_input": "入队 1 2 3，出队 1，再入队 4 5，依次出队",
+    "sample_output": "1 2 3 4 5",
+    "explanation": "入队时一律把元素压入 in 栈；出队时若 out 栈为空，就把 in 栈中的元素全部弹出并依次压入 out 栈（顺序恰好被反转两次），此后 out 栈顶就是最早的队头元素。每个元素最多进出两个栈各一次，均摊时间复杂度 O(1)。",
+    "tags": [
+      "队列",
+      "栈",
+      "双栈",
+      "先进先出"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "DS_CODE_018",
+    "subject": "数据结构",
+    "knowledge_point": "栈",
+    "title": "用栈实现表达式求值",
+    "description": "用两个栈（操作数栈与运算符栈）计算只含 + - * / 与括号的整数表达式的值，除法按整除处理。示例表达式为 3+4*2-(1+5)/3。",
+    "language": "c",
+    "difficulty": "综合",
+    "starter_code": "#include <stdio.h>\n\n/* 求只含 + - * / 和括号 () 的整数表达式的值，除法为整除 */\nint evalExpr(const char *expr) {\n    /* TODO: 使用两个栈——操作数栈 num 和运算符栈 op：\n       1) 遇到数字字符时取出完整的整数压入 num；\n       2) 遇到 '(' 直接压入 op；\n       3) 遇到 ')' 时不断取 op 栈顶运算符做一次二元运算，直到遇到 '(' 并将其弹出；\n       4) 遇到运算符时，只要 op 栈顶仍是运算符且优先级不低于当前运算符，就先做一次运算，\n          然后把当前运算符压入 op（'(' 视为优先级最低）；\n       5) 扫描结束后把 op 中剩余运算符依次做完，num 栈顶即为结果 */\n    return 0;\n}\n\nint main(void) {\n    printf(\"%d\\n\", evalExpr(\"3+4*2-(1+5)/3\"));\n    return 0;\n}\n",
+    "sample_input": "3+4*2-(1+5)/3",
+    "sample_output": "9",
+    "explanation": "遇数字取完整整数压入操作数栈；遇 '(' 直接入运算符栈；遇 ')' 反复用栈顶运算符做二元运算直到弹出 '('；遇普通运算符时，先把栈顶优先级不低于它的运算符全部算完再入栈；扫描结束后清空运算符栈，操作数栈顶即为结果。",
+    "tags": [
+      "栈",
+      "表达式求值",
+      "运算符优先级",
+      "括号"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "DS_CODE_019",
+    "subject": "数据结构",
+    "knowledge_point": "串",
+    "title": "字符串朴素模式匹配",
+    "description": "实现朴素模式匹配（BF 算法），返回模式串在主串中第一次出现的下标（从 0 开始），不存在时返回 -1，示例给出一个能匹配的串和一个不能匹配的串。",
+    "language": "c",
+    "difficulty": "基础",
+    "starter_code": "#include <stdio.h>\n\n/* 朴素模式匹配：返回模式串 pattern 在主串 text 中第一次出现的下标（从 0 开始），找不到返回 -1 */\nint naiveMatch(const char *text, const char *pattern) {\n    /* TODO: 双重循环：外层用 i 枚举主串中的起始位置，\n       内层用 j 逐位比较 pattern[j] 与 text[i + j]；\n       当 pattern[j] == '\\0' 时说明完全匹配，返回 i；\n       外层循环结束还没有匹配就返回 -1 */\n    return -1;\n}\n\nint main(void) {\n    printf(\"%d\\n\", naiveMatch(\"ababcabcacbab\", \"abcac\"));\n    printf(\"%d\\n\", naiveMatch(\"aaaaa\", \"bba\"));\n    return 0;\n}\n",
+    "sample_input": "主串 ababcabcacbab，模式串 abcac；主串 aaaaa，模式串 bba",
+    "sample_output": "5\n-1",
+    "explanation": "外层用 i 枚举主串中的起始位置，内层用 j 逐位比较 pattern[j] 与 text[i+j]；当 pattern[j] 走到结尾符时说明匹配成功，返回起始下标 i。最坏时间复杂度 O(n*m)。",
+    "tags": [
+      "串",
+      "模式匹配",
+      "BF 算法",
+      "暴力枚举"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "DS_CODE_020",
+    "subject": "数据结构",
+    "knowledge_point": "串",
+    "title": "KMP 算法求 next 数组",
+    "description": "用递推法求出模式串的 next 数组（教材定义：next[j] = k 表示 p[0..k-1] == p[j-k..j-1] 的最大 k，且要求 1 <= k < j，即最长相等真前缀与真后缀的长度，不存在这样的 k 时取 0；并规定 next[0] = -1），示例模式串为 abaabcac。",
+    "language": "c",
+    "difficulty": "提高",
+    "starter_code": "#include <stdio.h>\n\n/* KMP 算法中模式串的 next 数组（采用教材定义）：\n   next[j] = k 表示 p[0..k-1] == p[j-k..j-1] 的最大 k，并规定 next[0] = -1。\n   函数把长度 m 的 next 值写入调用者提供的数组 next 中 */\nvoid getNext(const char *p, int m, int next[]) {\n    /* TODO: 用递推法求 next：\n       next[0] = -1；令 j = 0、k = -1；\n       当 j < m - 1 时循环：\n         若 k == -1 或 p[j] == p[k]，则 j++、k++，并令 next[j] = k；\n         否则 k = next[k]（回溯）。\n       注意 next[1] 一定为 0，此时 k == -1 的分支会自然处理 */\n}\n\nint main(void) {\n    const char *p = \"abaabcac\";\n    int m = 8;\n    int next[16];\n\n    for (int i = 0; i < 16; i++) {   /* 先清零，保证空实现时也能安全输出 */\n        next[i] = 0;\n    }\n\n    getNext(p, m, next);\n\n    for (int i = 0; i < m; i++) {\n        if (i > 0) {\n            printf(\" \");\n        }\n        printf(\"%d\", next[i]);\n    }\n    printf(\"\\n\");\n    return 0;\n}\n",
+    "sample_input": "abaabcac",
+    "sample_output": "-1 0 0 1 1 2 0 1",
+    "explanation": "令 j = 0、k = -1、next[0] = -1：当 k == -1 或 p[j] == p[k] 时，j 与 k 同时加一，并令 next[j] = k；否则 k 回退到 next[k]。整趟递推只需 O(m) 时间，next 数组正是 KMP 主串指针不回退的依据。",
+    "tags": [
+      "串",
+      "KMP",
+      "next 数组",
+      "模式匹配"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "DS_CODE_021",
+    "subject": "数据结构",
+    "knowledge_point": "串",
+    "title": "最长回文子串",
+    "description": "求字符串中最长的回文子串。若存在多个等长的最长回文子串，输出最先出现的那个。示例串为 abaxyzzyxf。",
+    "language": "c",
+    "difficulty": "综合",
+    "starter_code": "#include <stdio.h>\n\n/* 最长回文子串：把 s 中最长的回文子串复制到 out 中（out 至少 64 字节），并保证以 '\\0' 结尾；\n   若存在多个等长的最长回文子串，输出其中最先出现的那个 */\nvoid longestPalindrome(const char *s, char *out) {\n    /* TODO: 中心扩展法：分别以每个字符（奇数长度）和每两个相邻字符之间（偶数长度）为中心向两边扩展，\n       记录最长回文子串的起点和长度，最后把该子串复制到 out 并补上 '\\0'；\n       空串时 out 应为空字符串 */\n}\n\nint main(void) {\n    char out[64] = \"\";\n\n    longestPalindrome(\"abaxyzzyxf\", out);\n    printf(\"%s\\n\", out);\n    return 0;\n}\n",
+    "sample_input": "abaxyzzyxf",
+    "sample_output": "xyzzyx",
+    "explanation": "中心扩展法：分别以每个字符为中心（奇数长度回文）和每两个相邻字符之间为中心（偶数长度回文）向两侧扩展，记录最长回文区间的起点与长度，最后复制该子串。时间复杂度 O(n^2)，空间 O(1)。",
+    "tags": [
+      "串",
+      "回文",
+      "中心扩展",
+      "最长子串"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "DS_CODE_022",
+    "subject": "数据结构",
+    "knowledge_point": "先序遍历",
+    "title": "二叉树的三种递归遍历",
+    "description": "对同一棵二叉树分别输出先序遍历、中序遍历、后序遍历的结点序列，每个序列占一行，结点值之间用一个空格分隔。本练习以先序遍历为主线，同时覆盖中序与后序。",
+    "language": "c",
+    "difficulty": "基础",
+    "starter_code": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct TreeNode {\n    int val;\n    struct TreeNode *left;\n    struct TreeNode *right;\n} TreeNode;\n\n/* 新建结点：已给出，无需修改 */\nTreeNode *newNode(int v) {\n    TreeNode *p = (TreeNode *)malloc(sizeof(TreeNode));\n    p->val = v;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\n/* 输出辅助：已给出，无需修改。按“数字之间一个空格”的格式打印，由 first 控制空格 */\nstatic int first = 1;\n\nvoid emit(int v) {\n    if (!first) {\n        printf(\" \");\n    }\n    printf(\"%d\", v);\n    first = 0;\n}\n\n/* 前序遍历：根 -> 左 -> 右，访问结点时调用 emit(结点值) */\nvoid preOrder(TreeNode *root) {\n    /* TODO: root 为 NULL 直接返回；否则 emit(root->val) 后依次递归 preOrder(root->left)、preOrder(root->right) */\n}\n\n/* 中序遍历：左 -> 根 -> 右 */\nvoid inOrder(TreeNode *root) {\n    /* TODO: root 为 NULL 直接返回；否则先递归 inOrder(root->left)，再 emit(root->val)，最后递归 inOrder(root->right) */\n}\n\n/* 后序遍历：左 -> 右 -> 根 */\nvoid postOrder(TreeNode *root) {\n    /* TODO: root 为 NULL 直接返回；否则先递归 postOrder(root->left)、postOrder(root->right)，最后 emit(root->val) */\n}\n\nint main(void) {\n    TreeNode *n1 = newNode(1);\n    TreeNode *n2 = newNode(2);\n    TreeNode *n3 = newNode(3);\n    TreeNode *n4 = newNode(4);\n    TreeNode *n5 = newNode(5);\n    TreeNode *n6 = newNode(6);\n\n    n1->left = n2;\n    n1->right = n3;\n    n2->left = n4;\n    n2->right = n5;\n    n3->right = n6;\n\n    TreeNode *root = n1;\n\n    first = 1;\n    preOrder(root);\n    printf(\"\\n\");\n\n    first = 1;\n    inOrder(root);\n    printf(\"\\n\");\n\n    first = 1;\n    postOrder(root);\n    printf(\"\\n\");\n\n    return 0;\n}\n",
+    "sample_input": "示例二叉树：1 的左孩子 2、右孩子 3；2 的左右孩子为 4、5；3 的右孩子为 6",
+    "sample_output": "1 2 4 5 3 6\n4 2 5 1 3 6\n4 5 2 6 3 1",
+    "explanation": "三种遍历的递归框架完全相同，区别只在访问根结点的时机：先序是「根左右」，中序是「左根右」，后序是「左右根」。递归出口都是空指针直接返回。",
+    "tags": [
+      "二叉树",
+      "先序遍历",
+      "中序遍历",
+      "后序遍历",
+      "递归"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "DS_CODE_023",
+    "subject": "数据结构",
+    "knowledge_point": "二叉树",
+    "title": "求二叉树的高度与叶子结点数",
+    "description": "求一棵二叉树的结点层数（高度）与叶子结点个数，分两行输出。示例树共有 6 个结点，最深的一条链有 4 层。",
+    "language": "c",
+    "difficulty": "基础",
+    "starter_code": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct TreeNode {\n    int val;\n    struct TreeNode *left;\n    struct TreeNode *right;\n} TreeNode;\n\n/* 新建结点：已给出，无需修改 */\nTreeNode *newNode(int v) {\n    TreeNode *p = (TreeNode *)malloc(sizeof(TreeNode));\n    p->val = v;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\n/* 求二叉树的高度（结点层数；空树高度为 0） */\nint treeHeight(TreeNode *root) {\n    /* TODO: root 为 NULL 时返回 0；否则返回 1 + max(treeHeight(左), treeHeight(右))，\n       可以自己引入一个求最大值的辅助逻辑 */\n    return 0;\n}\n\n/* 统计二叉树的叶子结点个数 */\nint countLeaves(TreeNode *root) {\n    /* TODO: root 为 NULL 返回 0；左右孩子都为空说明是叶子，返回 1；\n       否则返回 countLeaves(左) + countLeaves(右) */\n    return 0;\n}\n\nint main(void) {\n    /*          1\n              /   \\\n             2     3\n            / \\\n           4   5\n          /\n         6\n    */\n    TreeNode *root = newNode(1);\n    root->left = newNode(2);\n    root->right = newNode(3);\n    root->left->left = newNode(4);\n    root->left->right = newNode(5);\n    root->left->left->left = newNode(6);\n\n    int height = treeHeight(root);\n    int leaves = countLeaves(root);\n    printf(\"%d\\n%d\\n\", height, leaves);\n    return 0;\n}\n",
+    "sample_input": "示例二叉树：1(2(4(6),5),3)",
+    "sample_output": "4\n3",
+    "explanation": "高度定义为 1 + max(左子树高度, 右子树高度)，空树高度为 0；叶子结点的判定是左右孩子都为空，此时贡献 1，否则叶子数等于左右子树叶子数之和。",
+    "tags": [
+      "二叉树",
+      "树高",
+      "叶子结点",
+      "递归"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "DS_CODE_024",
+    "subject": "数据结构",
+    "knowledge_point": "层序遍历",
+    "title": "二叉树的层序遍历",
+    "description": "对给定二叉树做层序遍历（自上而下、同层从左到右），把访问到的结点值按顺序输出在一行内，用空格分隔。",
+    "language": "c",
+    "difficulty": "提高",
+    "starter_code": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct TreeNode {\n    int val;\n    struct TreeNode *left;\n    struct TreeNode *right;\n} TreeNode;\n\n/* 新建结点：已给出，无需修改 */\nTreeNode *newNode(int v) {\n    TreeNode *p = (TreeNode *)malloc(sizeof(TreeNode));\n    p->val = v;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\n/* 输出辅助：已给出，无需修改。数字之间用一个空格分隔，由 first 控制 */\nstatic int first = 1;\n\nvoid emit(int v) {\n    if (!first) {\n        printf(\" \");\n    }\n    printf(\"%d\", v);\n    first = 0;\n}\n\n/* 二叉树的层序遍历：借助一个队列按层依次访问每个结点，访问时调用 emit(结点值)；\n   同一层的结点从左到右依次访问，全部结点在同一行内用空格分隔 */\nvoid levelOrder(TreeNode *root) {\n    /* TODO: root 为 NULL 直接返回；否则用数组模拟队列：\n       根结点入队；循环取出队头结点并 emit 它的值，再把非空的左孩子、右孩子依次入队，\n       直到队列为空 */\n}\n\nint main(void) {\n    /*          1\n              /   \\\n             2     3\n            / \\     \\\n           4   5     6\n              /\n             7\n    */\n    TreeNode *root = newNode(1);\n    root->left = newNode(2);\n    root->right = newNode(3);\n    root->left->left = newNode(4);\n    root->left->right = newNode(5);\n    root->right->right = newNode(6);\n    root->left->right->left = newNode(7);\n\n    first = 1;\n    levelOrder(root);\n    printf(\"\\n\");\n    return 0;\n}\n",
+    "sample_input": "示例二叉树：1(2(4,5(7)),3(,6))",
+    "sample_output": "1 2 3 4 5 6 7",
+    "explanation": "层序遍历借助队列实现：根结点先入队，循环中每次取出队头结点并访问，同时把它的非空左孩子、右孩子依次入队，直到队列为空。每个结点只入队一次。",
+    "tags": [
+      "二叉树",
+      "层序遍历",
+      "队列",
+      "广度优先"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "DS_CODE_025",
+    "subject": "数据结构",
+    "knowledge_point": "二叉搜索树",
+    "title": "二叉搜索树的插入与查找",
+    "description": "从空树开始依次插入若干关键字构造二叉搜索树，用中序遍历输出（结果应为递增序列），再分别查找一个存在的键和一个不存在的键，按行输出 FOUND / NOT_FOUND。",
+    "language": "c",
+    "difficulty": "提高",
+    "starter_code": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct TreeNode {\n    int val;\n    struct TreeNode *left;\n    struct TreeNode *right;\n} TreeNode;\n\n/* 新建结点：已给出，无需修改 */\nTreeNode *newNode(int v) {\n    TreeNode *p = (TreeNode *)malloc(sizeof(TreeNode));\n    p->val = v;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\n/* 中序遍历辅助：已给出，无需修改 */\nstatic int first = 1;\n\nvoid emit(int v) {\n    if (!first) {\n        printf(\" \");\n    }\n    printf(\"%d\", v);\n    first = 0;\n}\n\nvoid inOrder(TreeNode *root) {\n    if (root == NULL) {\n        return;\n    }\n    inOrder(root->left);\n    emit(root->val);\n    inOrder(root->right);\n}\n\n/* 二叉搜索树插入：把 val 插入以 root 为根的二叉搜索树，\n   返回插入之后的树根（val 已存在时不重复插入，直接返回原树根） */\nTreeNode *bstInsert(TreeNode *root, int val) {\n    /* TODO: root 为 NULL 时新建结点并返回；\n       val 小于 root->val 就递归插入左子树并把结果赋给 root->left；\n       val 大于 root->val 就递归插入右子树并把结果赋给 root->right；\n       val 等于 root->val 时不做任何操作；最后返回 root */\n    return NULL;   /* 占位返回，保证空实现也能编译运行 */\n}\n\n/* 二叉搜索树查找：找到值为 val 的结点就返回该结点指针，否则返回 NULL */\nTreeNode *bstSearch(TreeNode *root, int val) {\n    /* TODO: root 为 NULL 或 root->val == val 时返回 root；\n       val 小于 root->val 就在左子树中继续查找，否则在右子树中继续查找 */\n    return NULL;\n}\n\nint main(void) {\n    int a[] = {50, 30, 70, 20, 40, 60, 80};\n    TreeNode *root = NULL;\n\n    for (int i = 0; i < 7; i++) {\n        root = bstInsert(root, a[i]);\n    }\n\n    first = 1;\n    inOrder(root);          /* 中序遍历的结果应当是递增序列 */\n    printf(\"\\n\");\n\n    printf(\"%s\\n\", bstSearch(root, 60) != NULL ? \"FOUND\" : \"NOT_FOUND\");\n    printf(\"%s\\n\", bstSearch(root, 65) != NULL ? \"FOUND\" : \"NOT_FOUND\");\n    return 0;\n}\n",
+    "sample_input": "依次插入 50 30 70 20 40 60 80，再查找 60 与 65",
+    "sample_output": "20 30 40 50 60 70 80\nFOUND\nNOT_FOUND",
+    "explanation": "插入时沿比较路径递归下降，遇到空指针就新建结点并挂上，返回新的子树根；查找同样利用 BST 的有序性左右下降，命中则返回结点指针，走到空指针说明关键字不存在。",
+    "tags": [
+      "二叉搜索树",
+      "插入",
+      "查找",
+      "中序遍历"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "DS_CODE_026",
+    "subject": "数据结构",
+    "knowledge_point": "二叉搜索树",
+    "title": "判断一棵二叉树是否为二叉搜索树",
+    "description": "给定两棵二叉树，分别判断它们是否满足二叉搜索树的性质（每个结点的值严格大于左子树所有值、严格小于右子树所有值），按行输出 YES / NO。第二棵树中 30 的右孩子为 65，它比根 50 还大。",
+    "language": "c",
+    "difficulty": "提高",
+    "starter_code": "#include <stdio.h>\n#include <stdlib.h>\n\ntypedef struct TreeNode {\n    int val;\n    struct TreeNode *left;\n    struct TreeNode *right;\n} TreeNode;\n\n/* 新建结点：已给出，无需修改 */\nTreeNode *newNode(int v) {\n    TreeNode *p = (TreeNode *)malloc(sizeof(TreeNode));\n    p->val = v;\n    p->left = NULL;\n    p->right = NULL;\n    return p;\n}\n\n/* 判断以 root 为根的二叉树是否为二叉搜索树：是返回 1，不是返回 0。\n   要求每个结点的值都严格大于左子树中的所有值、严格小于右子树中的所有值 */\nint isBST(TreeNode *root) {\n    /* TODO: 借助中序遍历：BST 的中序遍历一定是严格递增序列。\n       可以先把“上一个访问到的结点”保存在静态变量或全局变量里（注意必须在 isBST 入口自己把它重置为 NULL，不能依赖调用方预置），\n       递归访问左子树 -> 比较前驱与当前结点的值 -> 记录当前结点 -> 递归访问右子树；\n       一旦发现 前驱->val >= 当前->val 就返回 0 */\n    return 0;\n}\n\nint main(void) {\n    /* 树一：合法的二叉搜索树 */\n    TreeNode *r1 = newNode(50);\n    r1->left = newNode(30);\n    r1->right = newNode(70);\n    r1->left->left = newNode(20);\n    r1->left->right = newNode(40);\n    r1->right->left = newNode(60);\n    r1->right->right = newNode(80);\n\n    /* 树二：30 的右孩子是 65，比根 50 还大，不满足 BST 性质 */\n    TreeNode *r2 = newNode(50);\n    r2->left = newNode(30);\n    r2->right = newNode(70);\n    r2->left->right = newNode(65);\n\n    printf(\"%s\\n\", isBST(r1) ? \"YES\" : \"NO\");\n    printf(\"%s\\n\", isBST(r2) ? \"YES\" : \"NO\");\n    return 0;\n}\n",
+    "sample_input": "树一 50(30(20,40),70(60,80))；树二 50(30(,65),70)",
+    "sample_output": "YES\nNO",
+    "explanation": "只比较结点与直接左右孩子的大小是不够的，必须保证整棵子树的值域约束。常用做法是中序遍历并检查序列是否严格递增（记录前驱结点），或递归时携带 (min, max) 上下界。",
+    "tags": [
+      "二叉搜索树",
+      "中序遍历",
+      "上下界",
+      "递归"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "DS_CODE_027",
+    "subject": "数据结构",
+    "knowledge_point": "堆排序",
+    "title": "小根堆的建立与堆排序",
+    "description": "先把一个无序数组原地调整成小根堆并输出，再借助小根堆做堆排序，使数组变成降序后输出。",
+    "language": "c",
+    "difficulty": "综合",
+    "starter_code": "#include <stdio.h>\n\n/* 打印数组：已给出，无需修改 */\nvoid printArray(const int *a, int n) {\n    for (int i = 0; i < n; i++) {\n        if (i > 0) {\n            printf(\" \");\n        }\n        printf(\"%d\", a[i]);\n    }\n    printf(\"\\n\");\n}\n\n/* 建立小根堆：把数组 a[0..n-1] 原地调整成小根堆 */\nvoid buildMinHeap(int *a, int n) {\n    /* TODO: 从最后一个非叶子结点 a[n/2 - 1] 开始，向前直到下标 0，对每个结点做一次“向下调整”：\n       令 i 为当前结点，先把 a[i] 存入临时变量 temp；\n       只要存在左孩子（2*i + 1 <= n-1），就在左右孩子中选出较小的那个，下标记作 child；\n       若 a[child] >= temp 就停止；否则把 a[child] 上移到位置 i，令 i = child 继续向下；\n       最后把 temp 放回位置 i 上。\n       建议另写一个 siftDown(a, i, n) 辅助函数，建堆与堆排序都可以复用 */\n}\n\n/* 在已经建好的小根堆上做堆排序：排序结果按降序写回数组 a[0..n-1] */\nvoid heapSortDesc(int *a, int n) {\n    /* TODO: 重复 n-1 轮，令 end 从 n-1 递减到 1：\n       每一轮把堆顶 a[0]（当前最小值）与堆的最后一个元素 a[end] 交换，\n       再对 a[0..end-1] 做一次“向下调整”恢复小根堆性质；\n       最小值被依次换到数组末尾，最终整个数组就是降序 */\n}\n\nint main(void) {\n    int a[] = {9, 4, 7, 1, 8, 3, 6};\n    int n = 7;\n\n    buildMinHeap(a, n);\n    printArray(a, n);\n\n    heapSortDesc(a, n);\n    printArray(a, n);\n    return 0;\n}\n",
+    "sample_input": "9 4 7 1 8 3 6",
+    "sample_output": "1 4 3 9 8 7 6\n9 8 7 6 4 3 1",
+    "explanation": "建堆从最后一个非叶子结点 n/2-1 开始向前对每个结点做一次向下调整，整体时间复杂度 O(n)；堆排序每一轮把堆顶（当前最小值）与堆的最后一个元素交换，再对剩余部分向下调整恢复堆性质，最小值被依次换到数组末尾，于是得到降序序列。",
+    "tags": [
+      "堆",
+      "小根堆",
+      "堆化",
+      "堆排序",
+      "向下调整"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "DS_CODE_028",
+    "subject": "数据结构",
+    "knowledge_point": "二分查找",
+    "title": "二分查找与第一个大于等于目标的位置",
+    "description": "在有序数组中实现两个函数：二分查找给定目标（找不到返回 -1），以及求第一个大于等于目标的下标（不存在时返回数组长度 n）。",
+    "language": "c",
+    "difficulty": "基础",
+    "starter_code": "#include <stdio.h>\n\n/* 有序数组中的二分查找：找到 target 返回其下标，找不到返回 -1 */\nint binarySearch(const int *a, int n, int target) {\n    /* TODO: 维护左右闭区间 [low, high]，循环取 mid = (low + high) / 2：\n       a[mid] == target 时返回 mid；a[mid] < target 时 low = mid + 1；否则 high = mid - 1。\n       区间为空时返回 -1 */\n    return -1;\n}\n\n/* 查找第一个大于等于 target 的元素下标（即 lower_bound）；不存在这样的元素时返回 n */\nint lowerBound(const int *a, int n, int target) {\n    /* TODO: 维护左闭右开区间 [low, high)（初始 low = 0、high = n），循环取 mid：\n       若 a[mid] >= target，说明答案在 [low, mid]，令 high = mid；\n       否则答案在 [mid+1, high]，令 low = mid + 1；\n       循环结束时 low 就是第一个大于等于 target 的下标（不存在时为 n）。\n       本函数固定采用左闭右开区间，循环条件是 low < high；不要写成闭区间配 low <= high，那会死循环 */\n    return 0;\n}\n\nint main(void) {\n    int a[] = {1, 3, 3, 5, 7, 9, 11};\n    int n = 7;\n\n    printf(\"%d\\n\", binarySearch(a, n, 7));\n    printf(\"%d\\n\", binarySearch(a, n, 4));\n    printf(\"%d\\n\", lowerBound(a, n, 3));\n    printf(\"%d\\n\", lowerBound(a, n, 10));\n    return 0;\n}\n",
+    "sample_input": "有序表 1 3 3 5 7 9 11；查找 7、4；求第一个 >= 3、>= 10 的位置",
+    "sample_output": "4\n-1\n1\n6",
+    "explanation": "普通二分在闭区间 [low, high] 中折半比较，命中即返回下标。lower_bound 建议使用左闭右开区间 [low, high)：a[mid] >= target 时收缩右边界 high = mid，否则 low = mid + 1，循环结束时 low 就是答案（可能等于 n），这样写不会死循环。",
+    "tags": [
+      "查找",
+      "二分查找",
+      "lower_bound",
+      "有序表"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "DS_CODE_029",
+    "subject": "数据结构",
+    "knowledge_point": "开放定址法",
+    "title": "哈希表的线性探测法",
+    "description": "用除留余数法 H(key) = key % m 构造哈希表，冲突时用线性探测法解决（地址依次加一并对 m 取模），插入若干关键字后输出整张表（空单元打印 -1），再输出两次查找结果。",
+    "language": "c",
+    "difficulty": "提高",
+    "starter_code": "#include <stdio.h>\n\n#define M 11\n#define EMPTY (-1)\n\n/* 打印哈希表：空单元打印 -1。已给出，无需修改 */\nvoid printTable(const int *table, int m) {\n    for (int i = 0; i < m; i++) {\n        if (i > 0) {\n            printf(\" \");\n        }\n        printf(\"%d\", table[i]);\n    }\n    printf(\"\\n\");\n}\n\n/* 用除留余数法 H(key) = key % m 计算散列地址，冲突时用线性探测法（地址依次 +1 再对 m 取模）。\n   插入成功返回存放的下标；key 已经存在时直接返回它所在的下标；表满返回 -1 */\nint hashInsert(int *table, int m, int key) {\n    /* TODO: 从 i = key % m 开始，最多循环 m 次：\n       table[i] == EMPTY 时写入 key 并返回 i；\n       table[i] == key 时直接返回 i；\n       否则 i = (i + 1) % m 继续探测；探测完 m 个位置仍没找到空位就返回 -1 */\n    return -1;\n}\n\n/* 查找 key：返回它所在的下标，找不到返回 -1 */\nint hashFind(const int *table, int m, int key) {\n    /* TODO: 同样从 i = key % m 开始线性探测，最多循环 m 次：\n       table[i] == key 时返回 i；\n       table[i] == EMPTY 时说明该 key 不存在，返回 -1；\n       否则 i = (i + 1) % m 继续；探测完 m 个位置返回 -1 */\n    return -1;\n}\n\nint main(void) {\n    int table[M];\n    int keys[] = {22, 41, 53, 46, 30, 13, 1};\n\n    for (int i = 0; i < M; i++) {\n        table[i] = EMPTY;\n    }\n    for (int i = 0; i < 7; i++) {\n        hashInsert(table, M, keys[i]);\n    }\n\n    printTable(table, M);\n    printf(\"%d\\n\", hashFind(table, M, 30));\n    printf(\"%d\\n\", hashFind(table, M, 99));\n    return 0;\n}\n",
+    "sample_input": "表长 11，依次插入 22 41 53 46 30 13 1；查找 30 与 99",
+    "sample_output": "22 1 46 13 -1 -1 -1 -1 41 53 30\n10\n-1",
+    "explanation": "线性探测从 H(key) 开始依次向后寻找空单元，最多探测 m 个位置。查找时同样从 H(key) 出发探测：命中就返回下标，一旦遇到空单元就可以断定关键字不存在（这是开放定址法特有的提前结束条件）。",
+    "tags": [
+      "哈希表",
+      "开放定址法",
+      "线性探测",
+      "除留余数法"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "DS_CODE_030",
+    "subject": "数据结构",
+    "knowledge_point": "深度优先搜索",
+    "title": "邻接表的深度优先与广度优先遍历",
+    "description": "图的邻接表已给出，从顶点 0 出发分别做深度优先遍历与广度优先遍历，按访问顺序输出顶点编号（空格分隔，各占一行）。本练习以深度优先搜索为主线，同时覆盖广度优先搜索。",
+    "language": "c",
+    "difficulty": "基础",
+    "starter_code": "#include <stdio.h>\n\n#define N 6       /* 顶点编号为 0..N-1 */\n#define MAXD 4    /* 每个顶点最多 MAXD 个邻接点 */\n\n/* 邻接表：已给出，无需修改 */\nint degree[N];             /* 每个顶点的邻接点个数 */\nint adjList[N][MAXD];      /* 每个顶点的邻接点，按顶点编号升序存放 */\nint visited[N];\n\n/* 建立无向图的邻接表（边为 0-1、0-2、1-3、2-4、3-5、4-5）：已给出，无需修改 */\nvoid buildGraph(void) {\n    for (int i = 0; i < N; i++) {\n        degree[i] = 0;\n    }\n\n    degree[0] = 2; adjList[0][0] = 1; adjList[0][1] = 2;\n    degree[1] = 2; adjList[1][0] = 0; adjList[1][1] = 3;\n    degree[2] = 2; adjList[2][0] = 0; adjList[2][1] = 4;\n    degree[3] = 2; adjList[3][0] = 1; adjList[3][1] = 5;\n    degree[4] = 2; adjList[4][0] = 2; adjList[4][1] = 5;\n    degree[5] = 2; adjList[5][0] = 3; adjList[5][1] = 4;\n}\n\n/* 输出辅助：已给出，无需修改。顶点编号之间用一个空格分隔 */\nstatic int first = 1;\n\nvoid emit(int v) {\n    if (!first) {\n        printf(\" \");\n    }\n    printf(\"%d\", v);\n    first = 0;\n}\n\n/* 深度优先遍历（从顶点 u 出发）：访问顶点时调用 emit(顶点编号) */\nvoid dfs(int u) {\n    /* TODO: 先标记 visited[u] = 1 并 emit(u)；\n       然后按下标 0..degree[u]-1 的顺序扫描 u 的邻接点（它们按编号升序存放），\n       遇到未访问的邻接点就递归 dfs */\n}\n\n/* 广度优先遍历（从顶点 start 出发）：访问顶点时调用 emit(顶点编号) */\nvoid bfs(int start) {\n    /* TODO: 用数组模拟队列：start 入队并立刻令 visited[start] = 1；\n       循环取出队头顶点 u 并 emit(u)，再把 u 的所有未访问邻接点依次标记 visited、入队；\n       队列为空时结束 */\n}\n\nint main(void) {\n    buildGraph();\n\n    for (int i = 0; i < N; i++) {\n        visited[i] = 0;\n    }\n    first = 1;\n    dfs(0);\n    printf(\"\\n\");\n\n    for (int i = 0; i < N; i++) {\n        visited[i] = 0;\n    }\n    first = 1;\n    bfs(0);\n    printf(\"\\n\");\n\n    return 0;\n}\n",
+    "sample_input": "无向图 0-1、0-2、1-3、2-4、3-5、4-5，从顶点 0 出发",
+    "sample_output": "0 1 3 5 4 2\n0 1 2 3 4 5",
+    "explanation": "DFS 用递归实现：访问顶点后立即标记 visited 并输出，再按邻接表中邻接点的顺序（本练习为编号升序）深入未访问的邻接点。BFS 借助数组模拟的队列，顶点入队时就要标记 visited，避免同一个顶点被重复入队。",
+    "tags": [
+      "图",
+      "邻接表",
+      "深度优先搜索",
+      "广度优先搜索",
+      "遍历"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "DS_CODE_031",
+    "subject": "数据结构",
+    "knowledge_point": "Dijkstra 算法",
+    "title": "Dijkstra 单源最短路径",
+    "description": "用邻接矩阵存储一个带权无向图，用 Dijkstra 算法求源点 0 到其余各顶点的最短距离，按顶点编号顺序输出距离序列。",
+    "language": "c",
+    "difficulty": "综合",
+    "starter_code": "#include <stdio.h>\n\n#define NV 5\n#define INF 10000\n\n/* 邻接矩阵：已给出，无需修改。g[u][v] 表示 u 到 v 的边权，INF 表示没有边 */\nconst int g[NV][NV] = {\n    {0,   10,  INF, 5,   INF},\n    {10,  0,   1,   2,   INF},\n    {INF, 1,   0,   3,   4},\n    {5,   2,   3,   0,   9},\n    {INF, INF, 4,   9,   0}\n};\n\n/* Dijkstra 算法：求源点 start 到所有顶点的最短距离，结果写入调用者提供的数组 dist[0..NV-1] */\nvoid dijkstra(int start, int dist[]) {\n    /* TODO:\n       int visited[NV] = {0};\n       1) 初始化：dist[i] = g[start][i]（无边则为 INF），再令 dist[start] = 0；\n       2) 重复 NV 次：\n          在尚未访问的顶点中挑出 dist 最小的顶点 u（若不存在说明剩余顶点都不可达，结束）；\n          标记 visited[u] = 1；\n          对每个未访问的顶点 v，若 g[u][v] < INF 且 dist[u] + g[u][v] < dist[v]，则更新 dist[v]；\n       函数结束时 dist 中即为各顶点的最短距离 */\n}\n\nint main(void) {\n    int dist[NV];\n\n    for (int i = 0; i < NV; i++) {   /* 先清零，保证空实现时也能安全输出 */\n        dist[i] = 0;\n    }\n\n    dijkstra(0, dist);\n\n    for (int i = 0; i < NV; i++) {\n        if (i > 0) {\n            printf(\" \");\n        }\n        printf(\"%d\", dist[i]);\n    }\n    printf(\"\\n\");\n    return 0;\n}\n",
+    "sample_input": "5 个顶点的带权无向图（边权见代码中的邻接矩阵），源点为 0",
+    "sample_output": "0 7 8 5 12",
+    "explanation": "每轮从尚未确定最短路的顶点中选出 dist 最小的顶点 u 加入已确定集合，再用 u 松弛它的所有邻接点：若 dist[u] + w(u,v) < dist[v] 就更新 dist[v]。算法要求边权非负，邻接矩阵实现的时间复杂度为 O(n^2)。",
+    "tags": [
+      "图",
+      "最短路径",
+      "Dijkstra 算法",
+      "邻接矩阵",
+      "贪心"
+    ],
+    "source": "system_seed"
+  },
+  {
+    "exercise_id": "DS_CODE_032",
+    "subject": "数据结构",
+    "knowledge_point": "快速排序",
+    "title": "快速排序",
+    "description": "实现快速排序，把一个整数数组原地排成升序后输出。示例数据中包含两个相同的关键字 49，用于检验划分的正确性。",
+    "language": "c",
+    "difficulty": "提高",
+    "starter_code": "#include <stdio.h>\n\n/* 打印数组：已给出，无需修改 */\nvoid printArray(const int *a, int n) {\n    for (int i = 0; i < n; i++) {\n        if (i > 0) {\n            printf(\" \");\n        }\n        printf(\"%d\", a[i]);\n    }\n    printf(\"\\n\");\n}\n\n/* 快速排序：把数组 a[low..high] 原地排成升序 */\nvoid quickSort(int *a, int low, int high) {\n    /* TODO:\n       1) 若 low >= high 直接返回；\n       2) 取基准 pivot = a[low]，左右指针 i = low、j = high；\n          先让 j 从右向左找到第一个小于 pivot 的元素，把它填到 a[i]；\n          再让 i 从左向右找到第一个大于 pivot 的元素，把它填到 a[j]；\n          重复上述过程直到 i == j，把 pivot 放到 a[i]（此时基准归位）；\n       3) 再递归排序 a[low..i-1] 和 a[i+1..high]。\n       也可以单独写一个 partition 辅助函数完成第 2 步 */\n}\n\nint main(void) {\n    int a[] = {49, 38, 65, 97, 76, 13, 27, 49};\n    int n = 8;\n\n    quickSort(a, 0, n - 1);\n    printArray(a, n);\n    return 0;\n}\n",
+    "sample_input": "49 38 65 97 76 13 27 49",
+    "sample_output": "13 27 38 49 49 65 76 97",
+    "explanation": "每趟划分以 a[low] 为基准，用左右两个指针交替「挖坑填数」：先从右向左找小于基准的元素填到左坑，再从左向右找大于基准的元素填到右坑，指针相遇处放置基准；随后递归处理左右两个子区间。平均时间复杂度 O(n log n)，最坏 O(n^2)。",
+    "tags": [
+      "排序",
+      "快速排序",
+      "划分",
+      "递归",
+      "分治法"
+    ],
+    "source": "system_seed"
+  }
+]

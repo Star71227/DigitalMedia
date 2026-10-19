@@ -1,0 +1,4 @@
+source      : frontend-new\public\logo.png（和产品里同一份 logo）
+templates   : packaging\desktop\assets\cover.html / logo-tile.html
+renderer    : 无头 Edge --screenshot（改设计改 HTML 重跑本脚本即可）
+generated at: 2026-10-04 20:13:34

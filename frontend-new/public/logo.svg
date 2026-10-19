@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="28 29 184 184">
+  <!-- 方案五 书页电路：书页即电路走线，知识经芯片贯通 -->
+  <g fill="none" stroke-linecap="round">
+    <path d="M 36 79 C 68 107, 94 125, 120 141 C 146 125, 172 107, 204 79" stroke="#23221E" stroke-width="15"/>
+    <path d="M 56 79 C 80 101, 100 115, 120 127 C 140 115, 160 101, 184 79" stroke="#6E6A62" stroke-width="11"/>
+    <path d="M 76 79 C 92 95, 104 105, 120 113 C 136 105, 148 95, 164 79" stroke="#8A867E" stroke-width="7"/>
+  </g>
+  <g fill="#23221E">
+    <circle cx="36" cy="79" r="4.5"/>
+    <circle cx="56" cy="79" r="4.5"/>
+    <circle cx="76" cy="79" r="4.5"/>
+    <circle cx="164" cy="79" r="4.5"/>
+    <circle cx="184" cy="79" r="4.5"/>
+    <circle cx="204" cy="79" r="4.5"/>
+  </g>
+  <rect x="112" y="149" width="16" height="16" rx="4.5" fill="#0FA47F"/>
+</svg>

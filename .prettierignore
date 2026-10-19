@@ -1,0 +1,6 @@
+node_modules
+dist
+.ai-cache
+ai-training/output
+backups
+*.bak*
