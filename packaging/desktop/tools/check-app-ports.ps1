@@ -1,5 +1,5 @@
-﻿# 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。
-# 智课研伴 LearnMate — 已安装实例自检（端口 + 页面内容）
+﻿# 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。
+# 寻笺 LearnMate — 已安装实例自检（端口 + 页面内容）
 #
 # 为什么单独有这个脚本：两个静态服务对任何路径都会回退到 index.html，
 # 所以"教师端 URL 返回 200"并不代表教师端真的起来了（可能只是学生端在应答）。
@@ -51,9 +51,9 @@ foreach ($name in @('mysql', 'backend', 'student', 'teacher')) {
     else { Write-Host "  [X] $name 端口 $($ports[$name]) 没有监听" -ForegroundColor Red; $failures.Add("$name 端口未监听") }
 }
 
-# 3) 页面内容特征（学生端 index.html 标题含「智课研伴」，教师端含「教师端」）
+# 3) 页面内容特征（学生端 index.html 标题含「寻笺」，教师端含「教师端」）
 $probes = @(
-    @{ Label = '学生端'; Url = "http://127.0.0.1:$($ports.student)/student"; Expect = '智课研伴' },
+    @{ Label = '学生端'; Url = "http://127.0.0.1:$($ports.student)/student"; Expect = '寻笺' },
     @{ Label = '教师端'; Url = "http://127.0.0.1:$($ports.teacher)/"; Expect = '教师端' },
     @{ Label = '后端健康检查'; Url = "http://127.0.0.1:$($ports.backend)/api/health"; Expect = '' }
 )

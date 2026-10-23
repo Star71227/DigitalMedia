@@ -1,4 +1,4 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 import {
   useCallback,
   useEffect,
@@ -575,7 +575,7 @@ export default function AssignmentView({ onNavigateToTab, initialAssignmentId = 
 
   return (
     <section className="lm-quiz-active" aria-labelledby="assignment-title">
-      <div className="lm-quiz-status-row">
+      <div className="lm-quiz-status-row" data-level="A" data-carrier="plate" data-enter="persist" data-family="F04" data-mg-behavior="persist">
         <span>
           <button type="button" className="lm-button" onClick={backToList}>
             <ChevronLeft aria-hidden="true" /> 返回作业列表
@@ -584,7 +584,7 @@ export default function AssignmentView({ onNavigateToTab, initialAssignmentId = 
         <strong id="assignment-title">{detail.assignment.title}</strong>
       </div>
 
-      <div className="lm-quiz-status-row" role="status" aria-live="polite">
+      <div className="lm-quiz-status-row" role="status" aria-live="polite" data-level="A" data-carrier="plate" data-enter="persist" data-family="F04" data-mg-behavior="persist">
         <span>
           {[
             detail.assignment.className,
@@ -616,7 +616,7 @@ export default function AssignmentView({ onNavigateToTab, initialAssignmentId = 
       </div>
 
       {flash && (
-        <p className="lm-quiz-status-row" role="status">
+        <p className="lm-quiz-status-row" role="status" data-level="A" data-carrier="plate" data-enter="persist" data-family="F04" data-mg-behavior="persist">
           {flash}
         </p>
       )}
@@ -922,7 +922,7 @@ export default function AssignmentView({ onNavigateToTab, initialAssignmentId = 
                   <em>{submitted ? "已提交 · 等待评阅" : answered ? "已作答" : "未作答"}</em>
                 </summary>
                 <div className="lm-quiz-review-item__body">
-                  <div className="lm-codelab-meta">
+                  <div className="lm-codelab-meta" data-level="B" data-carrier="tab" data-enter="attach" data-family="F12" data-mg-behavior="reveal">
                     {[question.subject, question.chapter, question.knowledgePoint, question.difficulty]
                       .filter((item): item is string => Boolean(item))
                       .filter((item, position, list) => list.indexOf(item) === position)
@@ -1143,7 +1143,7 @@ function CodeExerciseCard({
       </summary>
 
       <div className="lm-quiz-review-item__body">
-        <div className="lm-codelab-meta">
+        <div className="lm-codelab-meta" data-level="B" data-carrier="tab" data-enter="attach" data-family="F12" data-mg-behavior="reveal">
           {[exercise.subject, exercise.knowledgePoint, exercise.difficulty, language.toUpperCase()]
             .filter((item): item is string => Boolean(item))
             .map((item) => (

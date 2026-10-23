@@ -1,4 +1,4 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 /*! tailwindcss v4.3.2 | MIT License | https://tailwindcss.com */
 @layer properties;
 @layer theme, base, components, utilities;
@@ -18638,7 +18638,7 @@ textarea {
   object-fit: contain;
 }
 
-/* 品牌名改成中文「智课研伴」后，原来给 LearnMate 调的紧缩字距（-.06em）会挤在一起 */
+/* 品牌名改成中文「寻笺」后，原来给 LearnMate 调的紧缩字距（-.06em）会挤在一起 */
 .bp-brand__word {
   letter-spacing: 0.02em;
 }

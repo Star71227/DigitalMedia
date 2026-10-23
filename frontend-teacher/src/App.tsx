@@ -1,4 +1,4 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 import { lazy, Suspense, useEffect, useState } from "react";
 import { AuthProvider, useAuth } from "./auth/AuthContext";
 import { RequireTeacher } from "./auth/RequireTeacher";
@@ -72,7 +72,7 @@ export default function App() {
       </AuthProvider>
       {introVisible && (
         <LogoIntro
-          subtitle="智课研伴 · 教师工作台"
+          subtitle="寻笺 · 教师工作台"
           /* 登录页有 .lm-login-hero__mark，登录后是侧栏 .teacher-brand-monogram：
              两个都写进选择器，落在哪个页面上都能准确贴合 */
           dockTarget=".lm-login-hero__mark .lm-logo-reveal, .teacher-brand-monogram .lm-logo-reveal"

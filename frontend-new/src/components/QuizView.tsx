@@ -1,4 +1,4 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   AlertCircle,
@@ -701,7 +701,7 @@ export default function QuizView({ onNavigateToTab, prefill }: QuizViewProps) {
 
           {loadStatus === "ready" && currentQuestion && !submission && (
             <section className="lm-quiz-active" aria-labelledby="quiz-current-question">
-              <div className="lm-quiz-status-row" role="status" aria-live="polite">
+              <div className="lm-quiz-status-row" role="status" aria-live="polite" data-level="A" data-carrier="plate" data-enter="persist" data-family="F04" data-mg-behavior="persist">
                 <span>{loadMessage}</span>
                 <strong>
                   {answeredCount}/{questions.length} 已作答

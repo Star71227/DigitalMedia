@@ -1,4 +1,4 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 import React from "react";
 import SlideCanvas from "./SlideCanvas";
 import type { Personalization, PptSlide, PptTheme } from "./types";
@@ -25,7 +25,7 @@ export default function TitleSlide({
             className="text-[clamp(6px,1vw,10px)] font-bold tracking-[.16em]"
             style={{ color: theme.primary }}
           >
-            LEARNMATE · 智课研伴
+            LEARNMATE · 寻笺
           </p>
           <h4 className="mt-[9%] line-clamp-3 text-[clamp(16px,3.4vw,34px)] font-black leading-tight">
             {text(slide.title, "个性化学习课件")}

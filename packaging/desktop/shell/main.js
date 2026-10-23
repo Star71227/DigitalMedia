@@ -1,6 +1,6 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 /*
- * 智课研伴 LearnMate — 桌面端主进程（Electron 外壳）
+ * 寻笺 LearnMate — 桌面端主进程（Electron 外壳）
  *
  * 职责：
  *   1. 找到软件根目录（本文件位于 <根>\resources\app\main.js）
@@ -222,8 +222,8 @@ function startServices() {
         const line = raw.trim();
         if (!line) continue;
         log("start:", line);
-        if (line.includes("[智课研伴]")) {
-          const text = line.replace(/^\[智课研伴\]\s*/, "");
+        if (line.includes("[寻笺]")) {
+          const text = line.replace(/^\[寻笺\]\s*/, "");
           if (text && text !== lastStatus) {
             lastStatus = text;
             setSplashStatus(text);
@@ -316,7 +316,7 @@ function createMainWindow() {
     minHeight: 680,
     show: false,
     backgroundColor: "#f4f7fc",
-    title: "智课研伴 LearnMate",
+    title: "寻笺 LearnMate",
     icon: iconPath(),
     autoHideMenuBar: false,
     webPreferences: {
@@ -343,7 +343,7 @@ function createMainWindow() {
 function loadStudent() {
   const { student } = urls();
   if (!mainWindow || mainWindow.isDestroyed()) createMainWindow();
-  mainWindow.setTitle("智课研伴 LearnMate — 学生端");
+  mainWindow.setTitle("寻笺 LearnMate — 学生端");
   mainWindow.loadURL(student).catch((err) => log("load student failed:", err.message));
 }
 
@@ -360,7 +360,7 @@ function loadTeacher() {
     minHeight: 680,
     show: false,
     backgroundColor: "#f4f7fc",
-    title: "智课研伴 LearnMate — 教师端",
+    title: "寻笺 LearnMate — 教师端",
     icon: iconPath(),
     webPreferences: { contextIsolation: true, nodeIntegration: false, spellcheck: false },
   });
@@ -577,7 +577,7 @@ function showAbout() {
   dialog.showMessageBox({
     type: "info",
     title: "关于",
-    message: "智课研伴 LearnMate",
+    message: "寻笺 LearnMate",
     detail: [
       `桌面端版本：${app.getVersion()}`,
       `安装目录：${ROOT}`,
@@ -596,7 +596,7 @@ function createTray() {
     const image = nativeImage.createFromPath(source);
     if (image.isEmpty()) return;
     tray = new Tray(image.resize({ width: 16, height: 16 }));
-    tray.setToolTip("智课研伴 LearnMate");
+    tray.setToolTip("寻笺 LearnMate");
     tray.setContextMenu(
       Menu.buildFromTemplate([
         { label: "打开学生端", click: () => loadStudent() },
@@ -620,12 +620,12 @@ function showStartupError(message) {
     "",
     `日志目录：${PATHS.logs}`,
     "常见原因：端口被占用、杀毒软件拦截、磁盘空间不足。",
-    "可先双击软件目录里的「停止智课研伴.bat」再重新启动。",
+    "可先双击软件目录里的「停止寻笺.bat」再重新启动。",
   ].join("\n");
   dialog
     .showMessageBox({
       type: "error",
-      title: "智课研伴启动失败",
+      title: "寻笺启动失败",
       message: "后台服务没有启动成功",
       detail,
       buttons: ["打开日志文件夹", "关闭"],
@@ -694,7 +694,7 @@ if (!gotLock) {
   app.whenReady().then(async () => {
     log("LearnMate desktop shell starting", `root=${ROOT}`, `electron=${process.versions.electron}`);
     buildMenu();
-    showSplash(isFirstRun() ? "正在准备首次启动…" : "正在启动智课研伴…");
+    showSplash(isFirstRun() ? "正在准备首次启动…" : "正在启动寻笺…");
 
     const result = await startServices();
     if (!result.ok) {

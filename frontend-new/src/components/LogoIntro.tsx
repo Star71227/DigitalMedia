@@ -1,4 +1,4 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 import { useEffect, useRef, useState } from "react";
 import LogoReveal from "./LogoReveal";
 
@@ -7,7 +7,7 @@ import LogoReveal from "./LogoReveal";
  *  书（logo）从屏幕中央平缓飞向登录页内嵌 logo 的位置（dockTarget 选择器，量取实时坐标），落点重合后卸载。
  *  reduced-motion 直接跳过；找不到落点时退化为纯淡出；由父组件在 onDone 后卸载。 */
 export default function LogoIntro({
-  subtitle = "智课研伴 · AI 学习平台",
+  subtitle = "寻笺 · AI 学习平台",
   dockTarget,
   onDone,
 }: {
@@ -100,7 +100,7 @@ export default function LogoIntro({
           <span className="lm-logo-reveal__ring" />
           <span className="lm-logo-reveal__shimmer" />
         </div>
-        <p className="lm-logo-intro__name">智课研伴</p>
+        <p className="lm-logo-intro__name">寻笺</p>
         <p className="lm-logo-intro__sub">{subtitle}</p>
       </div>
     </div>

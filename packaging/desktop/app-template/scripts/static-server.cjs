@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 /*
- * 智课研伴 LearnMate — 本地静态服务（学生端 / 教师端各起一个）
+ * 寻笺 LearnMate — 本地静态服务（学生端 / 教师端各起一个）
  *
  * 行为与部署用的 nginx.conf 对齐：
  *   - /healthz 直接回 200 ok（健康探针）
@@ -117,7 +117,7 @@ function proxyApi(req, res) {
         502,
         { "Content-Type": "application/json; charset=utf-8" },
         JSON.stringify({
-          error: "后端服务未就绪，请先运行「一键启动智课研伴」。",
+          error: "后端服务未就绪，请先运行「一键启动寻笺」。",
           detail: String(error.message).slice(0, 160),
         }),
       );

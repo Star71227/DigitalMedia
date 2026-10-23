@@ -1,11 +1,11 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+import { Carrier } from "./motion/Motion";
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 import { useEffect, useMemo, useState } from "react";
 import { ArrowDown, ArrowUp, CalendarDays, ShieldCheck, Trophy } from "lucide-react";
 import { apiRequest, getStoredUser } from "../api";
 import BlueprintClassPanel from "./BlueprintClassPanel";
 import { BlueprintHeader, BlueprintMotif } from "./BlueprintDecorations";
 import { CountUp } from "../components/effects/CountUp";
-import { SvgDrawIn } from "../components/effects/SvgDrawIn";
 import "./blueprint-class-panel.css";
 
 interface RankingItem {
@@ -134,27 +134,21 @@ export default function BlueprintRankingView({
             班级信息<i>◆</i>
           </h2>
           <p>{data?.className || "正在读取班级"} · 本周</p>
-          <small>这里汇总你的班级归属、入班申请与本周排名</small>
+          <small data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">这里汇总你的班级归属、入班申请与本周排名</small>
         </div>
         <div className="bp-ranking-techfield" aria-hidden="true">
           {/* trace 描线入场:orbit 的 dasharray 3 8 是设计纹理,不在描线目标内 */}
-          <SvgDrawIn
-            replayKey="ranking-trace"
-            lineSelector=".bp-ranking-techfield__trace"
-            fadeSelector=".bp-ranking-techfield circle, .bp-ranking-techfield rect"
-            delay={0.5}
-            duration={1.2}
-          >
+          <div>
             <svg viewBox="0 0 720 250" preserveAspectRatio="xMidYMid meet">
-              <path className="bp-ranking-techfield__orbit" d="M70 176 C182 28 382 22 610 128" />
-              <path className="bp-ranking-techfield__trace" d="M28 205 H168 L226 148 H382 L438 92 H676" />
+              <path className="bp-ranking-techfield__orbit mg-draw-fade" pathLength="1" d="M70 176 C182 28 382 22 610 128" />
+              <path className="bp-ranking-techfield__trace mg-draw" pathLength="1" d="M28 205 H168 L226 148 H382 L438 92 H676" />
               <circle cx="168" cy="205" r="7" />
               <circle cx="226" cy="148" r="7" />
               <circle cx="438" cy="92" r="7" />
               <rect x="374" y="140" width="16" height="16" />
               <rect x="602" y="119" width="18" height="18" />
             </svg>
-          </SvgDrawIn>
+          </div>
           <span>GROWTH VECTOR · CLASS 02</span>
           <i />
           <i />
@@ -168,42 +162,43 @@ export default function BlueprintRankingView({
       <div className="bp-ranking-layout">
         <div className="bp-ranking-main">
           <section className="bp-ranking-summary">
+            <Carrier shape="rail" className="mg-ranking-rail" />
             <div>
               <ArrowUp />
               <span>
                 我的位置
-                <strong>
+                <strong data-level="A" data-carrier="disc" data-enter="attach" data-family="F15" data-mg-behavior="reveal">
                   {data?.myRank != null ? <CountUp to={data.myRank} mode="scramble" /> : "—"}
-                  <small>名</small>
+                  <small data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">名</small>
                 </strong>
               </span>
-              <small>全班 {data?.total ?? 0} 人</small>
+              <small data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">全班 {data?.total ?? 0} 人</small>
             </div>
             <div>
               <CalendarDays />
               <span>
                 连续学习
-                <strong>
+                <strong data-level="A" data-carrier="disc" data-enter="attach" data-family="F15" data-mg-behavior="reveal">
                   <CountUp to={current?.streak ?? 0} mode="scramble" />
-                  <small>天</small>
+                  <small data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">天</small>
                 </strong>
               </span>
-              <small>保持专注</small>
+              <small data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">保持专注</small>
             </div>
             <div>
               <Trophy />
               <span>
                 班级前
-                <strong>
+                <strong data-level="A" data-carrier="disc" data-enter="attach" data-family="F15" data-mg-behavior="reveal">
                   {data?.myRank && data.total ? (
                     <CountUp to={Math.max(1, Math.round((data.myRank / data.total) * 100))} mode="scramble" />
                   ) : (
                     "—"
                   )}
-                  <small>%</small>
+                  <small data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">%</small>
                 </strong>
               </span>
-              <small>成长坐标</small>
+              <small data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">成长坐标</small>
             </div>
             <p>
               好的学习
@@ -214,12 +209,12 @@ export default function BlueprintRankingView({
 
           <section className="bp-ranking-table" role="table" aria-label="班级学习排名">
             <div className="bp-ranking-row is-head" role="row">
-              <span>排名</span>
-              <span>学生</span>
-              <span>学习积分</span>
-              <span>章节进度</span>
-              <span>正确率</span>
-              <span>本周变化</span>
+              <span data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">排名</span>
+              <span data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">学生</span>
+              <span data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">学习积分</span>
+              <span data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">章节进度</span>
+              <span data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">正确率</span>
+              <span data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">本周变化</span>
             </div>
             {data?.items.map((item, index) => (
               <div
@@ -228,25 +223,25 @@ export default function BlueprintRankingView({
                 role="row"
                 key={item.studentId}
               >
-                <span className={index < 3 ? `bp-rank-medal is-${index + 1}` : ""}>{index + 1}</span>
+                <span className={index < 3 ? `bp-rank-medal is-${index + 1}` : ""} data-level="A" data-carrier="disc" data-enter="attach" data-family="F15" data-mg-behavior="reveal">{index + 1}</span>
                 <span>
                   <i>{item.name.slice(0, 1)}</i>
-                  <strong>{item.name}</strong>
+                  <strong data-level="A" data-carrier="plate" data-enter="attach" data-family="F15" data-mg-behavior="reveal">{item.name}</strong>
                 </span>
-                <span>
+                <span data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">
                   <strong>{item.score}</strong>
                 </span>
-                <span>
-                  <i className="bp-rank-progress">
+                <span data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">
+                  <i className="bp-rank-progress" data-level="B" data-carrier="rail" data-enter="persist" data-family="F05" data-mg-behavior="persist" data-mg-container="">
                     <b style={{ width: `${item.pathProgress}%` }} />
                   </i>
                   {item.pathProgress}%
                 </span>
-                <span>{item.mastery}%</span>
+                <span data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">{item.mastery}%</span>
                 <span
                   className={
                     (item.weeklyChange ?? 0) < 0 ? "is-down" : (item.weeklyChange ?? 0) > 0 ? "is-up" : ""
-                  }
+                  } data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist"
                 >
                   {(item.weeklyChange ?? 0) < 0 ? (
                     <ArrowDown />
@@ -260,12 +255,12 @@ export default function BlueprintRankingView({
           </section>
 
           <footer className="bp-ranking-footer">
-            <span>
+            <span data-level="C" data-carrier="rail" data-enter="persist" data-family="F16" data-mg-behavior="persist">
               SMALL STEPS
               <br />
               BIG CHANGES.
             </span>
-            <span>
+            <span data-level="C" data-carrier="rail" data-enter="persist" data-family="F16" data-mg-behavior="persist">
               <ShieldCheck /> 排名仅用于观察个人成长趋势
             </span>
           </footer>

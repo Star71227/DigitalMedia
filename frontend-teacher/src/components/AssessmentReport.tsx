@@ -1,4 +1,4 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 import type { ReportItem } from "../types";
 import {
   Bar,
@@ -98,7 +98,7 @@ export function AssessmentReport({ item }: { item: ReportItem }) {
   return (
     <article className="assessment-paper">
       <header className="assessment-cover">
-        <span className="assessment-kicker">智课研伴 / LEARNING ASSESSMENT</span>
+        <span className="assessment-kicker">寻笺 / LEARNING ASSESSMENT</span>
         <div className="assessment-heading">
           <div>
             <h2>{r.student?.displayName || item.studentName} · 学习评估报告</h2>

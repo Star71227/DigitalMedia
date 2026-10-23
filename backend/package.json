@@ -2,7 +2,7 @@
   "name": "edusmart-backend",
   "version": "0.1.0",
   "private": true,
-  "description": "智课研伴 Node/Express/MySQL 后端基础骨架",
+  "description": "寻笺 Node/Express/MySQL 后端基础骨架",
   "main": "src/index.js",
   "engines": {
     "node": ">=24 <25"

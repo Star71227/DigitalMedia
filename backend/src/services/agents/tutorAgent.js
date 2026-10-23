@@ -1,4 +1,4 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 const { generateText } = require("../aiService");
 
 const CHAT_TUTOR_SYSTEM_PROMPT = `你是 LearnMate 的 AI 学习助手 TutorAgent。请使用简体中文，为大学计算机专业学生提供具体、严谨、可学习的完整回答。
@@ -20,7 +20,7 @@ const TutorAgent = {
   name: "TutorAgent",
   description: "智能辅导答疑智能体",
   systemPrompt:
-    "你是智课研伴的智能辅导答疑智能体。你负责学生自由提问、代码解释、知识点讲解和答题提示。回答应清晰、循序渐进，不直接跳过关键推理。",
+    "你是寻笺的智能辅导答疑智能体。你负责学生自由提问、代码解释、知识点讲解和答题提示。回答应清晰、循序渐进，不直接跳过关键推理。",
   async run(context = {}, extraPrompt = "") {
     const prompt = [
       this.systemPrompt,

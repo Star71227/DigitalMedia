@@ -1,4 +1,4 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 import ReviewQueuePanel from "./ReviewQueuePanel";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
@@ -69,7 +69,7 @@ export default function ErrorView({ onNavigateToTab }: Props) {
 
   if (loading) {
     return (
-      <section className="lm-errors-state" role="status">
+      <section className="lm-errors-state" role="status" data-level="A" data-carrier="plate" data-enter="persist" data-family="F04" data-mg-behavior="persist">
         <Loader2 aria-hidden="true" className="is-spinning" />
         <h1>正在读取错题记录</h1>
         <p>错题来自真实测验提交后的后端记录。</p>
@@ -79,7 +79,7 @@ export default function ErrorView({ onNavigateToTab }: Props) {
 
   if (error && items.length === 0) {
     return (
-      <section className="lm-errors-state lm-errors-state--error" role="alert">
+      <section className="lm-errors-state lm-errors-state--error" role="alert" data-level="A" data-carrier="plate" data-enter="persist" data-family="F04" data-mg-behavior="persist">
         <AlertTriangle aria-hidden="true" />
         <h1>错题本暂时无法打开</h1>
         <p>{error}</p>

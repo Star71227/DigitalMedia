@@ -1,5 +1,6 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { labelProps } from "../blueprint/motion/Motion";
 import {
   AlertCircle,
   BookOpen,
@@ -369,8 +370,8 @@ export default function ResourceView({ onNavigateToTab, initialRecommendation }:
     <div className="lm-resource-view bp-resource-page">
       <section className="bp-resource-hero">
         <div className="bp-resource-hero__copy">
-          <p className="bp-resource-eyebrow">CHAPTER ARCHIVE · KNOWLEDGE FOLD</p>
-          <span>章节讲义</span>
+          <p className="bp-resource-eyebrow" {...labelProps("B", "rail", "persist")} data-level="A" data-carrier="plate" data-enter="attach" data-family="F03" data-mg-behavior="reveal">CHAPTER ARCHIVE · KNOWLEDGE FOLD</p>
+          <span className="mg-kicker-word" {...labelProps("A", "plate", "reveal")} data-level="B" data-carrier="rail" data-enter="attach" data-family="F03" data-mg-behavior="reveal">章节讲义</span>
           <h2>{stage.title}</h2>
           <p>沿着当前学习路径展开概念、方法、例题与练习。</p>
           <dl className="bp-resource-meta">
@@ -729,7 +730,7 @@ function typeStatus(
 
 function StatusCompactLabel({ status }: { status: TypeStatus }) {
   const meta = statusMeta(status);
-  return <span className={`bp-resource-status is-${status}`}>{meta.label}</span>;
+  return <span className={`bp-resource-status is-${status}`} data-level="A" data-carrier="plate" data-enter="persist" data-family="F04" data-mg-behavior="persist">{meta.label}</span>;
 }
 
 function statusMeta(status: TypeStatus) {

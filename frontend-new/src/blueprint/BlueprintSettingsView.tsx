@@ -1,4 +1,5 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+import { Carrier } from "./motion/Motion";
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 import { useEffect, useRef, useState } from "react";
 import {
   AlertTriangle,
@@ -209,10 +210,10 @@ export default function BlueprintSettingsView({ onNavigateToTab, onLogout }: Pro
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = "zhike-yanban-settings.json";
+    link.download = "Xunjian-settings.json";
     link.click();
     URL.revokeObjectURL(url);
-    setDataNote("已导出设置文件 zhike-yanban-settings.json");
+    setDataNote("已导出设置文件 Xunjian-settings.json");
   };
 
   const clearLocalCache = () => {
@@ -257,11 +258,12 @@ export default function BlueprintSettingsView({ onNavigateToTab, onLogout }: Pro
           <span>.</span>
         </h2>
         <p>{t("settings.subtitle")}</p>
-        <small>{t("settings.englishHeader")}.</small>
+        <small data-level="B" data-carrier="rail" data-enter="attach" data-family="F12" data-mg-behavior="reveal">{t("settings.englishHeader")}.</small>
       </div>
 
       <div className="bp-settings-layout">
         <section className="bp-settings-sheet">
+          <Carrier shape="rail" className="mg-settings-rail" />
           <SettingsGroup number="01" title={t("settings.group01")} english="LEARNING PREFERENCES">
             <SettingRow label={t("settings.goal")} help={t("settings.goal.help")}>
               <input
@@ -369,7 +371,7 @@ export default function BlueprintSettingsView({ onNavigateToTab, onLogout }: Pro
                     value={settings.fontSize}
                     onChange={(event) => update("fontSize", Number(event.target.value))}
                   />
-                  <small>px</small>
+                  <small data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">px</small>
                 </span>
               </SettingRow>
 
@@ -394,10 +396,10 @@ export default function BlueprintSettingsView({ onNavigateToTab, onLogout }: Pro
                 </span>
                 <p className="bp-font-preview__text">{t("settings.preview.text")}</p>
               </div>
-              <p className="bp-model-state">
+              <p className="bp-model-state" data-level="A" data-carrier="plate" data-enter="persist" data-family="F04" data-mg-behavior="persist">
                 <i />
                 {t("settings.applied")}
-                <small>{t("settings.language.help")}</small>
+                <small data-level="B" data-carrier="rail" data-enter="attach" data-family="F12" data-mg-behavior="reveal">{t("settings.language.help")}</small>
               </p>
             </SettingsGroup>
           </section>
@@ -405,7 +407,7 @@ export default function BlueprintSettingsView({ onNavigateToTab, onLogout }: Pro
           <section ref={groupRefs.privacy}>
             <SettingsGroup number="04" title={t("settings.group04")} english="ACCOUNT & PRIVACY">
               <SettingRow label={t("settings.account")} help={t("settings.account.help")}>
-                <span className="bp-account-chip">
+                <span className="bp-account-chip" data-level="B" data-carrier="tab" data-enter="persist" data-family="F11" data-mg-behavior="persist">
                   <b>{account?.displayName || "同学"}</b>
                   <em>{account?.username || account?.studentNo || "—"}</em>
                 </span>
@@ -428,7 +430,7 @@ export default function BlueprintSettingsView({ onNavigateToTab, onLogout }: Pro
                   <KeyRound aria-hidden="true" />
                   <div>
                     <strong>{t("settings.changePassword")}</strong>
-                    <small>{t("settings.changePassword.help")}</small>
+                    <small data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">{t("settings.changePassword.help")}</small>
                   </div>
                 </div>
                 <div className="bp-inline-form__fields">
@@ -478,7 +480,7 @@ export default function BlueprintSettingsView({ onNavigateToTab, onLogout }: Pro
                   <AlertTriangle aria-hidden="true" />
                   <div>
                     <strong>{t("settings.deleteAccount")}</strong>
-                    <small>{t("settings.deleteAccount.help")}</small>
+                    <small data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">{t("settings.deleteAccount.help")}</small>
                   </div>
                 </div>
                 {dangerOpen ? (
@@ -561,7 +563,7 @@ export default function BlueprintSettingsView({ onNavigateToTab, onLogout }: Pro
                 </button>
               </SettingRow>
               {dataNote ? (
-                <p className="bp-model-state">
+                <p className="bp-model-state" data-level="A" data-carrier="plate" data-enter="persist" data-family="F04" data-mg-behavior="persist">
                   <i />
                   {dataNote}
                 </p>
@@ -570,7 +572,7 @@ export default function BlueprintSettingsView({ onNavigateToTab, onLogout }: Pro
           </section>
 
           <footer>
-            <span>SETTINGS FOR A BRIGHTER YOU.</span>
+            <span data-level="C" data-carrier="rail" data-enter="persist" data-family="F16" data-mg-behavior="persist">SETTINGS FOR A BRIGHTER YOU.</span>
             <button className="bp-primary-action" onClick={persist}>
               <Save />
               {saved ? t("settings.saved") : t("settings.save")}
@@ -632,11 +634,11 @@ function SettingsGroup({
   children: React.ReactNode;
 }) {
   return (
-    <section className="bp-settings-group">
+    <section className="bp-settings-group" data-mg-group={number}>
       <header>
         <b>{number}</b>
         <div>
-          <h3>{title}</h3>
+          <h3 data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">{title}</h3>
           <span>{english}</span>
         </div>
       </header>
@@ -649,8 +651,8 @@ function SettingRow({ label, help, children }: { label: string; help: string; ch
   return (
     <div className="bp-setting-row">
       <div>
-        <strong>{label}</strong>
-        <small>{help}</small>
+        <strong data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">{label}</strong>
+        <small data-level="B" data-carrier="rail" data-enter="attach" data-family="F12" data-mg-behavior="reveal">{help}</small>
       </div>
       <div>{children}</div>
     </div>

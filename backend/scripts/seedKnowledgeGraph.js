@@ -1,4 +1,4 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 // 知识图谱关系导入：把各课程 catalog.json 的知识点/课程内关系，以及跨课程关系文件
 // 一并写入 knowledge_points / knowledge_point_aliases / knowledge_point_prerequisites。
 // 幂等：知识点用 ON DUPLICATE KEY UPDATE，关系用 INSERT IGNORE，可反复执行。

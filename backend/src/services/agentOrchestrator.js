@@ -1,4 +1,4 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 const crypto = require("crypto");
 const {
   ProfileAgent,
@@ -54,7 +54,7 @@ const {
 const CHAT_PARTS = [
   {
     agent: "coordinator",
-    title: "智课研伴（综合协调）",
+    title: "寻笺（综合协调）",
   },
   {
     agent: "TheoryAgent",
@@ -1165,7 +1165,7 @@ function buildChatFallback(message) {
     return [
       {
         agent: "coordinator",
-        title: "智课研伴（综合协调）",
+        title: "寻笺（综合协调）",
         content:
           "已完成多智能体协同：ProfileAgent 判断该问题属于数据结构中的树与二叉树遍历；TutorAgent 负责讲解遍历顺序；ResourceAgent 提供 C 语言示例；ReviewAgent 补充边界与复杂度。",
       },
@@ -1202,7 +1202,7 @@ function buildChatFallback(message) {
   return [
     {
       agent: "coordinator",
-      title: "智课研伴（综合协调）",
+      title: "寻笺（综合协调）",
       content: `已收到问题：“${message}”。当前使用多智能体 fallback 流程，保持前端 parts 返回结构不变。`,
     },
     {
@@ -1218,7 +1218,7 @@ function buildChatFallback(message) {
         "#include <stdio.h>",
         "",
         "int main(void) {",
-        '    printf("ZhiKe YanBan fallback demo\\n");',
+        '    printf("Xunjian fallback demo\\n");',
         "    return 0;",
         "}",
       ].join("\n"),
@@ -1580,7 +1580,7 @@ function buildFallbackCode(message) {
       "#include <stdio.h>",
       "",
       "int main(void) {",
-      '    printf("ZhiKe YanBan fallback demo\\n");',
+      '    printf("Xunjian fallback demo\\n");',
       "    return 0;",
       "}",
     ].join("\n"),

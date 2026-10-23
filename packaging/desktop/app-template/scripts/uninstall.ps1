@@ -1,5 +1,5 @@
-﻿# 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。
-# 智课研伴 LearnMate — 卸载
+﻿# 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。
+# 寻笺 LearnMate — 卸载
 #
 # 停止全部服务 → 删除桌面与开始菜单快捷方式 → 删除注册表卸载项 → 删除安装目录。
 # 默认连数据库文件一起删除；加 -KeepData 可保留 data\ 目录（想留着账号数据时用）。
@@ -22,9 +22,9 @@ $keepData = [bool]$KeepData
 
 function Remove-LmShortcuts {
     $targets = @(
-        (Join-Path ([Environment]::GetFolderPath('Desktop')) '智课研伴 LearnMate.lnk'),
-        (Join-Path ([Environment]::GetFolderPath('Desktop')) '停止智课研伴.lnk'),
-        (Join-Path ([Environment]::GetFolderPath('Desktop')) '智课研伴 使用说明.lnk')
+        (Join-Path ([Environment]::GetFolderPath('Desktop')) '寻笺 LearnMate.lnk'),
+        (Join-Path ([Environment]::GetFolderPath('Desktop')) '停止寻笺.lnk'),
+        (Join-Path ([Environment]::GetFolderPath('Desktop')) '寻笺 使用说明.lnk')
     )
     foreach ($target in $targets) {
         if (Test-Path -LiteralPath $target) {
@@ -32,9 +32,9 @@ function Remove-LmShortcuts {
         }
     }
     $programs = Join-Path $env:APPDATA 'Microsoft\Windows\Start Menu\Programs'
-    $folder = Join-Path $programs '智课研伴 LearnMate'
+    $folder = Join-Path $programs '寻笺 LearnMate'
     if (Test-Path -LiteralPath $folder) { Remove-Item -LiteralPath $folder -Recurse -Force -ErrorAction SilentlyContinue }
-    Remove-Item -LiteralPath (Join-Path $programs '智课研伴 LearnMate.lnk') -Force -ErrorAction SilentlyContinue
+    Remove-Item -LiteralPath (Join-Path $programs '寻笺 LearnMate.lnk') -Force -ErrorAction SilentlyContinue
     $key = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\LearnMate'
     if (Test-Path -LiteralPath $key) { Remove-Item -LiteralPath $key -Recurse -Force -ErrorAction SilentlyContinue }
 }
@@ -60,7 +60,7 @@ if (-not $Detached) {
 }
 
 try {
-    if (-not $quiet) { Write-LmInfo "正在卸载智课研伴（$InstallDir）…" }
+    if (-not $quiet) { Write-LmInfo "正在卸载寻笺（$InstallDir）…" }
     $Config = Get-LmConfig $InstallDir
     $P = Get-LmPaths $InstallDir
 
@@ -103,7 +103,7 @@ try {
         }
     }
     if (Test-Path -LiteralPath $InstallDir) { throw "安装目录未能完全删除：$InstallDir" }
-    if (-not $quiet) { Write-LmOk '智课研伴已卸载完成。' }
+    if (-not $quiet) { Write-LmOk '寻笺已卸载完成。' }
 } catch {
     Write-LmError $_.Exception.Message
     if (-not $quiet) { Write-Host '按回车键关闭…' -ForegroundColor Yellow; [Console]::ReadLine() | Out-Null }

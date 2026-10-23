@@ -2,7 +2,7 @@
 
 ## system_seed
 
-`system_seed` 是智课研伴项目自建基础题库来源，用于 Phase 3 已完成的 `question_bank` 基础选择题数据。
+`system_seed` 是寻笺项目自建基础题库来源，用于 Phase 3 已完成的 `question_bank` 基础选择题数据。
 
 ## interview_grill_adapted
 
@@ -16,4 +16,4 @@
 
 本项目未引入 Electron。
 
-本项目未整包复制 interview-grill 代码，仅参考其学习训练结构并面向智课研伴 408 学习场景重新组织题库内容。
+本项目未整包复制 interview-grill 代码，仅参考其学习训练结构并面向寻笺 408 学习场景重新组织题库内容。

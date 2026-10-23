@@ -1,4 +1,4 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 import type { StudyNoteContent } from "./StudyNotePreview";
 
 /**
@@ -286,14 +286,14 @@ export function buildStudyNotePrintHtml(content: StudyNoteContent, meta: StudyNo
   </div>
 
   <header class="cover">
-    <div class="brand">智课研伴 · 学生端讲义</div>
+    <div class="brand">寻笺 · 学生端讲义</div>
     <h1>${esc(title)}</h1>
     <dl>${metaRows}</dl>
   </header>
 
   ${sections || '<p class="empty">当前讲义还没有可导出的内容。</p>'}
 
-  <div class="doc-foot">本讲义由「智课研伴」依据你的学习画像与知识库生成 · 导出于 ${esc(exportedAt)}</div>
+  <div class="doc-foot">本讲义由「寻笺」依据你的学习画像与知识库生成 · 导出于 ${esc(exportedAt)}</div>
 </div>
 </body>
 </html>`;

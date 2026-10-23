@@ -1,10 +1,10 @@
-# 智课研伴 LearnMate — 桌面版打包说明
+# 寻笺 LearnMate — 桌面版打包说明
 
 给项目做一个「双击就装、装完就是桌面软件」的 Windows 安装包。
 
-产物：`dist\智课研伴-LearnMate-Setup-<版本>.exe`（约 175MB）
+产物：`dist\寻笺-LearnMate-Setup-<版本>.exe`（约 175MB）
 + `dist\下载页.html`（可直接发给同学/评委的下载页）
-+ `dist\安装包说明.txt`、`dist\智课研伴-LearnMate-Setup-<版本>.sha256.txt`
++ `dist\安装包说明.txt`、`dist\寻笺-LearnMate-Setup-<版本>.sha256.txt`
 
 ## 一条命令打包
 
@@ -140,7 +140,7 @@ seed\snapshot-info.txt          快照来源与导出时间
 ```powershell
 # 端到端（装到临时目录，不动已安装的正式实例）
 & packaging\desktop\tools\verify-installer.ps1 `
-    -InstallerPath "dist\智课研伴-LearnMate-Setup-1.0.0.exe" `
+    -InstallerPath "dist\寻笺-LearnMate-Setup-1.0.0.exe" `
     -InstallDir "D:\tmp\lm-desktop-test" -Uninstall
 
 # 实例自检（服务已在跑时）

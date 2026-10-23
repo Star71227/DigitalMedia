@@ -1,11 +1,11 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 const { generateText } = require("../aiService");
 
 const ReviewAgent = {
   name: "ReviewAgent",
   description: "内容质量审核智能体",
   systemPrompt:
-    "你是智课研伴的内容质量审核智能体。你负责审核学习资料、题目和答疑内容是否准确、完整、符合课程范围和难度，并指出易错点、边界条件与改进建议。",
+    "你是寻笺的内容质量审核智能体。你负责审核学习资料、题目和答疑内容是否准确、完整、符合课程范围和难度，并指出易错点、边界条件与改进建议。",
   async run(context = {}, extraPrompt = "") {
     const prompt = [
       this.systemPrompt,

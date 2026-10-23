@@ -1,4 +1,4 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 import { BookOpen, ChevronRight, CircleCheck, FileText, UserRound } from "lucide-react";
 import { useId } from "react";
 import type { ChatAnswer, ChatCitation } from "../../types";
@@ -56,7 +56,7 @@ function CitationList({
 
   return (
     <section className="lm-chat-evidence" aria-label="学习资料依据">
-      <div className="lm-chat-section-heading">
+      <div className="lm-chat-section-heading" data-level="A" data-carrier="plate" data-enter="attach" data-family="F15" data-mg-behavior="reveal">
         <BookOpen aria-hidden="true" />
         <h3>学习资料依据</h3>
       </div>
@@ -71,7 +71,7 @@ function CitationList({
               className="lm-chat-evidence__item"
             >
               <summary>
-                <span className="lm-chat-evidence__label">[{label}]</span>
+                <span className="lm-chat-evidence__label" data-level="B" data-carrier="tab" data-enter="attach" data-family="F13" data-mg-behavior="reveal">[{label}]</span>
                 <span>
                   <strong>{citation.sourceTitle || "课程资料"}</strong>
                   {location && <small>{location}</small>}
@@ -128,7 +128,7 @@ export default function ChatAnswerView({
 
       {followups.length > 0 && (
         <section className="lm-chat-followups" aria-label="继续追问">
-          <div className="lm-chat-section-heading">
+          <div className="lm-chat-section-heading" data-level="A" data-carrier="plate" data-enter="attach" data-family="F15" data-mg-behavior="reveal">
             <FileText aria-hidden="true" />
             <h3>继续追问</h3>
           </div>
@@ -145,7 +145,7 @@ export default function ChatAnswerView({
 
       {answer.profileSuggestions.length > 0 && (
         <section className="lm-chat-profile-suggestions" aria-label="学习画像建议">
-          <div className="lm-chat-section-heading">
+          <div className="lm-chat-section-heading" data-level="A" data-carrier="plate" data-enter="attach" data-family="F15" data-mg-behavior="reveal">
             <UserRound aria-hidden="true" />
             <h3>学习画像建议</h3>
           </div>

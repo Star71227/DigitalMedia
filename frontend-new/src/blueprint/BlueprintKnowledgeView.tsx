@@ -1,4 +1,6 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+import { DepthScene } from "./depth/DepthScene";
+import { Carrier } from "./motion/Motion";
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 import { useEffect, useRef, useState } from "react";
 import {
   AlertTriangle,
@@ -136,7 +138,7 @@ export default function BlueprintKnowledgeView({
       <BlueprintMotif variant="branch" />
       <BlueprintHeader title="知识图谱" english="KNOWLEDGE GRAPH" />
       <div className="bp-knowledge-intro">
-        <h2>课程 · 章节 · 总学科知识导图</h2>
+        <h2 data-level="A" data-carrier="plate" data-enter="persist" data-family="F15" data-mg-behavior="persist">课程 · 章节 · 总学科知识导图</h2>
         <p>在知识的连接中，看见更大的学习世界。</p>
         <span>A MORE CONNECTED LEARNING WORLD.</span>
       </div>
@@ -151,7 +153,7 @@ export default function BlueprintKnowledgeView({
       <section className="bp-local-knowledge">
         <header>
           <Database />
-          <strong>本地知识库</strong>
+          <strong data-level="B" data-carrier="rail" data-enter="attach" data-family="F15" data-mg-behavior="reveal">本地知识库</strong>
         </header>
         <select value={selectedSubject} onChange={(event) => setSelectedSubject(event.target.value)}>
           {subjects.map((name) => (
@@ -180,16 +182,16 @@ export default function BlueprintKnowledgeView({
           去助手提问
         </button>
         <div className="bp-local-knowledge__counts">
-          <span>
+          <span data-level="B" data-carrier="rail" data-enter="attach" data-family="F12" data-mg-behavior="reveal">
             课程<b>{counts.courses}</b>
           </span>
-          <span>
+          <span data-level="B" data-carrier="rail" data-enter="attach" data-family="F12" data-mg-behavior="reveal">
             资料<b>{graph?.resources.length ?? 0}</b>
           </span>
-          <span>
+          <span data-level="B" data-carrier="rail" data-enter="attach" data-family="F12" data-mg-behavior="reveal">
             节点<b>{graph?.nodes.length ?? 0}</b>
           </span>
-          <span>
+          <span data-level="B" data-carrier="rail" data-enter="attach" data-family="F12" data-mg-behavior="reveal">
             关系<b>{graph?.edges.length ?? 0}</b>
           </span>
         </div>
@@ -197,11 +199,12 @@ export default function BlueprintKnowledgeView({
       </section>
 
       <section className="bp-knowledge-canvas">
+        <Carrier shape="fan" className="mg-knowledge-fan" />
         <header>
           <Network />
           <div>
-            <strong>学科知识导图</strong>
-            <span>
+            <strong data-level="A" data-carrier="plate" data-enter="attach" data-family="F15" data-mg-behavior="reveal">学科知识导图</strong>
+            <span data-level="B" data-carrier="rail" data-enter="attach" data-family="F15" data-mg-behavior="reveal">
               中心向外发散：课程 → 章节 → 知识点；滚轮缩放、拖拽平移，点击任意节点进入该知识点的详情页。
             </span>
           </div>
@@ -230,6 +233,8 @@ export default function BlueprintKnowledgeView({
           />
         </div>
       </section>
+      <DepthScene variant="rail" section="SECTION 04" title={["MAP", "04"]}
+        caption="KNOWLEDGE GRAPH / 知识图谱" meta={graph ? `${counts.courses} COURSES` : undefined} />
     </section>
   );
 }

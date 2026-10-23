@@ -1,4 +1,4 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 /* 测试环境补齐 jsdom 缺失的浏览器 API(必须早于任何 gsap import 求值,
    故单独成文件并被 tests/setup.ts 第一个 import)。
    GSAP 的 ScrollTrigger / MatchMedia 在插件注册与运行时都要调用 window.matchMedia,

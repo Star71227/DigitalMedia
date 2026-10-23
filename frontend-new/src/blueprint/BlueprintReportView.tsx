@@ -1,4 +1,5 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+import { DepthScene } from "./depth/DepthScene";
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 import { useEffect, useMemo, useState } from "react";
 import { ArrowRight, Download, RefreshCw } from "lucide-react";
 import {
@@ -8,9 +9,9 @@ import {
   type StudentAssessment,
   type StudyTimeSummary,
 } from "../api";
+import { Carrier, labelProps } from "./motion/Motion";
 import { BlueprintHeader, BlueprintMotif } from "./BlueprintDecorations";
 import { CountUp } from "../components/effects/CountUp";
-import { SvgDrawIn } from "../components/effects/SvgDrawIn";
 
 interface Props {
   onNavigateToTab: (tab: string, data?: unknown) => void;
@@ -142,29 +143,29 @@ export default function BlueprintReportView({ onNavigateToTab }: Props) {
 
       <div className="bp-report-summary">
         <div>
-          <span>
-            {periodDays === 7 ? "本周" : "近 30 天"}专注时长 <small>TOTAL FOCUS</small>
+          <span data-level="B" data-carrier="rail" data-enter="persist" data-family="F07" data-mg-behavior="persist">
+            {periodDays === 7 ? "本周" : "近 30 天"}专注时长 <small data-level="B" data-carrier="rail" data-enter="persist" data-family="F07" data-mg-behavior="persist">TOTAL FOCUS</small>
           </span>
-          <strong>
-            <CountUp to={totalMinutes} mode="scramble" />
+          <strong data-level="A" data-carrier="disc" data-enter="attach" data-family="F05" data-mg-behavior="reveal">
+            <CountUp to={totalMinutes} duration={0.32} />
             <i>分钟</i>
           </strong>
         </div>
         <div>
-          <span>
-            综合掌握度 <small>MASTERY</small>
+          <span data-level="B" data-carrier="rail" data-enter="persist" data-family="F07" data-mg-behavior="persist">
+            综合掌握度 <small data-level="B" data-carrier="rail" data-enter="persist" data-family="F07" data-mg-behavior="persist">MASTERY</small>
           </span>
-          <strong>
-            <CountUp to={Math.round(mastery)} mode="scramble" />
+          <strong data-level="A" data-carrier="disc" data-enter="attach" data-family="F05" data-mg-behavior="reveal">
+            <CountUp to={Math.round(mastery)} duration={0.32} />
             <i>%</i>
           </strong>
         </div>
         <div>
-          <span>
-            路径完成度 <small>PATH PROGRESS</small>
+          <span data-level="B" data-carrier="rail" data-enter="persist" data-family="F07" data-mg-behavior="persist">
+            路径完成度 <small data-level="B" data-carrier="rail" data-enter="persist" data-family="F07" data-mg-behavior="persist">PATH PROGRESS</small>
           </span>
-          <strong>
-            <CountUp to={Math.round(assessment?.metrics.pathProgress ?? 0)} mode="scramble" />
+          <strong data-level="A" data-carrier="disc" data-enter="attach" data-family="F05" data-mg-behavior="reveal">
+            <CountUp to={Math.round(assessment?.metrics.pathProgress ?? 0)} duration={0.32} />
             <i>%</i>
           </strong>
         </div>
@@ -174,17 +175,11 @@ export default function BlueprintReportView({ onNavigateToTab }: Props) {
         <div className="bp-report-grid__main">
           <section className="bp-report-chart bp-report-chart--daily">
             <header>
-              <strong>每日学习时长</strong>
-              <span>DAILY FOCUS</span>
+              <strong data-level="B" data-carrier="rail" data-enter="attach" data-family="F15" data-mg-behavior="reveal">每日学习时长</strong>
+              <span data-level="B" data-carrier="rail" data-enter="attach" data-family="F15" data-mg-behavior="reveal">DAILY FOCUS</span>
             </header>
             {/* 描线入场:deps 挂 days(useMemo 稳定引用),7/30 天切换与数据到达都会杀旧重播 */}
-            <SvgDrawIn
-              replayKey={days}
-              lineSelector="polyline.bp-chart-line:not(.bp-chart-line--glow)"
-              fadeSelector=".bp-chart-line--glow, .bp-report-chart text, path[fill='url(#bp-chart-fill)']"
-              popSelector=".bp-report-chart circle"
-              delay={0.35}
-            >
+            <div>
               <svg
                 viewBox={`0 0 980 ${chartHeight}`}
                 role="img"
@@ -215,7 +210,7 @@ export default function BlueprintReportView({ onNavigateToTab }: Props) {
                   className="bp-chart-line bp-chart-line--glow"
                   filter="url(#bp-line-glow)"
                 />
-                <polyline points={polyline} className="bp-chart-line" />
+                <polyline points={polyline} className="bp-chart-line mg-draw" pathLength="1" />
                 {points.map((point, index) => (
                   <g key={point.date}>
                     <line
@@ -227,25 +222,25 @@ export default function BlueprintReportView({ onNavigateToTab }: Props) {
                     />
                     <circle cx={point.x} cy={point.y} r={periodDays === 7 ? 6 : 4} />
                     {shouldLabelPoint(index, points.length) && (
-                      <text x={point.x} y={Math.max(14, point.y - 14)}>
+                      <text x={point.x} y={Math.max(14, point.y - 14)} data-level="B" data-carrier="tab" data-enter="persist" data-family="F07" data-mg-behavior="persist">
                         {point.minutes}
                       </text>
                     )}
                     {shouldLabelPoint(index, points.length) && (
-                      <text x={point.x} y={chartHeight - 12} className="bp-chart-date">
+                      <text x={point.x} y={chartHeight - 12} className="bp-chart-date" data-level="B" data-carrier="tab" data-enter="persist" data-family="F07" data-mg-behavior="persist">
                         {formatDay(point.date)}
                       </text>
                     )}
                   </g>
                 ))}
               </svg>
-            </SvgDrawIn>
+            </div>
           </section>
 
           <section className="bp-report-chart bp-report-chart--bars">
             <header>
-              <strong>各知识点掌握度</strong>
-              <span>MASTERY BY POINT</span>
+              <strong data-level="B" data-carrier="rail" data-enter="attach" data-family="F15" data-mg-behavior="reveal">各知识点掌握度</strong>
+              <span data-level="B" data-carrier="rail" data-enter="attach" data-family="F15" data-mg-behavior="reveal">MASTERY BY POINT</span>
             </header>
             <BarChart points={barPoints} />
           </section>
@@ -253,16 +248,17 @@ export default function BlueprintReportView({ onNavigateToTab }: Props) {
 
         <div className="bp-report-grid__side">
           <section className="bp-report-chart bp-report-chart--radar">
+            <Carrier shape="snow" className="mg-report-snow" />
             <header>
-              <strong>知识点掌握雷达</strong>
-              <span>MASTERY RADAR</span>
+              <strong data-level="B" data-carrier="rail" data-enter="attach" data-family="F15" data-mg-behavior="reveal">知识点掌握雷达</strong>
+              <span data-level="B" data-carrier="rail" data-enter="attach" data-family="F15" data-mg-behavior="reveal">MASTERY RADAR</span>
             </header>
             <RadarChart points={radarPoints} />
           </section>
           <section className="bp-report-chart bp-report-chart--donut">
             <header>
-              <strong>错误类型分布</strong>
-              <span>ERROR MIX</span>
+              <strong data-level="B" data-carrier="rail" data-enter="attach" data-family="F15" data-mg-behavior="reveal">错误类型分布</strong>
+              <span data-level="B" data-carrier="rail" data-enter="attach" data-family="F15" data-mg-behavior="reveal">ERROR MIX</span>
             </header>
             <DonutChart slices={errorSlices} />
           </section>
@@ -272,13 +268,13 @@ export default function BlueprintReportView({ onNavigateToTab }: Props) {
       <div className="bp-report-detail">
         <section>
           <header>
-            <strong>知识点掌握度</strong>
-            <span>MASTERY LEVEL</span>
+            <strong data-level="B" data-carrier="rail" data-enter="attach" data-family="F15" data-mg-behavior="reveal">知识点掌握度</strong>
+            <span data-level="B" data-carrier="rail" data-enter="attach" data-family="F15" data-mg-behavior="reveal">MASTERY LEVEL</span>
           </header>
           {(masteryBySubject.length ? masteryBySubject : [{ subject: "暂无课程数据", value: 0 }]).map(
             (item) => (
               <div className="bp-report-bar" key={item.subject}>
-                <span>{item.subject}</span>
+                <span data-level="B" data-carrier="tab" data-enter="persist" data-family="F07" data-mg-behavior="persist">{item.subject}</span>
                 <i>
                   <b style={{ width: `${item.value}%` }} />
                 </i>
@@ -289,8 +285,8 @@ export default function BlueprintReportView({ onNavigateToTab }: Props) {
         </section>
         <section>
           <header>
-            <strong>错误分布</strong>
-            <span>MISTAKE DISTRIBUTION</span>
+            <strong data-level="B" data-carrier="rail" data-enter="attach" data-family="F15" data-mg-behavior="reveal">错误分布</strong>
+            <span data-level="B" data-carrier="rail" data-enter="attach" data-family="F15" data-mg-behavior="reveal">MISTAKE DISTRIBUTION</span>
           </header>
           <div className="bp-mistake-stack">
             {mistakeCounts.map((value, index) => (
@@ -298,31 +294,34 @@ export default function BlueprintReportView({ onNavigateToTab }: Props) {
             ))}
           </div>
           <div className="bp-mistake-labels">
-            <span>
+            <span data-level="B" data-carrier="tab" data-enter="persist" data-family="F07" data-mg-behavior="persist">
               <b>{mistakeCounts[0]}</b>概念理解
             </span>
-            <span>
+            <span data-level="B" data-carrier="tab" data-enter="persist" data-family="F07" data-mg-behavior="persist">
               <b>{mistakeCounts[1]}</b>边界条件
             </span>
-            <span>
+            <span data-level="B" data-carrier="tab" data-enter="persist" data-family="F07" data-mg-behavior="persist">
               <b>{mistakeCounts[2]}</b>执行策略
             </span>
           </div>
         </section>
         <section className="bp-insight">
           <header>
-            <strong>本周洞察</strong>
-            <span>INSIGHTS</span>
+            <strong data-level="A" data-carrier="plate" data-enter="attach" data-family="F15" data-mg-behavior="reveal">本周洞察</strong>
+            <span data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">INSIGHTS</span>
           </header>
           <p>{assessment?.recommendations[0]?.text || "完成一次能力检测后，这里会显示下一条学习建议。"}</p>
           <button onClick={() => onNavigateToTab("path")}>
             查看更新后的路径
-            <span className="bp-arrow-chip" aria-hidden="true">
+            <span className="bp-arrow-chip" aria-hidden="true" {...labelProps("B", "ring", "attach")} data-level="B" data-carrier="ring" data-enter="attach" data-family="F02" data-mg-behavior="reveal">
               <ArrowRight />
             </span>
           </button>
         </section>
       </div>
+      <DepthScene variant="sheet" section="SECTION 06" title={["REPORT", `${periodDays}D`]}
+        caption="ASSESSMENT / 学习报告"
+        meta={assessment?.metrics.quiz?.averageAccuracy != null ? `ACC ${Math.round(assessment.metrics.quiz.averageAccuracy)}%` : undefined} />
     </section>
   );
 }
@@ -408,12 +407,12 @@ function RadarChart({ points }: { points: RadarPoint[] }) {
             x={x}
             y={y}
             className="bp-radar-label"
-            textAnchor={x < center - 6 ? "end" : x > center + 6 ? "start" : "middle"}
+            textAnchor={x < center - 6 ? "end" : x > center + 6 ? "start" : "middle"} data-level="B" data-carrier="tab" data-enter="persist" data-family="F07" data-mg-behavior="persist"
           >
             <tspan x={x} dy="0">
               {item.label.length > 8 ? `${item.label.slice(0, 7)}…` : item.label}
             </tspan>
-            <tspan x={x} dy="13" className="bp-radar-value">
+            <tspan x={x} dy="13" className="bp-radar-value" data-level="B" data-carrier="tab" data-enter="persist" data-family="F07" data-mg-behavior="persist">
               {item.value}%
             </tspan>
           </text>
@@ -463,19 +462,19 @@ function DonutChart({ slices }: { slices: DonutSlice[] }) {
             return circle;
           })}
         </g>
-        <text x="100" y="96" className="bp-donut-total" textAnchor="middle">
+        <text x="100" y="96" className="bp-donut-total" textAnchor="middle" data-level="B" data-carrier="tab" data-enter="persist" data-family="F07" data-mg-behavior="persist">
           {total}
         </text>
-        <text x="100" y="118" className="bp-donut-caption" textAnchor="middle">
+        <text x="100" y="118" className="bp-donut-caption" textAnchor="middle" data-level="B" data-carrier="tab" data-enter="persist" data-family="F07" data-mg-behavior="persist">
           次错误记录
         </text>
       </svg>
-      <ul className="bp-donut-legend">
+      <ul className="bp-donut-legend" data-level="B" data-carrier="rail" data-enter="persist" data-family="F06" data-mg-behavior="persist" data-mg-container="">
         {slices.map((item, index) => (
           <li key={item.label}>
             <i style={{ background: DONUT_COLORS[index % DONUT_COLORS.length] }} />
-            <span>{item.label}</span>
-            <b>{Math.round((item.value / total) * 100)}%</b>
+            <span data-level="B" data-carrier="tab" data-enter="persist" data-family="F06" data-mg-behavior="persist">{item.label}</span>
+            <b data-level="B" data-carrier="tab" data-enter="persist" data-family="F06" data-mg-behavior="persist">{Math.round((item.value / total) * 100)}%</b>
           </li>
         ))}
       </ul>
@@ -520,14 +519,14 @@ function BarChart({ points }: { points: Array<RadarPoint & { count?: number }> }
               rx="4"
               className={item.value < 60 ? "bp-bar is-weak" : "bp-bar"}
             />
-            <text x={x + barWidth / 2} y={y - 6} className="bp-bar-value" textAnchor="middle">
+            <text x={x + barWidth / 2} y={y - 6} className="bp-bar-value" textAnchor="middle" data-level="B" data-carrier="tab" data-enter="persist" data-family="F07" data-mg-behavior="persist">
               {item.value}
             </text>
             <text
               x={x + barWidth / 2}
               y={height - padding.bottom + 18}
               className="bp-bar-label"
-              textAnchor="middle"
+              textAnchor="middle" data-level="B" data-carrier="tab" data-enter="persist" data-family="F07" data-mg-behavior="persist"
             >
               {item.label.length > 6 ? `${item.label.slice(0, 5)}…` : item.label}
             </text>

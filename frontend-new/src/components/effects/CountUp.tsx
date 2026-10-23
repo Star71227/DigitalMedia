@@ -1,5 +1,5 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
-import { useEffect, useRef } from "react";
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+import { useLayoutEffect, useRef } from "react";
 import { gsap, prefersReducedMotion } from "../../lib/gsap";
 import { scrambleTo } from "./scramble";
 
@@ -32,12 +32,12 @@ export function CountUp({
 }: CountUpProps) {
   const ref = useRef<HTMLSpanElement>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const el = ref.current;
     if (!el) return;
     const fmt = (v: number) => `${prefix}${v.toFixed(decimals)}${suffix}`;
     const finalText = fmt(to);
-    if (prefersReducedMotion()) {
+    if (el.closest(".bp-app-shell") || prefersReducedMotion()) {
       el.textContent = finalText;
       return;
     }

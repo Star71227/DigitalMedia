@@ -1,4 +1,4 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as d3 from "d3";
 import {
@@ -870,7 +870,7 @@ export default function KnowledgeGraph({
               <Network aria-hidden="true" />
               知识结构关系图
             </h2>
-            <span className="lm-knowledge-graph-panel__hint">
+            <span className="lm-knowledge-graph-panel__hint" data-level="B" data-carrier="rail" data-enter="attach" data-family="F12" data-mg-behavior="reveal">
               中心向外发散：课程 → 章节 → 知识点；点击知识点可聚焦它的上下游，节点位置固定不会漂移
             </span>
             <div className="lm-knowledge-graph-panel__actions">
@@ -949,38 +949,38 @@ export default function KnowledgeGraph({
             <svg ref={svgRef} />
           </div>
 
-          <div className="lm-knowledge-graph-legend" aria-label="图例">
-            <span className="lm-knowledge-graph-legend__item">
+          <div className="lm-knowledge-graph-legend" aria-label="图例" data-level="B" data-carrier="rail" data-enter="persist" data-family="F06" data-mg-behavior="persist" data-mg-container="">
+            <span className="lm-knowledge-graph-legend__item" data-level="B" data-carrier="tab" data-enter="persist" data-family="F06" data-mg-behavior="persist">
               <i className="is-course" />
               课程
             </span>
-            <span className="lm-knowledge-graph-legend__item">
+            <span className="lm-knowledge-graph-legend__item" data-level="B" data-carrier="tab" data-enter="persist" data-family="F06" data-mg-behavior="persist">
               <i className="is-chapter" />
               章节
             </span>
-            <span className="lm-knowledge-graph-legend__item">
+            <span className="lm-knowledge-graph-legend__item" data-level="B" data-carrier="tab" data-enter="persist" data-family="F06" data-mg-behavior="persist">
               <i className="is-knowledge" />
               知识点（按掌握度上色）
             </span>
-            <span className="lm-knowledge-graph-legend__item">
+            <span className="lm-knowledge-graph-legend__item" data-level="B" data-carrier="tab" data-enter="persist" data-family="F06" data-mg-behavior="persist">
               <i className="is-hierarchy" />
               层级边（放射分支）
             </span>
-            <span className="lm-knowledge-graph-legend__item">
+            <span className="lm-knowledge-graph-legend__item" data-level="B" data-carrier="tab" data-enter="persist" data-family="F06" data-mg-behavior="persist">
               <i className="is-prerequisite" />
               课程内前置（实线箭头）
             </span>
-            <span className="lm-knowledge-graph-legend__item">
+            <span className="lm-knowledge-graph-legend__item" data-level="B" data-carrier="tab" data-enter="persist" data-family="F06" data-mg-behavior="persist">
               <i className="is-cross" />
               跨课程关系（紫色虚线）
             </span>
-            <span className="lm-knowledge-graph-legend__item">
+            <span className="lm-knowledge-graph-legend__item" data-level="B" data-carrier="tab" data-enter="persist" data-family="F06" data-mg-behavior="persist">
               <i className="is-hierarchy" />
               滚轮缩放 · 拖拽平移画布
             </span>
           </div>
 
-          <p className="lm-knowledge-graph-note">
+          <p className="lm-knowledge-graph-note" data-level="B" data-carrier="rail" data-enter="attach" data-family="F12" data-mg-behavior="reveal">
             当前画布：课程 {view.counts.courses} · 章节 {view.counts.chapters} · 知识点{" "}
             {view.counts.knowledge}
             {view.counts.hiddenKnowledge > 0
@@ -999,9 +999,9 @@ export default function KnowledgeGraph({
                 <GitBranch aria-hidden="true" />
                 当前画布上的跨课程依赖（谁依赖谁）
               </h3>
-              <div className="lm-knowledge-cross-summary__chips">
+              <div className="lm-knowledge-cross-summary__chips" data-level="B" data-carrier="tab" data-enter="attach" data-family="F13" data-mg-behavior="reveal">
                 {view.crossPairs.map((pair) => (
-                  <span key={`${pair.from}-${pair.to}`} className="lm-knowledge-chip">
+                  <span key={`${pair.from}-${pair.to}`} className="lm-knowledge-chip" data-level="B" data-carrier="tab" data-enter="attach" data-family="F13" data-mg-behavior="reveal">
                     {pair.from}
                     <ArrowRight aria-hidden="true" />
                     {pair.to}

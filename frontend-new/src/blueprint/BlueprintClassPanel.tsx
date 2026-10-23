@@ -1,4 +1,4 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   BookOpenCheck,
@@ -296,12 +296,12 @@ export default function BlueprintClassPanel({ rankingClassName, myRank, total, o
                         </small>
                       </div>
                       {isMember ? (
-                        <span className="bp-class-list__state">
+                        <span className="bp-class-list__state" data-level="A" data-carrier="plate" data-enter="persist" data-family="F04" data-mg-behavior="persist">
                           <CheckCircle2 />
                           已在班级
                         </span>
                       ) : isPending ? (
-                        <span className="bp-class-list__state">
+                        <span className="bp-class-list__state" data-level="A" data-carrier="plate" data-enter="persist" data-family="F04" data-mg-behavior="persist">
                           <Clock3 />
                           已申请
                         </span>
@@ -386,12 +386,12 @@ export default function BlueprintClassPanel({ rankingClassName, myRank, total, o
                 </div>
                 <div className="bp-homework-list__side">
                   {item.submitted ? (
-                    <span className="bp-homework-state is-done">
+                    <span className="bp-homework-state is-done" data-level="A" data-carrier="plate" data-enter="persist" data-family="F04" data-mg-behavior="persist">
                       <CheckCircle2 />
                       已交{item.score != null ? ` ${item.score} 分` : ""}
                     </span>
                   ) : (
-                    <span className="bp-homework-state is-pending">
+                    <span className="bp-homework-state is-pending" data-level="A" data-carrier="plate" data-enter="persist" data-family="F04" data-mg-behavior="persist">
                       <Clock3 />
                       未交
                     </span>

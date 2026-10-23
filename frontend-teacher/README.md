@@ -1,4 +1,4 @@
-# 智课研伴 LearnMate 教师端
+# 寻笺 LearnMate 教师端
 
 教师端已作为 LearnMate 主仓库中的纯 Vite 前端运行，与学生端共用 `backend`。
 

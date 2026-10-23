@@ -35434,7 +35434,7 @@ function FortuneCard({
           ] })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime18.jsxs)("p", { className: "bp-fortune__checkin", children: [
-          "\u4F60\u5DF2\u7ECF\u5728\u667A\u8BFE\u7814\u4F34\u7D2F\u8BA1\u6253\u5361 ",
+          "\u4F60\u5DF2\u7ECF\u5728\u5bfb\u7b3a\u7D2F\u8BA1\u6253\u5361 ",
           /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("b", { children: total }),
           " \u6B21",
           /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("em", { children: total > 0 ? ` \xB7 \u8FDE\u7EED ${streak} \u5929` : " \xB7 \u4ECA\u5929\u7B7E\u5230\u5C31\u4ECE\u7B2C\u4E00\u6B21\u5F00\u59CB" })
@@ -51342,7 +51342,7 @@ function MentorWorkspace({ initialPrompt, onClearPrefill, onNavigateToProfile })
             /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { className: "mw-avatar", "aria-hidden": "true", children: message.role === "assistant" ? /* @__PURE__ */ (0, import_jsx_runtime24.jsx)(Sparkles, { size: 17 }) : user?.displayName?.slice(0, 1) || "\u6211" }),
             /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { className: "mw-message-body", children: [
               /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("header", { children: [
-                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("strong", { children: message.role === "assistant" ? "\u667A\u8BFE\u7814\u4F34" : "\u6211" }),
+                /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("strong", { children: message.role === "assistant" ? "\u5bfb\u7b3a" : "\u6211" }),
                 /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("time", { dateTime: message.createdAt, children: message.createdAt ? new Date(message.createdAt).toLocaleTimeString("zh-CN", {
                   hour: "2-digit",
                   minute: "2-digit"
@@ -61988,7 +61988,7 @@ function LoginHero({ introLocked = false }) {
       /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "lm-login-hero__brand", children: [
         /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "lm-login-hero__mark", "aria-hidden": "true", children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(LogoReveal, { size: 34, static: introLocked }) }),
         /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("strong", { children: "\u667A\u8BFE\u7814\u4F34" }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("strong", { children: "\u5bfb\u7b3a" }),
           /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: "\u5B66\u751F\u5B66\u4E60\u5DE5\u4F5C\u53F0" })
         ] })
       ] }),
@@ -62259,7 +62259,7 @@ function Portal({
         ] })
       ] })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("footer", { className: "lm-login-footer", children: "\u667A\u8BFE\u7814\u4F34\u5B66\u751F\u5B66\u4E60\u5DE5\u4F5C\u53F0" })
+    /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("footer", { className: "lm-login-footer", children: "\u5bfb\u7b3a\u5B66\u751F\u5B66\u4E60\u5DE5\u4F5C\u53F0" })
   ] });
 }
 
@@ -62439,7 +62439,7 @@ function RegisterPage({ onBackToLogin }) {
         ] })
       ] })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("footer", { className: "lm-login-footer", children: "\u667A\u8BFE\u7814\u4F34 \xB7 \u5B66\u751F\u4E0E\u6559\u5E08\u5747\u53EF\u81EA\u52A9\u6CE8\u518C\uFF0C\u7BA1\u7406\u5458\u8D26\u53F7\u7531\u5E73\u53F0\u5206\u914D" })
+    /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("footer", { className: "lm-login-footer", children: "\u5bfb\u7b3a \xB7 \u5B66\u751F\u4E0E\u6559\u5E08\u5747\u53EF\u81EA\u52A9\u6CE8\u518C\uFF0C\u7BA1\u7406\u5458\u8D26\u53F7\u7531\u5E73\u53F0\u5206\u914D" })
   ] });
 }
 
@@ -63117,11 +63117,11 @@ function BlueprintShell({
     ),
     mobileOpen && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("button", { className: "bp-sidebar-scrim", onClick: () => setMobileOpen(false), "aria-label": "\u5173\u95ED\u5BFC\u822A" }),
     /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("aside", { className: mobileOpen ? "bp-sidebar is-open" : "bp-sidebar", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "bp-brand", "aria-label": "\u667A\u8BFE\u7814\u4F34 \u5B66\u751F\u7AEF", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "bp-brand", "aria-label": "\u5bfb\u7b3a \u5B66\u751F\u7AEF", children: [
         /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "bp-brand__mark", "aria-hidden": "true", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(LogoReveal, { size: 40, static: true, bare: true }) }),
         /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { className: "bp-brand__word", children: [
-          "\u667A\u8BFE",
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { children: "\u7814\u4F34" })
+          "\u5bfb",
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { children: "\u7b3a" })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("small", { children: "ALWAYS LEARNING" })
       ] }),
@@ -63224,7 +63224,7 @@ var import_react15 = __toESM(require_react(), 1);
 init_LogoReveal();
 var import_jsx_runtime14 = __toESM(require_jsx_runtime(), 1);
 function LogoIntro({
-  subtitle = "\u667A\u8BFE\u7814\u4F34 \xB7 AI \u5B66\u4E60\u5E73\u53F0",
+  subtitle = "\u5bfb\u7b3a \xB7 AI \u5B66\u4E60\u5E73\u53F0",
   dockTarget,
   onDone
 }) {
@@ -63298,7 +63298,7 @@ function LogoIntro({
               /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "lm-logo-reveal__ring" }),
               /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("span", { className: "lm-logo-reveal__shimmer" })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { className: "lm-logo-intro__name", children: "\u667A\u8BFE\u7814\u4F34" }),
+            /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { className: "lm-logo-intro__name", children: "\u5bfb\u7b3a" }),
             /* @__PURE__ */ (0, import_jsx_runtime14.jsx)("p", { className: "lm-logo-intro__sub", children: subtitle })
           ]
         }
@@ -63722,7 +63722,7 @@ function App() {
     introVisible && /* @__PURE__ */ (0, import_jsx_runtime47.jsx)(
       LogoIntro,
       {
-        subtitle: "\u667A\u8BFE\u7814\u4F34 \xB7 \u5B66\u751F\u5B66\u4E60\u5DE5\u4F5C\u53F0",
+        subtitle: "\u5bfb\u7b3a \xB7 \u5B66\u751F\u5B66\u4E60\u5DE5\u4F5C\u53F0",
         dockTarget: ".lm-login-hero__mark .lm-logo-reveal, .bp-brand__mark .lm-logo-reveal",
         onDone: () => setIntroVisible(false)
       }

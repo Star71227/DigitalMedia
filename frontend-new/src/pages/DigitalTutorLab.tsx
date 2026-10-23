@@ -1,4 +1,4 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 import { useState } from "react";
 import DigitalTutor from "../components/digitalTutor/DigitalTutor";
 import DigitalTutorAvatar from "../components/digitalTutor/DigitalTutorAvatar";
@@ -156,7 +156,7 @@ export default function DigitalTutorLab() {
       </section>
 
       <footer className="dt-lab__footer">
-        <span>智课研伴 · 数字讲师实验室</span>
+        <span>寻笺 · 数字讲师实验室</span>
         <span>本地原创 SVG / CSS，无远程商业素材</span>
       </footer>
     </main>

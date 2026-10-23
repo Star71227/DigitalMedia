@@ -1,5 +1,5 @@
-﻿# 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。
-# 智课研伴 LearnMate — 停止后台服务
+﻿# 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。
+# 寻笺 LearnMate — 停止后台服务
 #
 # 依次停掉学生端 / 教师端静态服务、后端进程，最后优雅关闭内置 MySQL。
 # 数据库文件（data\mysql）与会话数据都会保留，下次启动直接续用。
@@ -17,7 +17,7 @@ $Config = Get-LmConfig $Root
 $P = Get-LmPaths $Root
 $quiet = [bool]$Quiet
 
-if (-not $quiet) { Write-LmInfo '正在停止智课研伴…' }
+if (-not $quiet) { Write-LmInfo '正在停止寻笺…' }
 
 $stopped = 0
 foreach ($item in @(
@@ -44,9 +44,9 @@ if ($Config) {
 if ($busy.Count -gt 0) {
     Write-LmWarn "以下端口仍被占用：$($busy -join ', ')（可能是别的程序，请自行确认）"
 } elseif ($stopped -gt 0) {
-    if (-not $quiet) { Write-LmOk '智课研伴已全部停止，数据库数据已保留。' }
+    if (-not $quiet) { Write-LmOk '寻笺已全部停止，数据库数据已保留。' }
 } else {
-    if (-not $quiet) { Write-LmInfo '当前没有正在运行的智课研伴服务。' }
+    if (-not $quiet) { Write-LmInfo '当前没有正在运行的寻笺服务。' }
 }
 
 if (-not $Quiet) {

@@ -1,4 +1,4 @@
-# 智课研伴 LearnMate 学生端
+# 寻笺 LearnMate 学生端
 
 学生端是 LearnMate 主仓库中的纯 Vite 前端，与教师端共用根目录下的 `backend` 服务。
 

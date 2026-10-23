@@ -1,4 +1,4 @@
-<!-- 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 -->
+<!-- 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 -->
 <!doctype html>
 <html lang="zh-CN">
   <head>
@@ -678,15 +678,15 @@
 
     <main>
       <svg id="graph" role="img" aria-label="计算机专业课知识图谱（放射思维导图）"></svg>
-      <canvas id="scene3d" aria-label="三维知识网络（单课立体视图）"></canvas>
+      <canvas data-level="B" data-carrier="none" data-enter="persist" data-family="F07" id="scene3d" aria-label="三维知识网络（单课立体视图）"></canvas>
       <div class="crumb" id="crumb">总览</div>
       <div class="legend">
         <span><i class="dot" style="background: #d94436"></i>主课程</span>
-        <span><i></i>包含关系</span>
-        <span><i class="dash"></i>跨课程关联</span>
-        <span><i class="dotted"></i>前置依赖（放大 / 悬浮时显示）</span>
-        <span class="only-2d">滚轮缩放 · 拖拽平移 · 节点固定（不漂移）</span>
-        <span class="only-3d">银河 / 知识球 · 自动旋转 · 拖拽转动 · 滚轮缩放 · 双击复位</span>
+        <span data-level="B" data-carrier="tab" data-enter="persist" data-family="F06"><i></i>包含关系</span>
+        <span data-level="B" data-carrier="tab" data-enter="persist" data-family="F06"><i class="dash"></i>跨课程关联</span>
+        <span data-level="B" data-carrier="tab" data-enter="persist" data-family="F06"><i class="dotted"></i>前置依赖（放大 / 悬浮时显示）</span>
+        <span data-level="B" data-carrier="tab" data-enter="persist" data-family="F06" class="only-2d">滚轮缩放 · 拖拽平移 · 节点固定（不漂移）</span>
+        <span data-level="B" data-carrier="tab" data-enter="persist" data-family="F06" class="only-3d">银河 / 知识球 · 自动旋转 · 拖拽转动 · 滚轮缩放 · 双击复位</span>
       </div>
       <div class="hint">
         <span class="only-2d"
@@ -699,6 +699,7 @@
       </div>
     </main>
 
+    <script>document.querySelectorAll(".legend > span").forEach(function(e){e.dataset.level="B";e.dataset.carrier="tab";e.dataset.enter="persist";e.dataset.family="F06";});</script>
     <!-- 第三方开源代码开始 D3 保留原版权声明 -->
 <script>
       // https://d3js.org v7.9.0 Copyright 2010-2023 Mike Bostock
@@ -19210,7 +19211,7 @@
           labelSel.exit().remove();
           labelSel = labelSel
             .enter()
-            .append("text")
+            .append("text").attr("data-level", "B").attr("data-carrier", "tab").attr("data-enter", "persist").attr("data-family", "F07")
             .attr("class", function (d) {
               return d.cls;
             })
@@ -19279,13 +19280,13 @@
             .attr("height", 62)
             .attr("rx", 15);
           hub
-            .append("text")
+            .append("text").attr("data-level", "B").attr("data-carrier", "tab").attr("data-enter", "persist").attr("data-family", "F07")
             .attr("class", "hub-t1")
             .attr("text-anchor", "middle")
             .attr("y", -3)
             .text("计算机专业课");
           hub
-            .append("text")
+            .append("text").attr("data-level", "B").attr("data-carrier", "tab").attr("data-enter", "persist").attr("data-family", "F07")
             .attr("class", "hub-t1")
             .attr("text-anchor", "middle")
             .attr("y", 18)
@@ -19302,7 +19303,7 @@
               return d.color.main;
             });
           course
-            .append("text")
+            .append("text").attr("data-level", "B").attr("data-carrier", "tab").attr("data-enter", "persist").attr("data-family", "F07")
             .attr("class", "abbr")
             .attr("text-anchor", "middle")
             .attr("dy", 5)
@@ -19310,7 +19311,7 @@
               return d.color.abbr;
             });
           course
-            .append("text")
+            .append("text").attr("data-level", "B").attr("data-carrier", "tab").attr("data-enter", "persist").attr("data-family", "F07")
             .attr("class", "name")
             .attr("text-anchor", "middle")
             .attr("fill", function (d) {
@@ -19332,7 +19333,7 @@
               return d.color.main;
             });
           chapter
-            .append("text")
+            .append("text").attr("data-level", "B").attr("data-carrier", "tab").attr("data-enter", "persist").attr("data-family", "F07")
             .attr("text-anchor", "middle")
             .attr("dy", 4)
             .attr("fill", function (d) {
@@ -19349,7 +19350,7 @@
             .attr("fill", function (d) {
               return (PALETTE[d.subject] || FALLBACK).main;
             });
-          kp.append("text")
+          kp.append("text").attr("data-level", "B").attr("data-carrier", "tab").attr("data-enter", "persist").attr("data-family", "F07")
             .attr("dy", 3.6)
             .attr("fill", function (d) {
               return lift((PALETTE[d.subject] || FALLBACK).main, LIFT);

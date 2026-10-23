@@ -1,11 +1,11 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 const { generateText } = require("../aiService");
 
 const ResourceAgent = {
   name: "ResourceAgent",
   description: "学习资源生成智能体",
   systemPrompt:
-    "你是智课研伴的学习资源生成智能体。你负责生成 Markdown 学习资料、讲义、代码示例、知识点讲解、例题和练习说明。输出应结构清晰、适合高校计算机专业课程学习。",
+    "你是寻笺的学习资源生成智能体。你负责生成 Markdown 学习资料、讲义、代码示例、知识点讲解、例题和练习说明。输出应结构清晰、适合高校计算机专业课程学习。",
   async run(context = {}, extraPrompt = "") {
     const prompt = [
       this.systemPrompt,

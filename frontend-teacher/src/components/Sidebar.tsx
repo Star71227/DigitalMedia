@@ -1,4 +1,4 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 import { useEffect, useState } from "react";
 import {
   BarChart3,
@@ -115,7 +115,7 @@ export function Sidebar({ path }: { path: string }) {
             <LogoReveal size={38} static bare />
           </span>
           <strong>
-            智课<span>研伴</span>
+            寻<span>笺</span>
           </strong>
           <small>TEACHER WORKSPACE</small>
         </div>
@@ -150,7 +150,7 @@ export function Sidebar({ path }: { path: string }) {
           </nav>
         </DockNav>
         <div className="teacher-sidebar-foot">
-          <span>智课研伴</span>
+          <span>寻笺</span>
           <small>让每一次教学决策都有依据</small>
         </div>
       </aside>

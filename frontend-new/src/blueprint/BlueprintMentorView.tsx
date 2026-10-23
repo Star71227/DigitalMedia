@@ -1,4 +1,4 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 import { useEffect, useRef, useState } from "react";
 import { BookOpen, Copy, Database, Mic, Paperclip, Send, ThumbsDown, ThumbsUp } from "lucide-react";
 import { createChatSession, describeApiError, sendChatMessage } from "../api";
@@ -84,12 +84,12 @@ export default function BlueprintMentorView({ initialPrompt, onClearPrefill, onN
               <span className="bp-chat-avatar">{message.role === "user" ? "张" : "AI"}</span>
               <div>
                 <header>
-                  <strong>{message.role === "user" ? "STUDENT" : "LEARNMATE"}</strong>
-                  <time>
+                  <strong data-level="B" data-carrier="rail" data-enter="attach" data-family="F15" data-mg-behavior="reveal">{message.role === "user" ? "STUDENT" : "LEARNMATE"}</strong>
+                  <time data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">
                     {new Date().toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" })}
                   </time>
                   {message.role === "assistant" && (
-                    <span className="bp-message-tools">
+                    <span className="bp-message-tools" data-level="B" data-carrier="rail" data-enter="attach" data-family="F15" data-mg-behavior="reveal">
                       <Copy />
                       <ThumbsUp />
                       <ThumbsDown />

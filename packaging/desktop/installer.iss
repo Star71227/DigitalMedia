@@ -1,4 +1,4 @@
-﻿; 智课研伴 LearnMate 桌面版 — Inno Setup 安装脚本
+﻿; 寻笺 LearnMate 桌面版 — Inno Setup 安装脚本
 ; 由 packaging\desktop\build-desktop-installer.ps1 调用 ISCC 编译（会以 UTF-8 BOM 写入临时副本）。
 ; 需要的宏：AppVersion / PayloadDir / OutputDir / OutputBase / IconFile（LangFile 可选）
 
@@ -15,8 +15,8 @@
   #define OutputBase "LearnMate-Setup-" + AppVersion
 #endif
 
-#define AppName "智课研伴 LearnMate"
-#define AppShortName "智课研伴"
+#define AppName "寻笺 LearnMate"
+#define AppShortName "寻笺"
 #define AppPublisher "LearnMate"
 #define AppExeName "LearnMate.exe"
 
@@ -70,7 +70,7 @@ Source: "{#PayloadDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
 Name: "{group}\{#AppShortName} 学生端"; Filename: "{app}\{#AppExeName}"; WorkingDir: "{app}"; Comment: "打开学生端（登录后进入学习工作台）"
 Name: "{group}\{#AppShortName} 教师端"; Filename: "{app}\{#AppExeName}"; Parameters: "--teacher"; WorkingDir: "{app}"; Comment: "打开教师端（教师工作台）"
 Name: "{group}\{#AppShortName} 使用说明"; Filename: "{app}\使用说明.txt"
-Name: "{group}\停止{#AppShortName}（后台服务）"; Filename: "{app}\停止智课研伴.bat"; WorkingDir: "{app}"
+Name: "{group}\停止{#AppShortName}（后台服务）"; Filename: "{app}\停止寻笺.bat"; WorkingDir: "{app}"
 Name: "{group}\卸载 {#AppName}"; Filename: "{uninstallexe}"
 Name: "{autodesktop}\{#AppShortName} 学生端"; Filename: "{app}\{#AppExeName}"; WorkingDir: "{app}"; Tasks: desktopicon
 Name: "{autodesktop}\{#AppShortName} 教师端"; Filename: "{app}\{#AppExeName}"; Parameters: "--teacher"; WorkingDir: "{app}"; Tasks: desktopicon_teacher

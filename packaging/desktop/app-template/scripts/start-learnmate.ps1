@@ -1,5 +1,5 @@
-﻿# 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。
-# 智课研伴 LearnMate — 一键启动（包内主入口）
+﻿# 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。
+# 寻笺 LearnMate — 一键启动（包内主入口）
 #
 # 做四件事：拉起内置 MySQL → 首启建库建账号 → 拉起后端（建表 / 灌知识库 / 灌演示数据）→
 # 拉起学生端与教师端静态服务，最后自动打开浏览器。
@@ -121,7 +121,7 @@ function Start-LmWeb([string]$Client, [string]$DistDir, [int]$Port, [string]$Pid
 try {
     if ((Test-LmRunning $Root) -and -not $Restart) {
         $studentUrl = "http://127.0.0.1:$($Config.ports.student)/student"
-        Write-LmOk "智课研伴已经在运行。"
+        Write-LmOk "寻笺已经在运行。"
         Write-Host "  学生端：$studentUrl"
         Write-Host "  教师端：http://127.0.0.1:$($Config.ports.teacher)/"
         if (-not $NoBrowser) { Start-Process $studentUrl | Out-Null }
@@ -214,11 +214,11 @@ try {
     $studentUrl = "http://127.0.0.1:$($Config.ports.student)/student"
     $teacherUrl = "http://127.0.0.1:$($Config.ports.teacher)/"
     Write-Host ''
-    Write-LmOk '智课研伴 LearnMate 已就绪'
+    Write-LmOk '寻笺 LearnMate 已就绪'
     Write-Host "  学生端：$studentUrl"
     Write-Host "  教师端：$teacherUrl"
     Write-Host "  演示账号：学生 zhangsan / 教师 teacher_demo   密码 $($Config.demoPassword)"
-    Write-Host "  停止服务：双击「停止智课研伴.bat」；日志目录：$($P.Logs)"
+    Write-Host "  停止服务：双击「停止寻笺.bat」；日志目录：$($P.Logs)"
     Write-Host ''
     if (-not $NoBrowser) { Start-Process $studentUrl | Out-Null }
     if (-not $Quiet) {

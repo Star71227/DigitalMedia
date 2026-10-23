@@ -1,4 +1,4 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 import { useEffect, useState, type ReactNode } from "react";
 import {
   BarChart3,
@@ -15,6 +15,8 @@ import {
   Users,
   X,
 } from "lucide-react";
+import { labelProps } from "./motion/Motion";
+import { usePageEnter } from "./motion/usePageEnter";
 import LogoReveal from "../components/LogoReveal";
 import { useAppSettings } from "../appSettings";
 import { DockNav } from "../components/effects/DockNav";
@@ -80,6 +82,7 @@ export default function BlueprintShell({
   onLogout,
   children,
 }: BlueprintShellProps) {
+  usePageEnter(activeTab);
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigation = useNavigation();
   const { t } = useAppSettings();
@@ -119,7 +122,7 @@ export default function BlueprintShell({
             <LogoReveal size={40} static bare />
           </span>
           <span className="bp-brand__word">
-            智课<span>研伴</span>
+            寻<span>笺</span>
           </span>
           <small>ALWAYS LEARNING</small>
         </div>
@@ -147,7 +150,7 @@ export default function BlueprintShell({
                     navigate(item.tab);
                   }}
                 >
-                  <span className="bp-nav__roman">{item.roman}</span>
+                  <span className="bp-nav__roman" {...labelProps("C", "none", "persist")} data-level="C" data-carrier="rail" data-enter="persist" data-family="F08" data-mg-behavior="persist">{item.roman}</span>
                   <Icon aria-hidden="true" />
                   <span>{item.label}</span>
                 </button>
@@ -167,7 +170,7 @@ export default function BlueprintShell({
             <LogOut aria-hidden="true" />
             {t("shell.logout")}
           </button>
-          <p>
+          <p data-level="C" data-carrier="rail" data-enter="persist" data-family="F16" data-mg-behavior="persist">
             KEEP LEARNING
             <br />
             KEEP GROWING
@@ -182,43 +185,43 @@ export default function BlueprintShell({
         <div className="bp-side-hud" aria-hidden="true">
           <div className="bp-side-hud__rail is-left">
             {/* 代号拆两行：SYS 01 一行、页面英文名另一行，两行都在装饰框内，不会压到刻度尺竖线 */}
-            <span className="bp-side-hud__code">
+            <span className="bp-side-hud__code" data-level="C" data-carrier="rail" data-enter="persist" data-family="F09" data-mg-behavior="persist">
               <i />
               <b>{codeOf(pageCodes[activeTab] ?? "SYS · ONLINE")}</b>
               <em>{nameOf(pageCodes[activeTab] ?? "")}</em>
             </span>
             <span className="bp-side-hud__group">
-              <b className="bp-side-hud__caption">PATH STEP</b>
+              <b className="bp-side-hud__caption" data-level="C" data-carrier="rail" data-enter="persist" data-family="F09" data-mg-behavior="persist">PATH STEP</b>
               <span className="bp-side-hud__gauge">
                 {Array.from({ length: 14 }, (_, index) => (
                   <i key={index} />
                 ))}
               </span>
-              <em className="bp-side-hud__mono">08 / 14</em>
+              <em className="bp-side-hud__mono" data-level="C" data-carrier="rail" data-enter="persist" data-family="F09" data-mg-behavior="persist">08 / 14</em>
             </span>
             <span className="bp-side-hud__group">
-              <b className="bp-side-hud__caption">LOAD</b>
+              <b className="bp-side-hud__caption" data-level="C" data-carrier="rail" data-enter="persist" data-family="F09" data-mg-behavior="persist">LOAD</b>
               <span className="bp-side-hud__bars">
                 <i />
                 <i />
                 <i />
                 <i />
               </span>
-              <em className="bp-side-hud__mono">45 / 100</em>
+              <em className="bp-side-hud__mono" data-level="C" data-carrier="rail" data-enter="persist" data-family="F09" data-mg-behavior="persist">45 / 100</em>
             </span>
             <span className="bp-side-hud__stripe" />
-            <span className="bp-side-hud__label">ZHIKE YANBAN / STUDENT TERMINAL</span>
+            <span className="bp-side-hud__label" data-level="C" data-carrier="rail" data-enter="persist" data-family="F09" data-mg-behavior="persist">XUNJIAN / STUDENT TERMINAL</span>
             <span className="bp-side-hud__ticks" />
           </div>
           <div className="bp-side-hud__rail is-right">
             <span className="bp-side-hud__ticks" />
-            <span className="bp-side-hud__label">LINK · STABLE</span>
+            <span className="bp-side-hud__label" data-level="C" data-carrier="rail" data-enter="persist" data-family="F09" data-mg-behavior="persist">LINK · STABLE</span>
             <span className="bp-side-hud__diamonds">
               <i />
               <i />
               <i />
             </span>
-            <span className="bp-side-hud__code">IV · 04</span>
+            <span className="bp-side-hud__code" data-level="C" data-carrier="rail" data-enter="persist" data-family="F09" data-mg-behavior="persist">IV · 04</span>
           </div>
         </div>
         {pageArtwork[activeTab] && (

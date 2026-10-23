@@ -68917,7 +68917,7 @@ function AssessmentReport({ item }) {
     return /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("p", { children: "\u8BE5\u62A5\u544A\u5C1A\u65E0\u53EF\u7528\u5185\u5BB9\u3002" });
   return /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)("article", { className: "assessment-paper", children: [
     /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)("header", { className: "assessment-cover", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("span", { className: "assessment-kicker", children: "\u667A\u8BFE\u7814\u4F34 / LEARNING ASSESSMENT" }),
+      /* @__PURE__ */ (0, import_jsx_runtime36.jsx)("span", { className: "assessment-kicker", children: "\u5bfb\u7b3a / LEARNING ASSESSMENT" }),
       /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)("div", { className: "assessment-heading", children: [
         /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)("div", { children: [
           /* @__PURE__ */ (0, import_jsx_runtime36.jsxs)("h2", { children: [
@@ -69668,8 +69668,8 @@ function Sidebar({ path: path2 }) {
       /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "teacher-brand", children: [
         /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { className: "teacher-brand-monogram", "aria-hidden": "true", children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(LogoReveal, { size: 38, static: true, bare: true }) }),
         /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("strong", { children: [
-          "\u667A\u8BFE",
-          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { children: "\u7814\u4F34" })
+          "\u5bfb",
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { children: "\u7b3a" })
         ] }),
         /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("small", { children: "TEACHER WORKSPACE" })
       ] }),
@@ -69696,7 +69696,7 @@ function Sidebar({ path: path2 }) {
         href
       )) }) }),
       /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { className: "teacher-sidebar-foot", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { children: "\u667A\u8BFE\u7814\u4F34" }),
+        /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { children: "\u5bfb\u7b3a" }),
         /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("small", { children: "\u8BA9\u6BCF\u4E00\u6B21\u6559\u5B66\u51B3\u7B56\u90FD\u6709\u4F9D\u636E" })
       ] })
     ] })
@@ -70114,7 +70114,7 @@ function LoginHero({ introLocked = false }) {
       /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { className: "lm-login-hero__brand", children: [
         /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { className: "lm-login-hero__mark", "aria-hidden": "true", children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(LogoReveal, { size: 34, static: introLocked }) }),
         /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { children: [
-          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("strong", { children: "\u667A\u8BFE\u7814\u4F34" }),
+          /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("strong", { children: "\u5bfb\u7b3a" }),
           /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { children: "\u6559\u5E08\u5DE5\u4F5C\u53F0" })
         ] })
       ] }),
@@ -70272,7 +70272,7 @@ function LoginPage({
         ] })
       ] })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("footer", { className: "lm-login-footer", children: "\u667A\u8BFE\u7814\u4F34\u6559\u5E08\u5DE5\u4F5C\u53F0" })
+    /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("footer", { className: "lm-login-footer", children: "\u5bfb\u7b3a\u6559\u5E08\u5DE5\u4F5C\u53F0" })
   ] });
 }
 
@@ -70361,7 +70361,7 @@ function RegisterPage() {
               }
             ),
             /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: "min-w-0", children: [
-              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("strong", { className: "block text-lg font-bold leading-tight tracking-tight text-slate-900", children: "\u667A\u8BFE\u7814\u4F34 \u6559\u5E08\u7AEF" }),
+              /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("strong", { className: "block text-lg font-bold leading-tight tracking-tight text-slate-900", children: "\u5bfb\u7b3a \u6559\u5E08\u7AEF" }),
               /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "text-xs text-slate-500", children: "\u521B\u5EFA TEACHER \u8D26\u53F7" })
             ] })
           ] }),
@@ -70493,7 +70493,7 @@ function RegisterPage() {
         ]
       }
     ) }),
-    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { className: "relative pb-2 text-center text-xs text-slate-500", children: "\u667A\u8BFE\u7814\u4F34 \u6559\u5E08\u6570\u636E\u4E2D\u5FC3" })
+    /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("p", { className: "relative pb-2 text-center text-xs text-slate-500", children: "\u5bfb\u7b3a \u6559\u5E08\u6570\u636E\u4E2D\u5FC3" })
   ] });
 }
 
@@ -70501,7 +70501,7 @@ function RegisterPage() {
 var import_react17 = __toESM(require_react(), 1);
 var import_jsx_runtime17 = __toESM(require_jsx_runtime(), 1);
 function LogoIntro({
-  subtitle = "\u667A\u8BFE\u7814\u4F34 \xB7 AI \u6559\u5B66\u5E73\u53F0",
+  subtitle = "\u5bfb\u7b3a \xB7 AI \u6559\u5B66\u5E73\u53F0",
   dockTarget,
   onDone
 }) {
@@ -70575,7 +70575,7 @@ function LogoIntro({
               /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "lm-logo-reveal__ring" }),
               /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("span", { className: "lm-logo-reveal__shimmer" })
             ] }),
-            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { className: "lm-logo-intro__name", children: "\u667A\u8BFE\u7814\u4F34" }),
+            /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { className: "lm-logo-intro__name", children: "\u5bfb\u7b3a" }),
             /* @__PURE__ */ (0, import_jsx_runtime17.jsx)("p", { className: "lm-logo-intro__sub", children: subtitle })
           ]
         }
@@ -70649,7 +70649,7 @@ function App() {
     introVisible && /* @__PURE__ */ (0, import_jsx_runtime39.jsx)(
       LogoIntro,
       {
-        subtitle: "\u667A\u8BFE\u7814\u4F34 \xB7 \u6559\u5E08\u5DE5\u4F5C\u53F0",
+        subtitle: "\u5bfb\u7b3a \xB7 \u6559\u5E08\u5DE5\u4F5C\u53F0",
         dockTarget: ".lm-login-hero__mark .lm-logo-reveal, .teacher-brand-monogram .lm-logo-reveal",
         onDone: () => setIntroVisible(false)
       }

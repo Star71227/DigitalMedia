@@ -1,4 +1,4 @@
-﻿# 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。
+﻿# 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。
 # 把本机数据库替换成安装包内置的「云端数据快照」（用于：装在已有数据的目录、或数据被灌成了演示数据时）
 #
 # 用法：
@@ -14,7 +14,7 @@ $ErrorActionPreference = 'Stop'
 
 $Root = Get-LmRoot
 $Config = Get-LmConfig $Root
-if (-not $Config) { throw '还没有 runtime\config.json：请先启动一次「智课研伴」，再执行本脚本。' }
+if (-not $Config) { throw '还没有 runtime\config.json：请先启动一次「寻笺」，再执行本脚本。' }
 
 $dump = Get-LmSeedDatabasePath $Root
 if (-not $dump) { throw '安装包里没有云端数据快照（seed\learnmate-cloud-db.sql）。' }
@@ -36,7 +36,7 @@ Stop-LmStragglers -Root $Root -IncludeDatabase $true -Quiet $true | Out-Null
 
 Initialize-LmMySqlHome -Root $Root | Out-Null
 $fresh = Start-LmMySqlStandalone -Root $Root -Config $Config
-if ($fresh) { throw '本机数据库还是全新的：直接启动「智课研伴」，首启会自动导入快照。' }
+if ($fresh) { throw '本机数据库还是全新的：直接启动「寻笺」，首启会自动导入快照。' }
 
 $p = Get-LmPaths $Root
 $name = [string]$Config.db.name
@@ -57,5 +57,5 @@ Stop-LmDatabase -Config $Config -Root $Root -Quiet $true | Out-Null
 Stop-LmStragglers -Root $Root -IncludeDatabase $true -Quiet $true | Out-Null
 
 $users = 0
-Write-LmOk '云端数据已导入完成，重新打开「智课研伴」即可用云端账号登录。'
+Write-LmOk '云端数据已导入完成，重新打开「寻笺」即可用云端账号登录。'
 exit 0

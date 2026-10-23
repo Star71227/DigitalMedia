@@ -1,4 +1,4 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 import { useEffect, useRef, useState } from "react";
 import {
   confirmProfileDialogue,
@@ -167,7 +167,7 @@ export default function ProfileDialogue({
           aria-keyshortcuts="Control+Enter Meta+Enter"
           placeholder="写下课程、基础、目标、偏好和学习时间…"
         />
-        <div className="lm-profile-composer__meta">
+        <div className="lm-profile-composer__meta" data-level="B" data-carrier="tab" data-enter="attach" data-family="F12" data-mg-behavior="reveal">
           <p id="profile-input-example">示例：{EXAMPLE}</p>
           <span id="profile-input-count">{message.length} / 1000</span>
         </div>

@@ -1,4 +1,4 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import {
   ArrowRight,
@@ -23,6 +23,7 @@ import {
   type StudyTimeSummary,
 } from "../api";
 import type { LearningPathResponse } from "../types";
+import { labelProps } from "./motion/Motion";
 import { BlueprintHeader, BlueprintMotif, TreeRingGraphic } from "./BlueprintDecorations";
 import { dailyFortune, fortuneDateKey } from "./fortune";
 import { CountUp } from "../components/effects/CountUp";
@@ -91,7 +92,7 @@ export default function BlueprintDashboard({ onNavigateToTab }: Props) {
       <BlueprintMotif variant="branch" />
       <BlueprintHeader title="学习首页" english="STUDENT DASHBOARD" />
 
-      <RevealOnScroll className="lm-reveal-contents" stagger={0.1}>
+      <RevealOnScroll className="lm-reveal-contents" stagger={0.06} y={0}>
         <div className="bp-dashboard__topline">
           <div className="bp-dashboard__greeting">
             <h2>
@@ -112,30 +113,30 @@ export default function BlueprintDashboard({ onNavigateToTab }: Props) {
           <div className="bp-dashboard__rings">
             <TreeRingGraphic />
             <div className="bp-ring-stat is-top">
-              <strong>
-                <CountUp to={todayMinutes} mode="scramble" />
+              <strong data-level="A" data-carrier="disc" data-enter="attach" data-family="F05" data-mg-behavior="reveal">
+                <CountUp to={todayMinutes} duration={0.32} />
               </strong>
-              <span>
+              <span data-level="B" data-carrier="rail" data-enter="persist" data-family="F07" data-mg-behavior="persist">
                 分钟
                 <br />
                 今日学习时长
               </span>
             </div>
             <div className="bp-ring-stat is-left">
-              <strong>
-                <CountUp to={Math.round(mastery)} mode="scramble" />%
+              <strong data-level="A" data-carrier="disc" data-enter="attach" data-family="F05" data-mg-behavior="reveal">
+                <CountUp to={Math.round(mastery)} duration={0.32} />%
               </strong>
-              <span>
+              <span data-level="B" data-carrier="rail" data-enter="persist" data-family="F07" data-mg-behavior="persist">
                 正确率
                 <br />
-                <small>ACCURACY</small>
+                <small data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">ACCURACY</small>
               </span>
             </div>
             <div className="bp-ring-stat is-right">
-              <strong>
-                <CountUp to={checkIn?.currentStreak ?? 0} mode="scramble" />
+              <strong data-level="A" data-carrier="disc" data-enter="attach" data-family="F05" data-mg-behavior="reveal">
+                <CountUp to={checkIn?.currentStreak ?? 0} duration={0.32} />
               </strong>
-              <span>
+              <span data-level="B" data-carrier="rail" data-enter="persist" data-family="F07" data-mg-behavior="persist">
                 天<br />
                 连续学习
               </span>
@@ -143,8 +144,9 @@ export default function BlueprintDashboard({ onNavigateToTab }: Props) {
           </div>
 
           <article className="bp-current-course">
-            <div className="bp-kicker">
-              当前学习课程 <span>CURRENT COURSE</span>
+            <div className="bp-kicker" data-level="B" data-carrier="rail" data-enter="persist" data-family="F03" data-mg-behavior="persist" data-mg-container="">
+              <b className="mg-kicker-word" {...labelProps("A", "plate", "reveal")} data-level="A" data-carrier="plate" data-enter="attach" data-family="F03" data-mg-behavior="reveal">当前学习课程</b> <span data-level="B" data-carrier="rail" data-enter="attach" data-family="F03" data-mg-behavior="reveal">CURRENT COURSE</span>
+              <i data-mg-rail aria-hidden="true" />
             </div>
             <h3>{course}</h3>
             <p>
@@ -152,37 +154,37 @@ export default function BlueprintDashboard({ onNavigateToTab }: Props) {
                 ? `本阶段重点：${currentFocus}。完成当前任务后继续下一步。`
                 : "从今天的第一个知识点开始，完成后会自动保存进度。"}
             </p>
-            <div className="bp-course-progress">
-              <strong>{activeStage?.title || "专属学习路径"}</strong>
-              <span>
-                本章进度 <b>{Math.round(activeStage?.progress ?? path?.progress ?? 0)}%</b>
+            <div className="bp-course-progress" data-level="B" data-carrier="rail" data-enter="persist" data-family="F05" data-mg-behavior="persist" data-mg-container="">
+              <strong data-level="B" data-carrier="rail" data-enter="persist" data-family="F05" data-mg-behavior="persist">{activeStage?.title || "专属学习路径"}</strong>
+              <span data-level="B" data-carrier="rail" data-enter="persist" data-family="F05" data-mg-behavior="persist">
+                本章进度 <b {...labelProps("B", "tab", "attach")} data-level="B" data-carrier="rail" data-enter="persist" data-family="F05" data-mg-behavior="persist">{Math.round(activeStage?.progress ?? path?.progress ?? 0)}%</b>
               </span>
             </div>
-            <div className="bp-progress">
+            <div className="bp-progress" data-mg-progress data-level="B" data-carrier="rail" data-enter="persist" data-family="F05" data-mg-behavior="persist" data-mg-container="">
               <i style={{ width: `${activeStage?.progress ?? path?.progress ?? 0}%` }} />
             </div>
             <button type="button" className="bp-primary-action" onClick={() => onNavigateToTab("path")}>
               继续学习{" "}
-              <span className="bp-arrow-chip" aria-hidden="true">
+              <span className="bp-arrow-chip" aria-hidden="true" {...labelProps("B", "ring", "attach")} data-level="B" data-carrier="ring" data-enter="attach" data-family="F02" data-mg-behavior="reveal">
                 <ArrowRight />
               </span>
             </button>
           </article>
         </div>
 
-        <section className="bp-action-strip" aria-label="今日行动" data-reveal>
+        <section className="bp-action-strip" aria-label="今日行动">
           <header>
-            <strong>今日行动</strong>
-            <span>TODAY&apos;S ACTIONS</span>
+            <strong data-level="A" data-carrier="plate" data-enter="attach" data-family="F15" data-mg-behavior="reveal">今日行动</strong>
+            <span data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">TODAY&apos;S ACTIONS</span>
             <i />
           </header>
           <button type="button" onClick={() => onNavigateToTab("path")}>
-            <b>01</b>
+            <b data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">01</b>
             <span className="bp-action-icon">
               <Play />
             </span>
             <span>继续学习 {activeStage?.title || "当前路径"}</span>
-            <span className="bp-arrow-chip" aria-hidden="true">
+            <span className="bp-arrow-chip" aria-hidden="true" {...labelProps("B", "ring", "attach")} data-level="B" data-carrier="ring" data-enter="attach" data-family="F02" data-mg-behavior="reveal">
               <ArrowRight />
             </span>
           </button>
@@ -192,12 +194,12 @@ export default function BlueprintDashboard({ onNavigateToTab }: Props) {
               onNavigateToTab("quiz", { subject: course, knowledgePoint: activeStage?.knowledgePoints?.[0] })
             }
           >
-            <b>02</b>
+            <b data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">02</b>
             <span className="bp-action-icon">
               <ClipboardCheck />
             </span>
             <span>完成针对性章节测验</span>
-            <span className="bp-arrow-chip" aria-hidden="true">
+            <span className="bp-arrow-chip" aria-hidden="true" {...labelProps("B", "ring", "attach")} data-level="B" data-carrier="ring" data-enter="attach" data-family="F02" data-mg-behavior="reveal">
               <ArrowRight />
             </span>
           </button>
@@ -205,31 +207,31 @@ export default function BlueprintDashboard({ onNavigateToTab }: Props) {
             type="button"
             onClick={() => onNavigateToTab("resource", { subject: course, title: activeStage?.title })}
           >
-            <b>03</b>
+            <b data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">03</b>
             <span className="bp-action-icon">
               <Map />
             </span>
             <span>生成讲义与思维导图</span>
-            <span className="bp-arrow-chip" aria-hidden="true">
+            <span className="bp-arrow-chip" aria-hidden="true" {...labelProps("B", "ring", "attach")} data-level="B" data-carrier="ring" data-enter="attach" data-family="F02" data-mg-behavior="reveal">
               <ArrowRight />
             </span>
           </button>
         </section>
 
-        <section className="bp-student-basics" aria-label="学习基本信息" data-reveal>
+        <section className="bp-student-basics" aria-label="学习基本信息">
           <header>
-            <strong>学习基本信息</strong>
-            <span>STUDY SNAPSHOT</span>
+            <strong data-level="A" data-carrier="plate" data-enter="attach" data-family="F15" data-mg-behavior="reveal">学习基本信息</strong>
+            <span data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">STUDY SNAPSHOT</span>
           </header>
           <button type="button" onClick={() => onNavigateToTab("analytics")}>
             <i>
               <BookCheck />
             </i>
             <span>
-              资料完整度<small>PROFILE</small>
+              资料完整度<small data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">PROFILE</small>
             </span>
-            <strong>
-              <CountUp to={Math.round((overview?.profile.completeness ?? 0) * 100)} mode="scramble" />%
+            <strong data-level="B" data-carrier="rail" data-enter="persist" data-family="F05" data-mg-behavior="persist">
+              <CountUp to={Math.round((overview?.profile.completeness ?? 0) * 100)} duration={0.32} />%
             </strong>
           </button>
           <button type="button" onClick={() => onNavigateToTab("report")}>
@@ -237,10 +239,10 @@ export default function BlueprintDashboard({ onNavigateToTab }: Props) {
               <TimerReset />
             </i>
             <span>
-              今日学习<small>FOCUS</small>
+              今日学习<small data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">FOCUS</small>
             </span>
-            <strong>
-              <CountUp to={todayMinutes} mode="scramble" />
+            <strong data-level="B" data-carrier="rail" data-enter="persist" data-family="F05" data-mg-behavior="persist">
+              <CountUp to={todayMinutes} duration={0.32} />
               <em> 分钟</em>
             </strong>
           </button>
@@ -249,10 +251,10 @@ export default function BlueprintDashboard({ onNavigateToTab }: Props) {
               <ClipboardCheck />
             </i>
             <span>
-              已完成检测<small>ASSESSMENT</small>
+              已完成检测<small data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">ASSESSMENT</small>
             </span>
-            <strong>
-              <CountUp to={overview?.quiz.attemptCount ?? 0} mode="scramble" />
+            <strong data-level="B" data-carrier="rail" data-enter="persist" data-family="F05" data-mg-behavior="persist">
+              <CountUp to={overview?.quiz.attemptCount ?? 0} duration={0.32} />
               <em> 次</em>
             </strong>
           </button>
@@ -261,10 +263,10 @@ export default function BlueprintDashboard({ onNavigateToTab }: Props) {
               <Code2 />
             </i>
             <span>
-              编程实战<small>CODE LAB</small>
+              编程实战<small data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">CODE LAB</small>
             </span>
-            <strong>
-              <CountUp to={overview?.codeLab.successCount ?? 0} mode="scramble" />
+            <strong data-level="B" data-carrier="rail" data-enter="persist" data-family="F05" data-mg-behavior="persist">
+              <CountUp to={overview?.codeLab.successCount ?? 0} duration={0.32} />
               <em> 项</em>
             </strong>
           </button>
@@ -282,23 +284,23 @@ function ClassStrip({ classes }: { classes: MyClassSummary[] }) {
   if (classes.length === 0) {
     return (
       <div className="bp-class-strip">
-        <span className="bp-class-strip__label">我的班级</span>
-        <p className="bp-class-strip__empty">暂未加入班级 · 输入班级号即可加入</p>
+        <span className="bp-class-strip__label" data-level="A" data-carrier="plate" data-enter="attach" data-family="F01" data-mg-behavior="reveal">我的班级</span>
+        <p className="bp-class-strip__empty" data-level="B" data-carrier="rail" data-enter="persist" data-family="F01" data-mg-behavior="persist">暂未加入班级 · 输入班级号即可加入</p>
       </div>
     );
   }
 
   return (
     <div className="bp-class-strip">
-      <span className="bp-class-strip__label">我的班级</span>
+      <span className="bp-class-strip__label" data-level="A" data-carrier="plate" data-enter="attach" data-family="F01" data-mg-behavior="reveal">我的班级</span>
       <div className="bp-class-strip__list">
         {classes.map((item) => (
           <span key={item.classId} className="bp-class-strip__chip">
-            <b>{item.className}</b>
-            <i>{metaOf(item)}</i>
+            <b data-level="A" data-carrier="plate" data-enter="attach" data-family="F01" data-mg-behavior="reveal">{item.className}</b>
+            <i data-level="B" data-carrier="rail" data-enter="persist" data-family="F01" data-mg-behavior="persist">{metaOf(item)}</i>
             <span className="bp-class-strip__people">
               {teacherLabel(item.teacherName) && (
-                <em className="is-teacher">{teacherLabel(item.teacherName)}</em>
+                <em className="is-teacher" data-level="B" data-carrier="rail" data-enter="persist" data-family="F01" data-mg-behavior="persist">{teacherLabel(item.teacherName)}</em>
               )}
             </span>
           </span>
@@ -366,7 +368,6 @@ function FortuneCard({
     <aside
       className={`bp-fortune${revealed ? "" : " is-locked"}${ominous ? " is-ominous" : ""}`}
       aria-label="今日签运"
-      data-reveal
     >
       {/* 角落暗纹：吉签用「吉」，凶签用「凶」 */}
       <span className="bp-fortune__watermark" aria-hidden="true">
@@ -448,7 +449,7 @@ function FortuneCard({
         </div>
       )}
       <p className="bp-fortune__checkin">
-        你已经在智课研伴累计打卡 <b>{total}</b> 次
+        你已经在寻笺累计打卡 <b>{total}</b> 次
         <em>{total > 0 ? ` · 连续 ${streak} 天` : " · 今天签到就从第一次开始"}</em>
       </p>
     </aside>

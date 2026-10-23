@@ -1,4 +1,4 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 import type { ReactNode } from "react";
 import { CircleAlert, Inbox, LockKeyhole, WifiOff } from "lucide-react";
 
@@ -38,7 +38,7 @@ export default function AsyncState({
       className={`lm-async-state lm-async-state--${kind} ${className}`.trim()}
       role={isAlert ? "alert" : "status"}
       aria-live={isAlert ? "assertive" : "polite"}
-      aria-busy={kind === "loading" ? "true" : undefined}
+      aria-busy={kind === "loading" ? "true" : undefined} data-level="A" data-carrier="plate" data-enter="persist" data-family="F04" data-mg-behavior="persist"
     >
       <div className="lm-async-state__icon">
         {kind === "loading" ? (

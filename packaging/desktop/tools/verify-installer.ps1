@@ -1,11 +1,11 @@
-﻿# 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。
-# 智课研伴 LearnMate 桌面版 — 安装包端到端验证
+﻿# 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。
+# 寻笺 LearnMate 桌面版 — 安装包端到端验证
 #
 # 做四件事：静默安装到指定目录 → 检查文件齐全 → 启动桌面端并等后台服务就绪 → （可选）静默卸载
 #
 # 用法：
 #   powershell -NoProfile -ExecutionPolicy Bypass -File packaging\desktop\tools\verify-installer.ps1 `
-#       -InstallerPath "dist\智课研伴-LearnMate-Setup-1.0.0.exe" -InstallDir "D:\tmp\lm-test" -Uninstall
+#       -InstallerPath "dist\寻笺-LearnMate-Setup-1.0.0.exe" -InstallDir "D:\tmp\lm-test" -Uninstall
 
 param(
     [Parameter(Mandatory = $true)][string]$InstallerPath,

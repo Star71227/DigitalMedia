@@ -1,4 +1,5 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+import { DepthScene } from "../components/depth/DepthScene";
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 import type { DashboardOverview, TrendPoint, ClassItem } from "../types";
 import { useEffect, useState } from "react";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
@@ -514,6 +515,9 @@ export function DashboardPage() {
         onAdd={(material) => setPendingMaterials((items) => [...items, material])}
         onRemove={(id) => setPendingMaterials((items) => items.filter((item) => item.id !== id))}
       />
+      <DepthScene variant="stage" section="SECTION 01" title={["DESK", "01"]}
+        caption="TEACHING OVERVIEW / 教学工作台"
+        meta={data ? `${data.teacher.classCount} CLASSES · ${data.summary.managedStudentCount} STUDENTS` : undefined} />
     </>
   );
 }

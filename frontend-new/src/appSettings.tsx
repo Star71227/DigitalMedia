@@ -1,4 +1,4 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 // 全局偏好设置：语言 / 外观 / 字号大小 / 字体。
 // 全部落 localStorage，并在 <html> 上打标记 + 写 CSS 变量，所以整个软件立刻生效，
 // 刷新之后依然生效（index.html 的首屏脚本不会覆盖这些标记）。
@@ -58,7 +58,7 @@ const DICT: Dict = {
   "nav.settings": { zh: "设置", en: "Settings" },
   "shell.search": { zh: "搜索课程、知识点…", en: "Search courses and topics…" },
   "shell.navAria": { zh: "学生端主导航", en: "Student navigation" },
-  "shell.brandAria": { zh: "智课研伴 学生端", en: "ZhiKe YanBan student terminal" },
+  "shell.brandAria": { zh: "寻笺 学生端", en: "Xunjian student terminal" },
   "shell.profile": { zh: "学习档案", en: "Profile" },
   "shell.logout": { zh: "退出登录", en: "Sign out" },
   "settings.title": { zh: "设置", en: "Settings" },

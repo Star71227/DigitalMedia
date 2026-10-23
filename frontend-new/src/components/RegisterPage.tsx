@@ -1,4 +1,4 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 import { useState, type FormEvent } from "react";
 import { ArrowLeft, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { describeApiError, registerStudent } from "../api";
@@ -179,7 +179,7 @@ export default function RegisterPage({ onBackToLogin }: RegisterPageProps) {
         </section>
       </div>
 
-      <footer className="lm-login-footer">智课研伴 · 学生与教师均可自助注册，管理员账号由平台分配</footer>
+      <footer className="lm-login-footer">寻笺 · 学生与教师均可自助注册，管理员账号由平台分配</footer>
     </main>
   );
 }

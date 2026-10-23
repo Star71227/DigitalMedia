@@ -1,4 +1,4 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 import React from "react";
 import type { PptSlide, PptTheme } from "./types";
 import { text } from "./types";
@@ -44,7 +44,7 @@ export default function SlideCanvas({
           className="absolute bottom-[2.5%] left-[4.5%] right-[4.5%] flex items-center justify-between text-[clamp(5px,.8vw,8px)]"
           style={{ color: theme.muted }}
         >
-          <span className="max-w-[80%] truncate">{citationLabels || "智课研伴 · 当前学生个性化生成"}</span>
+          <span className="max-w-[80%] truncate">{citationLabels || "寻笺 · 当前学生个性化生成"}</span>
           <span className="font-bold" style={{ color: theme.primary }}>
             {String(page).padStart(2, "0")}
           </span>

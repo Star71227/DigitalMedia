@@ -1,4 +1,4 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 import { useEffect, useRef, useState } from "react";
 import {
   BookOpen,
@@ -326,18 +326,18 @@ export default function MentorWorkspace({ initialPrompt, onClearPrefill, onNavig
           <LogoReveal size={34} static bare />
           <div>
             <h1>AI 学习助手</h1>
-            <span>LEARNING COMPANION</span>
+            <span data-level="B" data-carrier="rail" data-enter="persist" data-family="F10" data-mg-behavior="persist">LEARNING COMPANION</span>
           </div>
         </div>
         <div className="mw-course">
           <BookOpen size={16} />
-          <span>
+          <span data-level="B" data-carrier="rail" data-enter="persist" data-family="F10" data-mg-behavior="persist">
             {course.subject}
-            <strong>{course.topic}</strong>
+            <strong data-level="B" data-carrier="rail" data-enter="persist" data-family="F10" data-mg-behavior="persist">{course.topic}</strong>
           </span>
         </div>
         <div className="mw-header-actions">
-          <span className="mw-duration" title="本次助手页面停留时长">
+          <span className="mw-duration" title="本次助手页面停留时长" data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">
             <Clock3 size={14} />
             {minutes} 分钟
           </span>
@@ -386,7 +386,7 @@ export default function MentorWorkspace({ initialPrompt, onClearPrefill, onNavig
             ))}
           </nav>
           <div className="mw-thread" aria-label="对话消息" aria-busy={sending || loading}>
-            <div className="mw-thread-intro">
+            <div className="mw-thread-intro" data-level="A" data-carrier="plate" data-enter="attach" data-family="F15" data-mg-behavior="reveal">
               <span className="mw-online" /> 学习助手 · 一起把知识学明白
             </div>
             {loading ? (
@@ -405,8 +405,8 @@ export default function MentorWorkspace({ initialPrompt, onClearPrefill, onNavig
                   </span>
                   <div className="mw-message-body">
                     <header>
-                      <strong>{message.role === "assistant" ? "智课研伴" : "我"}</strong>
-                      <time dateTime={message.createdAt}>
+                      <strong data-level="B" data-carrier="rail" data-enter="persist" data-family="F10" data-mg-behavior="persist">{message.role === "assistant" ? "寻笺" : "我"}</strong>
+                      <time dateTime={message.createdAt} data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">
                         {message.createdAt
                           ? new Date(message.createdAt).toLocaleTimeString("zh-CN", {
                               hour: "2-digit",
@@ -430,7 +430,7 @@ export default function MentorWorkspace({ initialPrompt, onClearPrefill, onNavig
                               onClick={() => {
                                 setSideTab("引用记录");
                                 setCollapsed(false);
-                              }}
+                              }} data-level="B" data-carrier="tab" data-enter="attach" data-family="F13" data-mg-behavior="reveal"
                             >
                               <BookOpen size={12} />[{i + 1}] {citation.sourceTitle}
                             </button>
@@ -549,7 +549,7 @@ export default function MentorWorkspace({ initialPrompt, onClearPrefill, onNavig
                 <span>{image && !input.trim() ? "识图讲解" : "发送"}</span>
               </button>
             </form>
-            <div className="mw-input-hint">
+            <div className="mw-input-hint" data-level="B" data-carrier="tab" data-enter="attach" data-family="F12" data-mg-behavior="reveal">
               <span role="status">{notice || "AI 回答供学习参考，重要结论请结合课程资料核实。"}</span>
               <span>
                 {enterSend ? "Shift + Enter 换行" : "支持多行提问"} · {input.length}/4000
@@ -559,7 +559,7 @@ export default function MentorWorkspace({ initialPrompt, onClearPrefill, onNavig
         </div>
         <aside className="mw-side" aria-label="助手功能侧栏">
           <div className="mw-side-heading">
-            {!collapsed && <span>学习空间</span>}
+            {!collapsed && <span data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">学习空间</span>}
             <button
               type="button"
               aria-label={collapsed ? "展开功能侧栏" : "收起功能侧栏"}
@@ -610,7 +610,7 @@ export default function MentorWorkspace({ initialPrompt, onClearPrefill, onNavig
                     <Plus size={15} />
                     新建会话
                   </button>
-                  <small>最近会话</small>
+                  <small data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">最近会话</small>
                   {sessions.length ? (
                     sessions.slice(0, 12).map((session) => (
                       <button
@@ -631,7 +631,7 @@ export default function MentorWorkspace({ initialPrompt, onClearPrefill, onNavig
               )}
               {sideTab === "班级资料" && (
                 <>
-                  <small>已加入班级</small>
+                  <small data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">已加入班级</small>
                   {classes.length ? (
                     classes.map((item) => (
                       <div className="mw-material" key={item.classId}>
@@ -661,14 +661,14 @@ export default function MentorWorkspace({ initialPrompt, onClearPrefill, onNavig
               )}
               {sideTab === "引用记录" && (
                 <>
-                  <small>本会话使用的来源</small>
+                  <small data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">本会话使用的来源</small>
                   {citations.length ? (
                     citations.map((citation, i) => (
                       <div className="mw-citation" key={`${citation.sourceTitle}-${i}`}>
-                        <strong>
+                        <strong data-level="B" data-carrier="tab" data-enter="attach" data-family="F13" data-mg-behavior="reveal">
                           [{i + 1}] {citation.sourceTitle}
                         </strong>
-                        {citation.chapter && <small>{citation.chapter}</small>}
+                        {citation.chapter && <small data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">{citation.chapter}</small>}
                         <p>{citation.excerpt}</p>
                       </div>
                     ))

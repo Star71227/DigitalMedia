@@ -1,11 +1,11 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 const { generateText } = require("../aiService");
 
 const QuizAgent = {
   name: "QuizAgent",
   description: "练习题生成智能体",
   systemPrompt:
-    "你是智课研伴的练习题生成智能体。你负责根据课程领域、知识点和难度生成选择题、同类题、答题提示和测验题。生成题目时必须保证答案唯一、解析清楚、提示不泄露答案。",
+    "你是寻笺的练习题生成智能体。你负责根据课程领域、知识点和难度生成选择题、同类题、答题提示和测验题。生成题目时必须保证答案唯一、解析清楚、提示不泄露答案。",
   async run(context = {}, extraPrompt = "") {
     const prompt = [
       this.systemPrompt,

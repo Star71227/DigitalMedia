@@ -1,8 +1,10 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+import { DepthScene } from "./depth/DepthScene";
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 import { useEffect, useMemo, useState } from "react";
 import { ArrowRight, Check, LockKeyhole, RefreshCw } from "lucide-react";
 import { describeApiError, generateLearningPath, getLearningPath } from "../api";
 import type { Course, LearningPathResponse, PathStage, WeakPoint } from "../types";
+import { Carrier, labelProps } from "./motion/Motion";
 import { BlueprintHeader, BlueprintMotif } from "./BlueprintDecorations";
 
 interface Props {
@@ -123,6 +125,7 @@ export default function BlueprintPathView({ onNavigateToTab, onNavigateToExercis
         className={`bp-path-stairs${loading ? " is-loading" : ""}${hovered ? " is-previewing" : ""}`}
         onMouseLeave={() => setHovered(null)}
       >
+        <Carrier shape="mesh" className="mg-path-floor" />
         {stages.length === 0 && !loading && (
           <p className="bp-empty-line">还没有学习路径，请先完善学习资料，再生成第一版方案。</p>
         )}
@@ -137,8 +140,8 @@ export default function BlueprintPathView({ onNavigateToTab, onNavigateToExercis
             onFocus={() => setHovered(stage)}
             aria-pressed={selected?.key === stage.key}
           >
-            <span>{String(index + 1).padStart(2, "0")}</span>
-            <strong>{stage.title}</strong>
+            <span data-level="B" data-carrier="rail" data-enter="attach" data-family="F14" data-mg-behavior="reveal">{String(index + 1).padStart(2, "0")}</span>
+            <strong {...labelProps("A", "plate", "persist")} data-level="A" data-carrier="plate" data-enter="attach" data-family="F14" data-mg-behavior="reveal">{stage.title}</strong>
             {stage.status === "completed" ? <Check /> : stage.status === "locked" ? <LockKeyhole /> : <i />}
             {/* 悬浮时从卡片上斜向扫过的高光层 */}
             <span className="bp-step-sheen" aria-hidden="true" />
@@ -148,19 +151,19 @@ export default function BlueprintPathView({ onNavigateToTab, onNavigateToExercis
 
       {shown && (
         <div className="bp-stage-detail" key={shown.key}>
-          <div className="bp-stage-connector" aria-hidden="true">
+          <div className="bp-stage-connector" aria-hidden="true" data-level="C" data-carrier="rail" data-enter="persist" data-family="F14" data-mg-behavior="persist">
             <i />
             <i />
             <i />
             <i />
           </div>
           <header>
-            <span>{String(stages.findIndex((item) => item.key === shown.key) + 1).padStart(2, "0")}</span>
+            <span data-level="B" data-carrier="rail" data-enter="attach" data-family="F15" data-mg-behavior="reveal">{String(stages.findIndex((item) => item.key === shown.key) + 1).padStart(2, "0")}</span>
             <div>
-              <small>CURRENT STAGE</small>
-              <h3>{shown.title}</h3>
+              <small data-level="B" data-carrier="rail" data-enter="attach" data-family="F14" data-mg-behavior="reveal">CURRENT STAGE</small>
+              <h3 data-level="A" data-carrier="plate" data-enter="attach" data-family="F14" data-mg-behavior="reveal">{shown.title}</h3>
             </div>
-            <b>{Math.round(shown.progress)}%</b>
+            <b data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">{Math.round(shown.progress)}%</b>
           </header>
           <nav className="bp-stage-journey" aria-label={`${shown.title}学习入口`}>
             <button
@@ -173,7 +176,7 @@ export default function BlueprintPathView({ onNavigateToTab, onNavigateToExercis
                 })
               }
             >
-              <small>01</small>
+              <small data-level="B" data-carrier="rail" data-enter="attach" data-family="F14" data-mg-behavior="reveal">01</small>
               <strong>知识导图</strong>
             </button>
             <button
@@ -187,7 +190,7 @@ export default function BlueprintPathView({ onNavigateToTab, onNavigateToExercis
                 })
               }
             >
-              <small>02</small>
+              <small data-level="B" data-carrier="rail" data-enter="attach" data-family="F14" data-mg-behavior="reveal">02</small>
               <strong>章节讲义</strong>
             </button>
             <button
@@ -196,7 +199,7 @@ export default function BlueprintPathView({ onNavigateToTab, onNavigateToExercis
                 onNavigateToTab("mentor", `请帮我梳理「${shown.title}」的重点，并带我完成本阶段学习。`)
               }
             >
-              <small>03</small>
+              <small data-level="B" data-carrier="rail" data-enter="attach" data-family="F14" data-mg-behavior="reveal">03</small>
               <strong>助手答疑</strong>
             </button>
             <button
@@ -205,15 +208,15 @@ export default function BlueprintPathView({ onNavigateToTab, onNavigateToExercis
                 onNavigateToTab("quiz", { subject: shown.subject, knowledgePoint: shown.knowledgePoints[0] })
               }
             >
-              <small>04</small>
+              <small data-level="B" data-carrier="rail" data-enter="attach" data-family="F14" data-mg-behavior="reveal">04</small>
               <strong>知识检测</strong>
             </button>
             <button type="button" onClick={() => onNavigateToExercise(shown.codeExerciseIds[0])}>
-              <small>05</small>
+              <small data-level="B" data-carrier="rail" data-enter="attach" data-family="F14" data-mg-behavior="reveal">05</small>
               <strong>编程实战</strong>
             </button>
             <button type="button" onClick={() => onNavigateToTab("report")}>
-              <small>06</small>
+              <small data-level="B" data-carrier="rail" data-enter="attach" data-family="F14" data-mg-behavior="reveal">06</small>
               <strong>学习报告</strong>
             </button>
           </nav>
@@ -226,7 +229,7 @@ export default function BlueprintPathView({ onNavigateToTab, onNavigateToExercis
                   onNavigateToTab("knowledge", { view: "graph", subject: shown.subject, focus: point })
                 }
               >
-                <span>
+                <span data-level="B" data-carrier="rail" data-enter="attach" data-family="F14" data-mg-behavior="reveal">
                   {stages.findIndex((item) => item.key === shown.key) + 1}.{index + 1}
                 </span>
                 <strong>{point}</strong>
@@ -239,16 +242,16 @@ export default function BlueprintPathView({ onNavigateToTab, onNavigateToExercis
 
       <footer className="bp-path-footer">
         <div>
-          <span>课程总进度</span>
+          <span data-level="B" data-carrier="rail" data-enter="persist" data-family="F05" data-mg-behavior="persist">课程总进度</span>
           <strong>{Math.round(path?.progress ?? 0)}%</strong>
-          <div className="bp-progress">
+          <div className="bp-progress" data-mg-progress data-level="B" data-carrier="rail" data-enter="persist" data-family="F05" data-mg-behavior="persist" data-mg-container="">
             <i style={{ width: `${path?.progress ?? 0}%` }} />
           </div>
         </div>
         <div>
-          <span>路径版本</span>
+          <span data-level="B" data-carrier="rail" data-enter="persist" data-family="F05" data-mg-behavior="persist">路径版本</span>
           <strong>V{path?.version ?? "—"}</strong>
-          <small>{path?.stages.length ?? 0} 个联动阶段</small>
+          <small data-level="B" data-carrier="rail" data-enter="persist" data-family="F05" data-mg-behavior="persist">{path?.stages.length ?? 0} 个联动阶段</small>
         </div>
         <button
           type="button"
@@ -257,11 +260,14 @@ export default function BlueprintPathView({ onNavigateToTab, onNavigateToExercis
           onClick={nextAction}
         >
           进入下一步：{selected?.title || "等待生成"}
-          <span className="bp-arrow-chip" aria-hidden="true">
+          <span className="bp-arrow-chip" aria-hidden="true" {...labelProps("B", "ring", "attach")} data-level="B" data-carrier="ring" data-enter="attach" data-family="F02" data-mg-behavior="reveal">
             <ArrowRight />
           </span>
         </button>
       </footer>
+      <DepthScene variant="stage" section="SECTION 02" title={["PATH", "02"]}
+        caption="STAGE JOURNEY / 阶段路径"
+        meta={path ? `${path.stages.length} STAGES · ${new Set(path.stages.flatMap(stage => stage.knowledgePoints)).size} POINTS` : undefined} />
     </section>
   );
 }

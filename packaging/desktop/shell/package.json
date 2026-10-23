@@ -1,8 +1,8 @@
 {
   "name": "learnmate-desktop",
-  "productName": "智课研伴 LearnMate",
+  "productName": "寻笺 LearnMate",
   "version": "1.0.0",
-  "description": "智课研伴 LearnMate 桌面端（学生端 / 教师端）",
+  "description": "寻笺 LearnMate 桌面端（学生端 / 教师端）",
   "main": "main.js",
   "author": "LearnMate",
   "license": "UNLICENSED",

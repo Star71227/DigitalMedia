@@ -1,7 +1,7 @@
-﻿# 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。
-# 智课研伴 LearnMate — 一键打出 Windows 桌面版安装包（Inno Setup）
+﻿# 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。
+# 寻笺 LearnMate — 一键打出 Windows 桌面版安装包（Inno Setup）
 #
-# 产物：<仓库>\dist\智课研伴-LearnMate-Setup-<版本>.exe
+# 产物：<仓库>\dist\寻笺-LearnMate-Setup-<版本>.exe
 # 组成：Electron 桌面外壳 + 内置 Node 运行时 + 内置 MySQL 运行时 + 后端 + 学生端/教师端网页产物
 #
 # 用法（在 PowerShell 里）：
@@ -89,10 +89,10 @@ $electronDist = Join-Path $packagingDir 'build\node_modules\electron\dist'
 $shellDir = Join-Path $packagingDir 'shell'
 $assetsDir = Join-Path $packagingDir 'assets'
 $issSource = Join-Path $packagingDir 'installer.iss'
-$outputBase = "智课研伴-LearnMate-Setup-$Version"
+$outputBase = "寻笺-LearnMate-Setup-$Version"
 $outputExe = Join-Path $distRoot "$outputBase.exe"
 
-Write-Host "智课研伴 LearnMate 桌面版打包" -ForegroundColor White
+Write-Host "寻笺 LearnMate 桌面版打包" -ForegroundColor White
 Write-Note "版本：$Version"
 Write-Note "项目根目录：$RepoRoot"
 Write-Note "运行环境来源：$RuntimeSource"
@@ -221,7 +221,7 @@ Invoke-Robocopy $scriptsSource (Join-Path $payloadDir 'scripts')
 Write-Note '图标 / 说明 / 快捷脚本'
 Copy-Item -LiteralPath $iconSource -Destination (Join-Path $payloadDir 'LearnMate.ico') -Force
 Copy-Item -LiteralPath (Join-Path $assetsDir '使用说明.txt') -Destination (Join-Path $payloadDir '使用说明.txt') -Force
-Copy-Item -LiteralPath (Join-Path $assetsDir '停止智课研伴.bat') -Destination (Join-Path $payloadDir '停止智课研伴.bat') -Force
+Copy-Item -LiteralPath (Join-Path $assetsDir '停止寻笺.bat') -Destination (Join-Path $payloadDir '停止寻笺.bat') -Force
 $judgeBat = Join-Path $appTemplateDir '启用代码判题.bat'
 if (Test-Path -LiteralPath $judgeBat) {
     Copy-Item -LiteralPath $judgeBat -Destination (Join-Path $payloadDir '启用代码判题.bat') -Force
@@ -239,7 +239,7 @@ $gitCommit = ''
 try { $gitCommit = (& git -C $RepoRoot rev-parse --short HEAD) 2>$null } catch { }
 if (-not $gitCommit) { $gitCommit = 'unknown' }
 $buildInfo = @(
-    "package   : 智课研伴 LearnMate $Version（桌面版）",
+    "package   : 寻笺 LearnMate $Version（桌面版）",
     "builtAt   : $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss zzz')",
     "gitCommit : $gitCommit",
     "machine   : $env:COMPUTERNAME",
@@ -400,7 +400,7 @@ $shaPath = Join-Path $distRoot "$outputBase.sha256.txt"
 [System.IO.File]::WriteAllText($shaPath, "$hash  $outputBase.exe`r`n", (New-Object System.Text.UTF8Encoding($true)))
 
 $summary = @(
-    "智课研伴 LearnMate 桌面版安装包",
+    "寻笺 LearnMate 桌面版安装包",
     "文件：$outputBase.exe",
     "大小：$(Format-Size $exeSize)",
     "SHA256：$hash",
@@ -408,7 +408,7 @@ $summary = @(
     "内含：Electron 桌面外壳 + 内置 Node + 内置 MySQL + 后端 + 学生端/教师端网页产物",
     "数据：内置云服务器数据快照（账号 / 班级 / 作业 / 题库 / 资源 / 报告与云端一致，含真实账号）",
     "安装：双击安装包 → 选择「仅为我安装」→ 完成（默认装到 %LOCALAPPDATA%\Programs\LearnMate，无需管理员）",
-    "卸载：设置 → 应用 → 已安装的应用 → 智课研伴 LearnMate（或安装目录里的 unins000.exe）"
+    "卸载：设置 → 应用 → 已安装的应用 → 寻笺 LearnMate（或安装目录里的 unins000.exe）"
 ) -join [Environment]::NewLine
 [System.IO.File]::WriteAllText((Join-Path $distRoot '安装包说明.txt'), $summary, (New-Object System.Text.UTF8Encoding($true)))
 

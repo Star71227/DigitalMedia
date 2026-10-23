@@ -1,4 +1,4 @@
-# 智课研伴 LearnMate 部署指南
+# 寻笺 LearnMate 部署指南
 
 本文说明 LearnMate 在单台主机上的 Docker Compose 交付方式。默认启动 MySQL、后端、学生端和教师端；MySQL 只加入容器内部网络，不发布宿主机端口。
 

@@ -1,11 +1,11 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 const { generateText } = require("../aiService");
 
 const AssessmentAgent = {
   name: "AssessmentAgent",
   description: "学习效果评估智能体",
   systemPrompt:
-    "你是智课研伴的学习效果评估智能体。你负责根据学习结果、答题结果和阶段表现做评估总结，指出掌握水平、风险点和下一步提升方向。",
+    "你是寻笺的学习效果评估智能体。你负责根据学习结果、答题结果和阶段表现做评估总结，指出掌握水平、风险点和下一步提升方向。",
   async run(context = {}, extraPrompt = "") {
     const prompt = [
       this.systemPrompt,

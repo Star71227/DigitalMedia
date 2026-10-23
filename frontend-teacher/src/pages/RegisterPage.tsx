@@ -1,4 +1,4 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 import { useState, type FormEvent } from "react";
 import { ArrowLeft, BookOpen, Lock, UserRound } from "lucide-react";
 import { registerTeacher } from "../api/auth";
@@ -92,7 +92,7 @@ export function RegisterPage() {
             </span>
             <div className="min-w-0">
               <strong className="block text-lg font-bold leading-tight tracking-tight text-slate-900">
-                智课研伴 教师端
+                寻笺 教师端
               </strong>
               <span className="text-xs text-slate-500">创建 TEACHER 账号</span>
             </div>
@@ -224,7 +224,7 @@ export function RegisterPage() {
           </p>
         </section>
       </div>
-      <p className="relative pb-2 text-center text-xs text-slate-500">智课研伴 教师数据中心</p>
+      <p className="relative pb-2 text-center text-xs text-slate-500">寻笺 教师数据中心</p>
     </main>
   );
 }

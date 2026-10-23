@@ -1,4 +1,4 @@
-﻿# 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。
+﻿# 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。
 # 校验「桌面版 = 云服务器」：数据条数、真实账号、AI/执行器配置、两端页面
 #
 # 用法：
@@ -88,7 +88,7 @@ if ($envText -match '(?m)^LLM_API_KEY=\S+') { Ok 'LLM_API_KEY 已配置（与云
 
 Write-Host "`n=== 4/4 两端页面 ===" -ForegroundColor Cyan
 foreach ($probe in @(
-        @{ Label = '学生端'; Url = "http://127.0.0.1:$($config.ports.student)/student"; Expect = '智课研伴' },
+        @{ Label = '学生端'; Url = "http://127.0.0.1:$($config.ports.student)/student"; Expect = '寻笺' },
         @{ Label = '教师端'; Url = "http://127.0.0.1:$($config.ports.teacher)/"; Expect = '教师端' }
     )) {
     try {

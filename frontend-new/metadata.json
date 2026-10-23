@@ -1,5 +1,5 @@
 {
-  "name": "智课研伴 - AI 驱动的 CS 专业课个性化学习平台",
+  "name": "寻笺 - AI 驱动的 CS 专业课个性化学习平台",
   "description": "基于多智能体协同的计算机专业课自适应学习与资源生成平台，支持画像诊断、路径规划、智能问答、自适应测验和错题反馈闭环。",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]

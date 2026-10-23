@@ -1,4 +1,4 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 const PLACEHOLDER_PATTERN = /^(?:请|change[-_ ]?me|replace[-_ ]?me|example|your[-_ ])/i;
 const SUPPORTED_NODE_ENVS = new Set(["development", "test", "production"]);
 /* local：用本机已安装的编译器（MSVC cl.exe）直接编译运行，

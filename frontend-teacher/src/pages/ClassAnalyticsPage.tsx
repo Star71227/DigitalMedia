@@ -1,4 +1,5 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+import { DepthScene } from "../components/depth/DepthScene";
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 import type { ClassAnalytics } from "../types";
 import { useEffect, useState } from "react";
 import {
@@ -210,6 +211,8 @@ export function ClassAnalyticsPage({ classId }: { classId: number }) {
           </div>
         </Panel>
       </State>
+      <DepthScene variant="sheet" section="SECTION 03" title={["CLASS", "DATA"]}
+        caption="CLASS ANALYTICS / 班级分析" meta={range === "6w" ? "6 WEEKS" : `${range.slice(0, -1)} DAYS`} />
     </>
   );
 }

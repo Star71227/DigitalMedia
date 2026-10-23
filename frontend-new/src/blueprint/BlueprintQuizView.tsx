@@ -1,4 +1,4 @@
-/* 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
+/* 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。 */
 import { useEffect, useRef, useState } from "react";
 import {
   AlertCircle,
@@ -23,6 +23,7 @@ import {
 } from "../api";
 import CodeLabView from "../components/CodeLabView";
 import { formatCodeText, splitQuestionStem } from "../lib/questionStem";
+import { Carrier, labelProps } from "./motion/Motion";
 import { BlueprintHeader, BlueprintMotif } from "./BlueprintDecorations";
 
 /** 知识检测只开放学科目录里的五门课（与题库/知识库科目一致） */
@@ -248,6 +249,7 @@ export default function BlueprintQuizView({
 
   return (
     <section className="bp-page bp-quiz-page">
+      <Carrier shape="mesh" className="mg-quiz-matrix" />
       <BlueprintMotif variant="branch" />
       <BlueprintHeader title="能力检测" english="ASSESSMENT STUDIO" />
 
@@ -277,14 +279,14 @@ export default function BlueprintQuizView({
       {mode === "quiz" && (
         <>
           <div className="bp-assessment-caption">
-            <span>KNOWLEDGE CHECK</span>
-            <strong>{subject || "选择题库科目"}</strong>
+            <span data-level="B" data-carrier="rail" data-enter="persist" data-family="F07" data-mg-behavior="persist">KNOWLEDGE CHECK</span>
+            <strong data-level="A" data-carrier="plate" data-enter="attach" data-family="F15" data-mg-behavior="reveal">{subject || "选择题库科目"}</strong>
           </div>
 
           {!questions.length && !result && (
             <div className="bp-quiz-setup bp-quiz-setup--wide">
               <div className="bp-quiz-setup__main">
-                <span className="bp-quiz-setup__kicker">KNOWLEDGE CHECK · 题库直出</span>
+                <span className="bp-quiz-setup__kicker" data-level="B" data-carrier="rail" data-enter="persist" data-family="F03" data-mg-behavior="persist" data-mg-container="">KNOWLEDGE CHECK · <b className="mg-kicker-word" {...labelProps("A", "plate", "reveal")} data-level="A" data-carrier="plate" data-enter="attach" data-family="F03" data-mg-behavior="reveal">题库直出</b><i data-mg-rail aria-hidden="true" /></span>
                 <h2>选择课程，开始检测</h2>
                 <p className="bp-quiz-setup__lead">
                   题目来自课程题库里已审核的公共题，选择题与填空题混排；答题过程中即时批改，随时可以在右侧答题卡跳题、看当前得分与本次错题。
@@ -336,7 +338,7 @@ export default function BlueprintQuizView({
                     />
                     <em>道</em>
                   </label>
-                  <span className="bp-quiz-count-row__total">共 {choiceCount + blankCount} 道</span>
+                  <span className="bp-quiz-count-row__total" {...labelProps("B", "tab", "attach")} data-level="B" data-carrier="rail" data-enter="persist" data-family="F05" data-mg-behavior="persist" data-mg-container="">共 {choiceCount + blankCount} 道</span>
                 </div>
 
                 <button
@@ -345,11 +347,11 @@ export default function BlueprintQuizView({
                   disabled={loading}
                 >
                   {loading ? "正在组卷…" : "开始检测"}
-                  <span className="bp-arrow-chip" aria-hidden="true">
+                  <span className="bp-arrow-chip" aria-hidden="true" {...labelProps("B", "ring", "attach")} data-level="B" data-carrier="ring" data-enter="attach" data-family="F02" data-mg-behavior="reveal">
                     <ArrowRight />
                   </span>
                 </button>
-                {paperNotice && <p className="bp-quiz-setup__tip">{paperNotice}</p>}
+                {paperNotice && <p className="bp-quiz-setup__tip" data-level="B" data-carrier="tab" data-enter="attach" data-family="F12" data-mg-behavior="reveal">{paperNotice}</p>}
               </div>
 
               <aside className="bp-quiz-setup__side" aria-label="检测说明">
@@ -393,12 +395,12 @@ export default function BlueprintQuizView({
               <div className="bp-quiz-main">
                 <article className="bp-question-sheet">
                   <header className="bp-question-sheet__bar">
-                    <b>{String(index + 1).padStart(2, "0")}</b>
+                    <b data-level="A" data-carrier="plate" data-enter="attach" data-family="F15" data-mg-behavior="reveal">{String(index + 1).padStart(2, "0")}</b>
                     <div>
-                      <span>
+                      <span data-level="B" data-carrier="rail" data-enter="attach" data-family="F15" data-mg-behavior="reveal">
                         {subject} · {current.knowledge_point || current.chapter || "综合"}
                       </span>
-                      <em>
+                      <em data-level="B" data-carrier="rail" data-enter="persist" data-family="F05" data-mg-behavior="persist">
                         {isFillBlank(current) ? "填空题" : "单选题"}
                         {current.difficulty ? ` · ${current.difficulty}` : ""}
                       </em>
@@ -448,7 +450,7 @@ export default function BlueprintQuizView({
                               setAnswers((value) => ({ ...value, [current.question_id]: option.key }))
                             }
                           >
-                            <b>{option.key || OPTION_KEYS[optionIndex]}</b>
+                            <b data-level="B" data-carrier="rail" data-enter="persist" data-family="F07" data-mg-behavior="persist">{option.key || OPTION_KEYS[optionIndex]}</b>
                             <span>{option.content}</span>
                             {isRight && <Check aria-hidden="true" />}
                           </button>
@@ -465,15 +467,15 @@ export default function BlueprintQuizView({
                   >
                     <header>
                       {answeredCorrect ? <Check aria-hidden="true" /> : <AlertCircle aria-hidden="true" />}
-                      <strong>{answeredCorrect ? "答对了" : "答错了"}</strong>
-                      <span>正确答案：{current.answer}</span>
+                      <strong data-level="B" data-carrier="rail" data-enter="attach" data-family="F15" data-mg-behavior="reveal">{answeredCorrect ? "答对了" : "答错了"}</strong>
+                      <span data-level="B" data-carrier="rail" data-enter="attach" data-family="F15" data-mg-behavior="reveal">正确答案：{current.answer}</span>
                     </header>
                     {current.analysis && <p>{current.analysis}</p>}
                   </aside>
                 )}
 
                 {hint && (
-                  <aside className="bp-quiz-hint">
+                  <aside className="bp-quiz-hint" data-level="B" data-carrier="tab" data-enter="attach" data-family="F12" data-mg-behavior="reveal">
                     <Lightbulb />
                     {hint}
                   </aside>
@@ -512,7 +514,7 @@ export default function BlueprintQuizView({
                     <Lightbulb />
                     查看提示
                   </button>
-                  <span className="bp-quiz-actions__progress">
+                  <span className="bp-quiz-actions__progress" data-level="B" data-carrier="rail" data-enter="persist" data-family="F05" data-mg-behavior="persist" data-mg-container="">
                     第 {index + 1} / {questions.length} 题
                   </span>
                   {index < questions.length - 1 ? (
@@ -525,14 +527,14 @@ export default function BlueprintQuizView({
                       }}
                     >
                       下一题
-                      <span className="bp-arrow-chip" aria-hidden="true">
+                      <span className="bp-arrow-chip" aria-hidden="true" {...labelProps("B", "ring", "attach")} data-level="B" data-carrier="ring" data-enter="attach" data-family="F02" data-mg-behavior="reveal">
                         <ArrowRight />
                       </span>
                     </button>
                   ) : (
                     <button type="button" className="bp-next" disabled={loading} onClick={submit}>
                       提交检测
-                      <span className="bp-arrow-chip" aria-hidden="true">
+                      <span className="bp-arrow-chip" aria-hidden="true" {...labelProps("B", "ring", "attach")} data-level="B" data-carrier="ring" data-enter="attach" data-family="F02" data-mg-behavior="reveal">
                         <ArrowRight />
                       </span>
                     </button>
@@ -543,8 +545,8 @@ export default function BlueprintQuizView({
               <aside className="bp-quiz-rail" aria-label="答题卡与得分">
                 <section className="bp-quiz-card">
                   <header>
-                    <h3>答题卡</h3>
-                    <span>{questions.length} 题</span>
+                    <h3 data-level="A" data-carrier="plate" data-enter="attach" data-family="F15" data-mg-behavior="reveal">答题卡</h3>
+                    <span data-level="B" data-carrier="rail" data-enter="attach" data-family="F15" data-mg-behavior="reveal">{questions.length} 题</span>
                   </header>
                   <div className="bp-quiz-sheet-grid">
                     {questions.map((question, questionIndex) => {
@@ -574,16 +576,16 @@ export default function BlueprintQuizView({
                       );
                     })}
                   </div>
-                  <div className="bp-quiz-sheet-legend">
-                    <span>
+                  <div className="bp-quiz-sheet-legend" data-level="B" data-carrier="rail" data-enter="persist" data-family="F06" data-mg-behavior="persist" data-mg-container="">
+                    <span data-level="B" data-carrier="tab" data-enter="persist" data-family="F06" data-mg-behavior="persist">
                       <i className="is-right" />
                       答对 {correctCount}
                     </span>
-                    <span>
+                    <span data-level="B" data-carrier="tab" data-enter="persist" data-family="F06" data-mg-behavior="persist">
                       <i className="is-wrong" />
                       答错 {wrongCount}
                     </span>
-                    <span>
+                    <span data-level="B" data-carrier="tab" data-enter="persist" data-family="F06" data-mg-behavior="persist">
                       <i className="is-empty" />
                       未答 {questions.length - answeredCount}
                     </span>
@@ -592,8 +594,8 @@ export default function BlueprintQuizView({
 
                 <section className="bp-quiz-card bp-quiz-card--score">
                   <header>
-                    <h3>当前得分</h3>
-                    <span>实时</span>
+                    <h3 data-level="A" data-carrier="plate" data-enter="attach" data-family="F15" data-mg-behavior="reveal">当前得分</h3>
+                    <span data-level="B" data-carrier="rail" data-enter="attach" data-family="F15" data-mg-behavior="reveal">实时</span>
                   </header>
                   <div className="bp-quiz-score">
                     <div
@@ -601,7 +603,7 @@ export default function BlueprintQuizView({
                       style={{ "--bp-score": `${scorePercent}%` } as React.CSSProperties}
                     >
                       <strong>{scorePercent}</strong>
-                      <small>分</small>
+                      <small data-level="B" data-carrier="rail" data-enter="persist" data-family="F07" data-mg-behavior="persist">分</small>
                     </div>
                     <dl>
                       <div>
@@ -626,8 +628,8 @@ export default function BlueprintQuizView({
 
                 <section className="bp-quiz-card bp-quiz-card--wrong">
                   <header>
-                    <h3>本次错题</h3>
-                    <span>{wrongCount} 道</span>
+                    <h3 data-level="A" data-carrier="plate" data-enter="attach" data-family="F15" data-mg-behavior="reveal">本次错题</h3>
+                    <span data-level="B" data-carrier="rail" data-enter="attach" data-family="F15" data-mg-behavior="reveal">{wrongCount} 道</span>
                   </header>
                   {wrongCount === 0 && <p className="bp-quiz-card__empty">还没有错题，继续加油。</p>}
                   <ul>
@@ -668,7 +670,7 @@ export default function BlueprintQuizView({
               <span>ASSESSMENT COMPLETE</span>
               <h2>
                 {Math.round(result.score)}
-                <small>分</small>
+                <small data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">分</small>
               </h2>
               <p>
                 答对 {result.correctCount} / {result.totalCount} 题，已自动判分。下面可以逐题核对答案与解析。
@@ -684,7 +686,7 @@ export default function BlueprintQuizView({
               <button className="bp-primary-action" onClick={() => onNavigateToTab("report")}>
                 查看学习报告
                 <ClipboardList />
-                <span className="bp-arrow-chip" aria-hidden="true">
+                <span className="bp-arrow-chip" aria-hidden="true" {...labelProps("B", "ring", "attach")} data-level="B" data-carrier="ring" data-enter="attach" data-family="F02" data-mg-behavior="reveal">
                   <ArrowRight />
                 </span>
               </button>
@@ -708,8 +710,8 @@ export default function BlueprintQuizView({
                       className={item?.isCorrect ? "is-correct" : "is-wrong"}
                     >
                       <header>
-                        <b>Q{String(questionIndex + 1).padStart(2, "0")}</b>
-                        <span>{isFillBlank(question) ? "填空题" : "选择题"}</span>
+                        <b data-level="B" data-carrier="rail" data-enter="persist" data-family="F15" data-mg-behavior="persist">Q{String(questionIndex + 1).padStart(2, "0")}</b>
+                        <span data-level="B" data-carrier="rail" data-enter="attach" data-family="F15" data-mg-behavior="reveal">{isFillBlank(question) ? "填空题" : "选择题"}</span>
                         <em>{item?.isCorrect ? "答对" : "答错"}</em>
                       </header>
                       <h4>{parts.prose || question.stem}</h4>
@@ -753,7 +755,7 @@ export default function BlueprintQuizView({
         <section className="bp-code-assessment bp-code-assessment--embedded">
           <header>
             <div>
-              <span>CODE PRACTICE</span>
+              <span data-level="B" data-carrier="rail" data-enter="attach" data-family="F15" data-mg-behavior="reveal">CODE PRACTICE</span>
               <h2>编程实战</h2>
               <p>选题、编写、运行和提交都在当前能力检测中完成。</p>
             </div>

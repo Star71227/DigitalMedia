@@ -1,5 +1,5 @@
-﻿# 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。
-# 智课研伴 LearnMate — 配置 AI 助手（可选）
+﻿# 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。
+# 寻笺 LearnMate — 配置 AI 助手（可选）
 #
 # 安装包里默认关闭 AI（界面会提示「模型未配置」，其余功能都能正常用）。
 # 想让 AI 助手 / 个性化组卷 / 资源生成走真实大模型时，运行本脚本填入
@@ -82,7 +82,7 @@ if ($running) {
         $answer = Read-Host '  服务正在运行，是否立即重启使其生效？(Y/n)'
         if (-not ($answer -match '^(n|N|no|NO|否)$')) { $shouldRestart = $true }
     } else {
-        Write-LmWarn '服务正在运行，重启后生效：先双击「停止智课研伴.bat」，再双击「一键启动智课研伴.bat」。'
+        Write-LmWarn '服务正在运行，重启后生效：先双击「停止寻笺.bat」，再双击「一键启动寻笺.bat」。'
     }
 }
 if ($shouldRestart) {

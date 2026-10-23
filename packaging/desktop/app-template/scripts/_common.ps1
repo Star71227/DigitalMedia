@@ -1,5 +1,5 @@
-﻿# 项目原创部分：本文件的智课研伴业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。
-# 智课研伴 LearnMate — 包内公共函数（被 start / stop / uninstall / configure-ai 共用）
+﻿# 项目原创部分：本文件的寻笺业务实现与集成逻辑。第三方导入库及其内部实现不属于本项目原创；AI 辅助研发见 AI_CODING_DISCLOSURE.md。此标注依据项目源码边界，非作者身份或逐行溯源证明。
+# 寻笺 LearnMate — 包内公共函数（被 start / stop / uninstall / configure-ai 共用）
 # 兼容 Windows PowerShell 5.1：不使用三元运算符、?? 等 PS7 语法，也不开 StrictMode
 # （配置对象是 JSON 反序列化来的，缺字段时按 $null 处理更稳妥）。
 
@@ -10,10 +10,10 @@ function Get-LmProp($Object, [string]$Name, $Default = $null) {
     return $property.Value
 }
 
-function Write-LmInfo([string]$Message) { Write-Host "[智课研伴] $Message" -ForegroundColor Cyan }
-function Write-LmOk([string]$Message) { Write-Host "[智课研伴] $Message" -ForegroundColor Green }
-function Write-LmWarn([string]$Message) { Write-Host "[智课研伴] $Message" -ForegroundColor Yellow }
-function Write-LmError([string]$Message) { Write-Host "[智课研伴] $Message" -ForegroundColor Red }
+function Write-LmInfo([string]$Message) { Write-Host "[寻笺] $Message" -ForegroundColor Cyan }
+function Write-LmOk([string]$Message) { Write-Host "[寻笺] $Message" -ForegroundColor Green }
+function Write-LmWarn([string]$Message) { Write-Host "[寻笺] $Message" -ForegroundColor Yellow }
+function Write-LmError([string]$Message) { Write-Host "[寻笺] $Message" -ForegroundColor Red }
 
 function New-LmSecret([int]$Bytes = 32) {
     $buffer = New-Object byte[] $Bytes
@@ -279,7 +279,7 @@ function Write-LmEnvFile($Config, [string]$Root) {
     $configuredCodeMode = [string](Get-LmProp $Config 'codeExecution' 'disabled')
     if ($configuredCodeMode) { $codeMode = $configuredCodeMode }
     $lines = New-Object System.Collections.Generic.List[string]
-    $lines.Add('# 智课研伴 LearnMate 本地运行配置（由启动脚本按 runtime\config.json 自动生成，可手改，但重启后会按 config.json 覆盖）')
+    $lines.Add('# 寻笺 LearnMate 本地运行配置（由启动脚本按 runtime\config.json 自动生成，可手改，但重启后会按 config.json 覆盖）')
     $lines.Add('NODE_ENV=production')
     $lines.Add('HOST=127.0.0.1')
     $lines.Add("PORT=$($Config.ports.backend)")
